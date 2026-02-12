@@ -194,7 +194,7 @@ fechas.forEach(f=>{
           <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(categoriaActual)}">
             ${piloto}
           </a>
-          ${victorias[piloto] ? " 🏆" : ""}
+          ${victorias[piloto] ? ` 🏆 x${victorias[piloto]}` : ""}
         </td>
         <td>${total}</td>
       </tr>
