@@ -57,6 +57,7 @@ a:hover{text-decoration:underline}
       <th>Pos</th>
       <th>Piloto</th>
       <th>Total Puntos</th>
+      <th>Victorias</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -187,21 +188,20 @@ fechas.forEach(f=>{
 
   // TABLA
   ranking.forEach(([piloto, total],i)=>{
-    tablaBody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>
-          <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(categoriaActual)}">
-            ${piloto}
-          </a>
-          ${victorias[piloto] ? ` 🏆 x${victorias[piloto]}` : ""}
-        </td>
-        <td>${total}</td>
-      </tr>
-    `;
-  });
+  tablaBody.innerHTML += `
+    <tr>
+      <td>${i+1}</td>
+      <td>
+        <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(categoriaActual)}">
+          ${piloto}
+        </a>
+      </td>
+      <td>${total}</td>
+      <td>${victorias[piloto] || 0}</td>
+    </tr>
+  `;
+});
 
-}
 
 </script>
 
