@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campeonato Oficial 2026 | PROKART</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+header{background:#000;color:#fff;text-align:center;padding:60px 20px}
+section{max-width:1100px;margin:auto;padding:60px 20px}
+h2{border-left:6px solid var(--rojo);padding-left:15px;margin-bottom:20px}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center}
+th{background:var(--negro);color:#fff}
+td:nth-child(2){text-align:left;padding-left:15px}
+tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
+tbody tr:nth-child(2){background:#c0c0c033}
+tbody tr:nth-child(3){background:#cd7f3233}
+tbody tr:hover{background:#f1f1f1}
+
+.categoria{margin-bottom:70px}
+
+.volver{
+display:inline-block;
+margin-top:30px;
+background:var(--rojo);
+color:#fff;
+padding:12px 20px;
+text-decoration:none;
+border-radius:6px;
+}
+
+a{color:var(--rojo);text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Campeonato Oficial 2026</h1>
+<p>Tabla General Acumulada</p>
+</header>
+
+<section id="contenedor"></section>
+
+<section style="text-align:center">
+<a href="index.html" class="volver">Volver al Inicio</a>
+</section>
+
+<script>
+
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+
+async function cargar(){
+
+const response = await fetch(SHEET_URL);
+const csv = await response.text();
+
+const filas = csv.split(/\r?\n/).slice(1);
+
+const datos = filas
+.filter(f=>f.trim()!=="")
+.map(f=>{
+const c = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+if(!c) return null;
+
+return {
+fecha: limpiar(c[1]),
+categoria: limpiar(c[2]),
+piloto: limpiar(c[3]),
+puntos: Number(limpiar(c[4])) || 0
+};
+})
+.filter(Boolean);
+
+mostrar(datos);
+}
+
+function limpiar(v){
+return v?.replace(/^"|"$/g,'').trim();
+}
+
+function mostrar(datos){
+
+const cont = document.getElementById("contenedor");
+
+const categorias = [...new Set(datos.map(d=>d.categoria))];
+
+categorias.forEach(cat=>{
+
+const datosCat = datos.filter(d=>d.categoria===cat);
+
+const mapa = {};
+
+datosCat.forEach(d=>{
+mapa[d.piloto] = (mapa[d.piloto] || 0) + d.puntos;
+});
+
+const ranking = Object.entries(mapa)
+.sort((a,b)=>b[1]-a[1]);
+
+let html = `
+<div class="categoria">
+<h2>${cat}</h2>
+<table>
+<thead>
+<tr>
+<th>Pos</th>
+<th>Piloto</th>
+<th>Puntos</th>
+</tr>
+</thead>
+<tbody>
+`;
+
+ranking.forEach((p,i)=>{
+html += `
+<tr>
+<td>${i+1}</td>
+<td>
+<a href="piloto.html?piloto=${encodeURIComponent(p[0])}&categoria=${encodeURIComponent(cat)}">
+${p[0]}
+</a>
+</td>
+<td>${p[1]}</td>
+</tr>
+`;
+});
+
+html += `</tbody></table></div>`;
+
+cont.innerHTML += html;
+
+});
+}
+
+cargar();
+
+</script>
+
+</body>
+</html>
