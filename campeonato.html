@@ -138,21 +138,21 @@ function actualizarCampeonato(){
   const datosCat = datos.filter(d=>d.categoria===categoriaActual);
 
   const mapa = {};
-  const victorias = {};
+const victorias = {};
 
-  // Detectar ganadores por fecha
-  const fechas = [...new Set(datosCat.map(d=>d.fecha))];
+// Detectar ganadores por fecha
+const fechas = [...new Set(datosCat.map(d=>d.fecha))];
 
-  fechas.forEach(f=>{
-    const fechaDatos = datosCat.filter(d=>d.fecha===f);
-    const maxPuntos = Math.max(...fechaDatos.map(d=>d.puntos));
+fechas.forEach(f=>{
+  const fechaDatos = datosCat.filter(d=>d.fecha===f);
+  const maxPuntos = Math.max(...fechaDatos.map(d=>d.puntos));
 
-    fechaDatos.forEach(d=>{
-      if(d.puntos === maxPuntos){
-        victorias[d.piloto] = true;
-      }
-    });
+  fechaDatos.forEach(d=>{
+    if(d.puntos === maxPuntos){
+      victorias[d.piloto] = (victorias[d.piloto] || 0) + 1;
+    }
   });
+});
 
   // Sumar puntos totales
   datosCat.forEach(d=>{
