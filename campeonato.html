@@ -46,6 +46,21 @@ a:hover{text-decoration:underline}
 <h1>Campeonato Oficial 2026</h1>
 <p>Tabla General Acumulada</p>
 </header>
+  
+<select id="categoriaSelectCampeonato"></select>
+
+<div id="liderCard" class="card" style="margin-top:20px;"></div>
+
+<table id="tablaCampeonato">
+  <thead>
+    <tr>
+      <th>Pos</th>
+      <th>Piloto</th>
+      <th>Total Puntos</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
 <section id="contenedor"></section>
 
@@ -57,92 +72,139 @@ a:hover{text-decoration:underline}
 
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
 
-async function cargar(){
+const catSel = document.getElementById("categoriaSelectCampeonato");
+const tablaBody = document.querySelector("#tablaCampeonato tbody");
+const liderCard = document.getElementById("liderCard");
 
-const response = await fetch(SHEET_URL);
-const csv = await response.text();
+let datos = [];
 
-const filas = csv.split(/\r?\n/).slice(1);
+cargarDatos();
 
-const datos = filas
-.filter(f=>f.trim()!=="")
-.map(f=>{
-const c = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-if(!c) return null;
+async function cargarDatos(){
+  const res = await fetch(SHEET_URL);
+  const csv = await res.text();
 
-return {
-fecha: limpiar(c[1]),
-categoria: limpiar(c[2]),
-piloto: limpiar(c[3]),
-puntos: Number(limpiar(c[4])) || 0
-};
-})
-.filter(Boolean);
+  const filas = csv.split(/\r?\n/).slice(1);
 
-mostrar(datos);
+  datos = filas
+    .filter(f => f.trim() !== "")
+    .map(f => {
+      const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+      if(!col) return null;
+
+      return {
+        fecha: limpiar(col[1]),
+        categoria: limpiar(col[2]),
+        piloto: limpiar(col[3]),
+        puntos: Number(limpiar(col[4])) || 0
+      };
+    })
+    .filter(Boolean);
+
+  cargarCategorias();
 }
 
 function limpiar(v){
-return v?.replace(/^"|"$/g,'').trim();
+  return v?.replace(/^"|"$/g,'').trim();
 }
 
-function mostrar(datos){
+/* ============================
+   CARGAR CATEGORIAS
+============================ */
 
-const cont = document.getElementById("contenedor");
+function cargarCategorias(){
+  const categorias = [...new Set(datos.map(d=>d.categoria))];
 
-const categorias = [...new Set(datos.map(d=>d.categoria))];
+  categorias.forEach(c=>{
+    const o = document.createElement("option");
+    o.value = c;
+    o.textContent = c;
+    catSel.appendChild(o);
+  });
 
-categorias.forEach(cat=>{
+  catSel.onchange = actualizarCampeonato;
 
-const datosCat = datos.filter(d=>d.categoria===cat);
-
-const mapa = {};
-
-datosCat.forEach(d=>{
-mapa[d.piloto] = (mapa[d.piloto] || 0) + d.puntos;
-});
-
-const ranking = Object.entries(mapa)
-.sort((a,b)=>b[1]-a[1]);
-
-let html = `
-<div class="categoria">
-<h2>${cat}</h2>
-<table>
-<thead>
-<tr>
-<th>Pos</th>
-<th>Piloto</th>
-<th>Puntos</th>
-</tr>
-</thead>
-<tbody>
-`;
-
-ranking.forEach((p,i)=>{
-html += `
-<tr>
-<td>${i+1}</td>
-<td>
-<a href="piloto.html?piloto=${encodeURIComponent(p[0])}&categoria=${encodeURIComponent(cat)}">
-${p[0]}
-</a>
-</td>
-<td>${p[1]}</td>
-</tr>
-`;
-});
-
-html += `</tbody></table></div>`;
-
-cont.innerHTML += html;
-
-});
+  actualizarCampeonato();
 }
 
-cargar();
+/* ============================
+   ACTUALIZAR CAMPEONATO
+============================ */
+
+function actualizarCampeonato(){
+
+  const categoriaActual = catSel.value;
+
+  const datosCat = datos.filter(d=>d.categoria===categoriaActual);
+
+  const mapa = {};
+  const victorias = {};
+
+  // Detectar ganadores por fecha
+  const fechas = [...new Set(datosCat.map(d=>d.fecha))];
+
+  fechas.forEach(f=>{
+    const fechaDatos = datosCat.filter(d=>d.fecha===f);
+    const maxPuntos = Math.max(...fechaDatos.map(d=>d.puntos));
+
+    fechaDatos.forEach(d=>{
+      if(d.puntos === maxPuntos){
+        victorias[d.piloto] = true;
+      }
+    });
+  });
+
+  // Sumar puntos totales
+  datosCat.forEach(d=>{
+    mapa[d.piloto] = (mapa[d.piloto] || 0) + d.puntos;
+  });
+
+  const ranking = Object.entries(mapa)
+    .sort((a,b)=>b[1]-a[1]);
+
+  // LIMPIAR
+  tablaBody.innerHTML = "";
+  liderCard.innerHTML = "";
+
+  if(ranking.length === 0) return;
+
+  // 🥇 LIDER
+  const lider = ranking[0];
+
+  liderCard.innerHTML = `
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <img src="pilotos/${lider[0].replaceAll(" ","_")}.jpg"
+           onerror="this.src='pilotos/default.jpg'"
+           style="width:160px;border-radius:12px">
+      <div>
+        <h2 style="margin:0;color:#e10600;">🥇 LÍDER DEL CAMPEONATO</h2>
+        <h3 style="margin:5px 0">${lider[0]}</h3>
+        <p style="font-size:18px;font-weight:bold">${lider[1]} puntos</p>
+        <p>${categoriaActual}</p>
+      </div>
+    </div>
+  `;
+
+  // TABLA
+  ranking.forEach(([piloto, total],i)=>{
+    tablaBody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>
+          <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(categoriaActual)}">
+            ${piloto}
+          </a>
+          ${victorias[piloto] ? " 🏆" : ""}
+        </td>
+        <td>${total}</td>
+      </tr>
+    `;
+  });
+
+}
 
 </script>
+
 
 </body>
 </html>
