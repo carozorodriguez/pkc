@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Organizador | Carga de Resultados</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+header{background:#000;color:#fff;text-align:center;padding:30px}
+section{max-width:700px;margin:auto;padding:40px 20px}
+.card{background:#fff;padding:30px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+
+label{display:block;margin-top:15px}
+select,input{width:100%;padding:10px;margin-top:5px}
+
+button{
+  margin-top:25px;
+  width:100%;
+  background:var(--rojo);
+  color:#fff;
+  border:none;
+  padding:14px;
+  font-size:1.1rem;
+  border-radius:6px;
+  cursor:pointer;
+}
+button:hover{opacity:.9}
+
+.ok{color:green;margin-top:15px;text-align:center}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Organizador</h1>
+  <p>Carga de Resultados por Fecha</p>
+</header>
+
+<section>
+<div class="card">
+
+  <label>Fecha (Ronda)</label>
+  <select id="fecha">
+    <option>Fecha 1</option>
+    <option>Fecha 2</option>
+    <option>Fecha 3</option>
+    <option>Fecha 4</option>
+    <option>Fecha 5</option>
+    <option>Fecha 6</option>
+    <option>Fecha 7</option>
+    <option>Fecha 8</option>
+  </select>
+
+  <label>Categoría</label>
+  <select id="categoria">
+    <option>PRE JUNIOR</option>
+    <option>JUNIOR</option>
+    <option>110 Cajeros</option>
+    <option>200 Master</option>
+    <option>200 STD</option>
+  </select>
+
+  <label>Piloto</label>
+  <input id="piloto" placeholder="Nombre del piloto">
+
+  <label>Puntos</label>
+  <input id="puntos" type="number" placeholder="Ej: 18">
+
+  <button onclick="enviar()">Cargar Resultado</button>
+
+  <div id="msg" class="ok"></div>
+
+</div>
+</section>
+
+<script>
+const FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeYeX1MeBEeYgyWg-4HBE4UJS98ardXP7Po2TP39Yr9SCapYg/formResponse";
+
+function enviar(){
+  const fecha = document.getElementById('fecha').value;
+  const categoria = document.getElementById('categoria').value;
+  const piloto = document.getElementById('piloto').value;
+  const puntos = document.getElementById('puntos').value;
+
+  if(!piloto || !puntos){
+    alert('Completá piloto y puntos');
+    return;
+  }
+
+  const data = new URLSearchParams({
+    "entry.181150003": fecha,
+    "entry.1272725453": categoria,
+    "entry.1291739805": piloto,
+    "entry.183586144": puntos
+  });
+
+  fetch(FORM_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: data
+  });
+
+  document.getElementById('msg').textContent = "✅ Resultado cargado";
+  document.getElementById('piloto').value = '';
+  document.getElementById('puntos').value = '';
+}
+</script>
+
+</body>
+</html>

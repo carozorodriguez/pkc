@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Organizador | PROKART CALETENSE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --rojo:#e10600;
+  --negro:#111;
+  --gris:#f4f4f4;
+}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:'Oswald',Arial;
+  background:var(--gris);
+}
+
+header{
+  background:#000;
+  color:#fff;
+  text-align:center;
+  padding:30px;
+}
+
+section{
+  max-width:900px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+h2{
+  border-left:6px solid var(--rojo);
+  padding-left:15px;
+}
+
+label{
+  display:block;
+  margin-top:15px;
+  font-weight:500;
+}
+
+select,input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  font-family:'Oswald';
+}
+
+button{
+  margin-top:25px;
+  padding:12px 20px;
+  background:var(--rojo);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-family:'Oswald';
+}
+
+button:hover{opacity:.85}
+
+#msg{
+  margin-top:15px;
+  font-weight:500;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Organizador</h1>
+  <p>Carga de Resultados por Fecha</p>
+</header>
+
+<section>
+
+<div class="card">
+  <h2>Form B – Resultados por Fecha</h2>
+
+  <label>Fecha (Ronda)</label>
+  <select id="fecha">
+    <option>Fecha 1</option>
+    <option>Fecha 2</option>
+    <option>Fecha 3</option>
+    <option>Fecha 4</option>
+    <option>Fecha 5</option>
+    <option>Fecha 6</option>
+    <option>Fecha 7</option>
+    <option>Fecha 8</option>
+  </select>
+
+  <label>Categoría</label>
+  <select id="categoria">
+    <option>PRE JUNIOR</option>
+    <option>JUNIOR</option>
+    <option>110 Cajeros</option>
+    <option>200 Master</option>
+    <option>200 STD</option>
+  </select>
+
+  <label>Piloto</label>
+  <input id="piloto" type="text" placeholder="Nombre y Apellido">
+
+  <label>Puntos</label>
+  <input id="puntos" type="number" min="0">
+
+  <button onclick="enviar()">Guardar Resultado</button>
+
+  <p id="msg"></p>
+</div>
+
+</section>
+
+<script>
+/* ===============================
+   CONFIGURACIÓN FORM B
+================================ */
+
+const FORM_URL =
+"https://docs.google.com/forms/d/e/1FAIpQLSeYeX1MeBEeYgyWg-4HBE4UJS98ardXP7Po2TP39Yr9SCapYg/formResponse";
+
+const ENTRY_FECHA     = "entry.181150003";
+const ENTRY_CATEGORIA = "entry.1272725453";
+const ENTRY_PILOTO    = "entry.1291739805";
+const ENTRY_PUNTOS    = "entry.183586144";
+
+/* ===============================
+   ENVÍO
+================================ */
+
+function enviar(){
+  const fecha = document.getElementById('fecha').value;
+  const categoria = document.getElementById('categoria').value;
+  const piloto = document.getElementById('piloto').value.trim();
+  const puntos = document.getElementById('puntos').value;
+
+  const msg = document.getElementById('msg');
+
+  if(!piloto || puntos === ""){
+    msg.textContent = "⚠️ Complete todos los campos";
+    msg.style.color = "red";
+    return;
+  }
+
+  const data = new URLSearchParams();
+  data.append(ENTRY_FECHA, fecha);
+  data.append(ENTRY_CATEGORIA, categoria);
+  data.append(ENTRY_PILOTO, piloto);
+  data.append(ENTRY_PUNTOS, puntos);
+
+  fetch(FORM_URL,{
+    method:'POST',
+    mode:'no-cors',
+    body:data
+  });
+
+  msg.textContent = "✅ Resultado cargado correctamente";
+  msg.style.color = "green";
+
+  document.getElementById('piloto').value = "";
+  document.getElementById('puntos').value = "";
+}
+</script>
+
+</body>
+</html>

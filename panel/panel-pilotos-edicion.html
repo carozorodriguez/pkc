@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Organizador | Edición de Pilotos</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+header{background:#000;color:#fff;text-align:center;padding:30px}
+section{max-width:1200px;margin:auto;padding:40px 20px}
+.card{background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center}
+th{background:var(--negro);color:#fff}
+td:nth-child(2),
+td:nth-child(3),
+td:nth-child(6){text-align:left}
+
+.btn{
+  background:var(--rojo);
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-family:'Oswald';
+}
+.btn:hover{opacity:.85}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Organizador</h1>
+  <p>Edición de Estado de Pilotos</p>
+</header>
+
+<section>
+<div class="card">
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Categoría</th>
+      <th>N°</th>
+      <th>Equipo</th>
+      <th>Estado</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody id="tablaPilotos"></tbody>
+</table>
+
+</div>
+</section>
+
+<script>
+/* ===============================
+   URL DE SHEET (CSV)
+================================ */
+const SHEET_URL = "PEGA_TU_SHEET_CSV_AQUI";
+
+/* ===============================
+   URL FORM CAMBIO DE ESTADO
+================================ */
+const FORM_URL = "https://docs.google.com/forms/d/e/TU_FORM_ID/formResponse";
+
+/* ENTRY DEL FORM (EDITÁS ACÁ) */
+const ENTRY = {
+  id: "entry.111111",
+  nombre: "entry.222222",
+  apellido: "entry.333333",
+  categoria: "entry.444444",
+  estado: "entry.555555"
+};
+
+/* ===============================
+   CARGA DE TABLA
+================================ */
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(text=>{
+  const filas=text.trim().split('\n').slice(1);
+  const tb=document.getElementById('tablaPilotos');
+
+  filas.forEach(f=>{
+    const c=f.split(',').map(v=>v.replace(/^"|"$/g,''));
+
+    tb.innerHTML+=`
+      <tr>
+        <td>${c[0]}</td>
+        <td>${c[1]}</td>
+        <td>${c[2]}</td>
+        <td>${c[3]}</td>
+        <td>${c[4]}</td>
+        <td>${c[5]}</td>
+        <td>${c[6]}</td>
+        <td>
+          <button class="btn"
+            onclick="cambiarEstado('${c[0]}','${c[1]}','${c[2]}','${c[3]}')">
+            Cambiar
+          </button>
+        </td>
+      </tr>`;
+  });
+});
+
+/* ===============================
+   ENVÍO AL FORM
+================================ */
+function cambiarEstado(id,nombre,apellido,categoria){
+  const nuevo = prompt("Nuevo estado (Activo / Suspendido / Baja):");
+  if(!nuevo) return;
+
+  const data = new URLSearchParams();
+  data.append(ENTRY.id,id);
+  data.append(ENTRY.nombre,nombre);
+  data.append(ENTRY.apellido,apellido);
+  data.append(ENTRY.categoria,categoria);
+  data.append(ENTRY.estado,nuevo);
+
+  fetch(FORM_URL,{
+    method:'POST',
+    mode:'no-cors',
+    body:data
+  });
+
+  alert("Estado enviado correctamente");
+}
+</script>
+
+</body>
+</html>

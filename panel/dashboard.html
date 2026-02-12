@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Organizador | PROKART CALETENSE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --rojo:#e10600;
+  --negro:#111;
+  --gris:#f4f4f4;
+}
+
+body{
+  margin:0;
+  font-family:'Oswald',Arial;
+  background:var(--gris);
+}
+
+header{
+  background:#000;
+  color:#fff;
+  padding:25px;
+  text-align:center;
+}
+
+main{
+  max-width:1100px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+h2{
+  border-left:6px solid var(--rojo);
+  padding-left:15px;
+}
+
+.menu{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:25px;
+  margin-top:40px;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+  cursor:pointer;
+  transition:.2s;
+  text-align:center;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+.card span{
+  font-size:42px;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Organizador</h1>
+  <p>PROKART CALETENSE</p>
+</header>
+
+<main>
+
+<h2>Administración</h2>
+
+<div class="menu">
+
+  <div class="card" onclick="location.href='pilotos.html'">
+    <span>??</span>
+    <h3>Pilotos</h3>
+    <p>Alta, edición y estado</p>
+  </div>
+
+  <div class="card" onclick="location.href='fechas.html'">
+    <span>??</span>
+    <h3>Fechas</h3>
+    <p>Calendario del campeonato</p>
+  </div>
+
+  <div class="card" onclick="location.href='resultados.html'">
+    <span>??</span>
+    <h3>Resultados</h3>
+    <p>Carga por fecha y categoría</p>
+  </div>
+
+  <div class="card" onclick="location.href='config.html'">
+    <span>??</span>
+    <h3>Configuración</h3>
+    <p>Temporada y parámetros</p>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  © 2026 PROKART CALETENSE · Panel Organizador
+</footer>
+
+</body>
+</html>

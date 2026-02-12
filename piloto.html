@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha del Piloto | PROKART CALETENSE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --rojo:#e10600;
+  --negro:#111;
+  --gris:#f4f4f4;
+}
+
+body{
+  margin:0;
+  font-family:'Oswald',Arial;
+  background:var(--gris);
+}
+
+/* ===============================
+   HEADER
+================================ */
+header{
+  background:#000;
+  color:#fff;
+  text-align:center;
+  padding:40px 20px;
+}
+
+/* ===============================
+   CONTENIDO
+================================ */
+section{
+  max-width:900px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.btn{
+  display:inline-block;
+  margin:10px 5px 0 0;
+  padding:12px 18px;
+  background:var(--rojo);
+  color:#fff;
+  text-decoration:none;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-family:'Oswald';
+}
+
+.btn:hover{opacity:.85}
+
+/* ===============================
+   DATOS PILOTO
+================================ */
+.piloto-header{
+  display:grid;
+  grid-template-columns:220px 1fr 160px;
+  gap:30px;
+  align-items:center;
+}
+
+.piloto-header img{
+  width:100%;
+  border-radius:12px;
+  border:4px solid var(--negro);
+}
+
+#qrPiloto img{
+  width:140px;
+}
+
+/* ===============================
+   TITULOS
+================================ */
+h1{margin:0}
+h3{
+  margin-top:35px;
+  border-left:5px solid var(--rojo);
+  padding-left:12px;
+}
+
+/* ===============================
+   TABLAS
+================================ */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+}
+
+th{
+  background:var(--negro);
+  color:#fff;
+}
+
+/* ===============================
+   ACCIONES
+================================ */
+.acciones{
+  margin-top:30px;
+  text-align:center;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+footer{
+  background:#000;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+  margin-top:40px;
+}
+
+.sponsors img{
+  height:45px;
+  margin:0 10px;
+}
+
+/* ===============================
+   IMPRESIÓN
+================================ */
+@media print{
+  .acciones,
+  footer{
+    display:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Ficha del Piloto</h1>
+</header>
+
+<section>
+
+<div class="card" id="fichaPiloto">
+
+  <!-- DATOS PRINCIPALES -->
+  <div class="piloto-header">
+    <img id="fotoPiloto" src="" alt="Foto del piloto">
+
+    <div>
+      <h1 id="nombrePiloto"></h1>
+      <p><strong>Categoría:</strong> <span id="categoriaPiloto"></span></p>
+    </div>
+
+    <div id="qrPiloto"></div>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <h3>Estadísticas</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Carreras</th>
+        <th>Puntos</th>
+        <th>Mejor Puesto</th>
+        <th>Promedio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="statCarreras">0</td>
+        <td id="statPuntos">0</td>
+        <td id="statMejor">—</td>
+        <td id="statPromedio">—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- HISTORIAL -->
+  <h3>Historial de Carreras</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Puesto</th>
+        <th>Puntos</th>
+      </tr>
+    </thead>
+    <tbody id="tablaHistorial"></tbody>
+  </table>
+
+  <!-- ACCIONES -->
+  <div class="acciones">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir / Exportar PDF</button>
+    <a class="btn" href="index.html">⬅ Volver al Campeonato</a>
+  </div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="sponsors">
+    <img src="sponsors/vintage.png" alt="Vintage Motors 4T">
+   <img src="sponsors/caleta.png" alt="Repuestos Santiago">
+ <img src="sponsors/dany.png" alt="Dany Kart">
+  </div>
+  <p>© 2026 PROKART CALETENSE</p>
+</footer>
+
+<script>
+/* ===============================
+   PARAMETROS URL
+================================ */
+const params = new URLSearchParams(window.location.search);
+const piloto = params.get('piloto');
+const categoria = params.get('categoria');
+
+document.getElementById('nombrePiloto').textContent = piloto;
+document.getElementById('categoriaPiloto').textContent = categoria;
+
+/* ===============================
+   FOTO PILOTO
+================================ */
+const foto = document.getElementById('fotoPiloto');
+foto.src = `pilotos/${piloto.replaceAll(' ','_')}.jpg`;
+foto.onerror = () => foto.src = 'pilotos/default.jpg';
+
+/* ===============================
+   QR PILOTO
+================================ */
+document.getElementById('qrPiloto').innerHTML =
+  `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
+
+/* ===============================
+   SHEETS POR CATEGORIA
+================================ */
+const SHEETS = {
+  "PRE JUNIOR":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=0&single=true&output=tsv",
+  "JUNIOR":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=1173158505&single=true&output=tsv",
+  "110 Cajeros":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=796482582&single=true&output=tsv",
+  "200 Master":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=2021979125&single=true&output=tsv",
+  "200 STD":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=660182728&single=true&output=tsv"
+};
+
+/* ===============================
+   CARGA + CALCULOS
+================================ */
+fetch(SHEETS[categoria])
+.then(r=>r.text())
+.then(text=>{
+  const filas = text.trim().split('\n').slice(1);
+  const tabla = document.getElementById('tablaHistorial');
+
+  let carreras=0, puntos=0, mejor=999, suma=0;
+
+  filas.forEach(f=>{
+    const c=f.split('\t');
+    if(c[1]===piloto){
+      const puesto=parseInt(c[2]);
+      const pts=parseInt(c[3]);
+
+      carreras++;
+      puntos+=pts;
+      suma+=puesto;
+      if(puesto<mejor) mejor=puesto;
+
+      tabla.innerHTML+=`
+        <tr>
+          <td>${c[0]}</td>
+          <td>${puesto}</td>
+          <td>${pts}</td>
+        </tr>`;
+    }
+  });
+
+  document.getElementById('statCarreras').textContent = carreras;
+  document.getElementById('statPuntos').textContent = puntos;
+  document.getElementById('statMejor').textContent = mejor===999?'—':mejor;
+  document.getElementById('statPromedio').textContent =
+    carreras ? (suma/carreras).toFixed(2) : '—';
+});
+</script>
+
+</body>
+</html>

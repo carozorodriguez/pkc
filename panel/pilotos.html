@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gesti�n de Pilotos | Panel Organizador</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --rojo:#e10600;
+  --negro:#111;
+  --gris:#f4f4f4;
+}
+
+body{
+  margin:0;
+  font-family:'Oswald',Arial;
+  background:var(--gris);
+}
+
+header{
+  background:#000;
+  color:#fff;
+  padding:25px;
+  text-align:center;
+}
+
+main{
+  max-width:1200px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+h2{
+  border-left:6px solid var(--rojo);
+  padding-left:15px;
+}
+
+.card{
+  background:#fff;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+  margin-bottom:35px;
+}
+
+/* ===============================
+   TABLA
+================================ */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+}
+
+th{
+  background:var(--negro);
+  color:#fff;
+}
+
+td:nth-child(2){
+  text-align:left;
+}
+
+/* ===============================
+   FORMULARIO
+================================ */
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+
+label{
+  font-weight:500;
+}
+
+input,select{
+  width:100%;
+  padding:10px;
+  font-family:'Oswald';
+}
+
+.preview{
+  width:160px;
+  height:220px;
+  border:2px dashed #aaa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* ===============================
+   BOTONES
+================================ */
+.btn{
+  background:var(--rojo);
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-family:'Oswald';
+}
+
+.btn:hover{opacity:.85}
+
+.btn-sec{
+  background:#333;
+}
+
+footer{
+  text-align:center;
+  color:#666;
+  padding:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Organizador</h1>
+  <p>Gesti�n de Pilotos</p>
+</header>
+
+<main>
+
+<!-- ===============================
+     LISTADO DE PILOTOS
+================================ -->
+<div class="card">
+  <h2>Pilotos Registrados</h2>
+
+  <table id="tablaPilotos">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Piloto</th>
+        <th>Categor�a</th>
+        <th>N�</th>
+        <th>Equipo</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- se llena por JS -->
+    </tbody>
+  </table>
+</div>
+
+<!-- ===============================
+     FORMULARIO
+================================ -->
+<div class="card">
+  <h2>Alta de Piloto</h2>
+
+  <div class="form-grid">
+
+    <div>
+      <label>Nombre</label>
+      <input id="nombre" placeholder="Ej: Juan">
+    </div>
+
+    <div>
+      <label>Apellido</label>
+      <input id="apellido" placeholder="Ej: P�rez">
+    </div>
+
+    <div>
+      <label>Categor�a</label>
+      <select id="categoria">
+        <option>PRE JUNIOR</option>
+        <option>JUNIOR</option>
+        <option>110 Cajeros</option>
+        <option>200 Master</option>
+        <option>200 STD</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Numero</label>
+      <input id="numero" type="number">
+    </div>
+
+    <div>
+      <label>Equipo</label>
+      <input id="equipo">
+    </div>
+
+    <div>
+      <label>Estado</label>
+      <select id="estado">
+        <option>Activo</option>
+        <option>Suspendido</option>
+        <option>Baja</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div style="margin-top:20px">
+    <label>Foto del Piloto</label>
+    <input type="file" id="foto" accept="image/*">
+    <div class="preview">
+      <img id="previewImg">
+    </div>
+  </div>
+
+  <div style="margin-top:30px;text-align:center">
+    <button class="btn" onclick="guardarPiloto()">Guardar Piloto</button>
+    <button class="btn btn-sec" onclick="limpiarFormulario()">Limpiar</button>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  � 2026 PROKART CALETENSE � Panel Organizador
+</footer>
+
+<script>
+/* ===============================
+   PREVIEW DE FOTO
+================================ */
+document.getElementById('foto').addEventListener('change',e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  document.getElementById('previewImg').src=URL.createObjectURL(file);
+});
+
+/* ===============================
+   DATOS TEMPORALES (SIMULACI�N)
+================================ */
+let pilotos=[];
+let id=1;
+
+/* ===============================
+   GUARDAR PILOTO
+================================ */
+function guardarPiloto(){
+  const piloto={
+    id:id++,
+    nombre:document.getElementById('nombre').value,
+    apellido:document.getElementById('apellido').value,
+    categoria:document.getElementById('categoria').value,
+    numero:document.getElementById('numero').value,
+    equipo:document.getElementById('equipo').value,
+    estado:document.getElementById('estado').value
+  };
+
+  pilotos.push(piloto);
+  renderTabla();
+  limpiarFormulario();
+}
+
+/* ===============================
+   TABLA
+================================ */
+function renderTabla(){
+  const tb=document.querySelector('#tablaPilotos tbody');
+  tb.innerHTML='';
+  pilotos.forEach(p=>{
+    tb.innerHTML+=`
+      <tr>
+        <td>${p.id}</td>
+        <td>${p.apellido}, ${p.nombre}</td>
+        <td>${p.categoria}</td>
+        <td>${p.numero}</td>
+        <td>${p.equipo}</td>
+        <td>${p.estado}</td>
+      </tr>`;
+  });
+}
+
+/* ===============================
+   LIMPIAR
+================================ */
+function limpiarFormulario(){
+  document.querySelectorAll('input').forEach(i=>i.value='');
+  document.getElementById('previewImg').src='';
+}
+</script>
+
+</body>
+</html>
