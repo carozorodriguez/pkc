@@ -198,9 +198,15 @@ fechas.forEach(f=>{
 
   liderCard.innerHTML = `
     <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-      <img src="pilotos/${lider[0].replaceAll(" ","_")}.jpg"
-           onerror="this.src='pilotos/default.jpg'"
-           style="width:160px;border-radius:12px">
+      const nombreImagen = lider[0]
+  .toLowerCase()
+  .replaceAll(" ","_");
+
+liderCard.innerHTML = `
+  <div class="lider-card">
+    <img src="pilotos/${nombreImagen}.jpg"
+         onerror="this.src='pilotos/default.jpg'">
+
       <div>
         <h2 style="margin:0;color:#e10600;">🥇 LÍDER DEL CAMPEONATO</h2>
         <h3 style="margin:5px 0">${lider[0]}</h3>
