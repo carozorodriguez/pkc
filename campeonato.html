@@ -11,7 +11,29 @@
 :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
 body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 header{background:#000;color:#fff;text-align:center;padding:60px 20px}
-...
+section{max-width:1100px;margin:auto;padding:60px 20px}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center}
+th{background:var(--negro);color:#fff}
+td:nth-child(2){text-align:left;padding-left:15px}
+tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
+tbody tr:nth-child(2){background:#c0c0c033}
+tbody tr:nth-child(3){background:#cd7f3233}
+tbody tr:hover{background:#f1f1f1}
+
+.volver{
+display:inline-block;
+margin-top:30px;
+background:var(--rojo);
+color:#fff;
+padding:12px 20px;
+text-decoration:none;
+border-radius:6px;
+}
+
+a{color:var(--rojo);text-decoration:none}
+a:hover{text-decoration:underline}
 
 /* ===== TARJETA LIDER ===== */
 
@@ -59,9 +81,7 @@ header{background:#000;color:#fff;text-align:center;padding:60px 20px}
   font-size:16px;
   opacity:.9;
 }
-
 </style>
-
 </head>
 
 <body>
@@ -70,10 +90,12 @@ header{background:#000;color:#fff;text-align:center;padding:60px 20px}
 <h1>Campeonato Oficial 2026</h1>
 <p>Tabla General Acumulada</p>
 </header>
-  
+
+<section>
+
 <select id="categoriaSelectCampeonato"></select>
 
-<div id="liderCard" class="card" style="margin-top:20px;"></div>
+<div id="liderCard" style="margin-top:20px;"></div>
 
 <table id="tablaCampeonato">
   <thead>
@@ -87,10 +109,10 @@ header{background:#000;color:#fff;text-align:center;padding:60px 20px}
   <tbody></tbody>
 </table>
 
-<section id="contenedor"></section>
-
-<section style="text-align:center">
+<div style="text-align:center">
 <a href="index.html" class="volver">Volver al Inicio</a>
+</div>
+
 </section>
 
 <script>
@@ -133,10 +155,6 @@ function limpiar(v){
   return v?.replace(/^"|"$/g,'').trim();
 }
 
-/* ============================
-   CARGAR CATEGORIAS
-============================ */
-
 function cargarCategorias(){
   const categorias = [...new Set(datos.map(d=>d.categoria))];
 
@@ -152,34 +170,27 @@ function cargarCategorias(){
   actualizarCampeonato();
 }
 
-/* ============================
-   ACTUALIZAR CAMPEONATO
-============================ */
-
 function actualizarCampeonato(){
 
   const categoriaActual = catSel.value;
-
   const datosCat = datos.filter(d=>d.categoria===categoriaActual);
 
   const mapa = {};
-const victorias = {};
+  const victorias = {};
 
-// Detectar ganadores por fecha
-const fechas = [...new Set(datosCat.map(d=>d.fecha))];
+  const fechas = [...new Set(datosCat.map(d=>d.fecha))];
 
-fechas.forEach(f=>{
-  const fechaDatos = datosCat.filter(d=>d.fecha===f);
-  const maxPuntos = Math.max(...fechaDatos.map(d=>d.puntos));
+  fechas.forEach(f=>{
+    const fechaDatos = datosCat.filter(d=>d.fecha===f);
+    const maxPuntos = Math.max(...fechaDatos.map(d=>d.puntos));
 
-  fechaDatos.forEach(d=>{
-    if(d.puntos === maxPuntos){
-      victorias[d.piloto] = (victorias[d.piloto] || 0) + 1;
-    }
+    fechaDatos.forEach(d=>{
+      if(d.puntos === maxPuntos){
+        victorias[d.piloto] = (victorias[d.piloto] || 0) + 1;
+      }
+    });
   });
-});
 
-  // Sumar puntos totales
   datosCat.forEach(d=>{
     mapa[d.piloto] = (mapa[d.piloto] || 0) + d.puntos;
   });
@@ -187,54 +198,53 @@ fechas.forEach(f=>{
   const ranking = Object.entries(mapa)
     .sort((a,b)=>b[1]-a[1]);
 
-  // LIMPIAR
   tablaBody.innerHTML = "";
   liderCard.innerHTML = "";
 
   if(ranking.length === 0) return;
 
-  // 🥇 LIDER
   const lider = ranking[0];
 
+  const nombreImagen = lider[0]
+    .toLowerCase()
+    .replaceAll(" ","_");
+
+  const victoriasLider = victorias[lider[0]] || 0;
+
   liderCard.innerHTML = `
-    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-      const nombreImagen = lider[0]
-  .toLowerCase()
-  .replaceAll(" ","_");
-
-liderCard.innerHTML = `
-  <div class="lider-card">
-    <img src="pilotos/${nombreImagen}.jpg"
-         onerror="this.src='pilotos/default.jpg'">
-
-      <div>
-        <h2 style="margin:0;color:#e10600;">🥇 LÍDER DEL CAMPEONATO</h2>
-        <h3 style="margin:5px 0">${lider[0]}</h3>
-        <p style="font-size:18px;font-weight:bold">${lider[1]} puntos</p>
-        <p>${categoriaActual}</p>
+    <div class="lider-card">
+      <img src="pilotos/${nombreImagen}.jpg"
+           onerror="this.src='pilotos/default.jpg'">
+      <div class="lider-info">
+        <h2>🥇 LÍDER DEL CAMPEONATO</h2>
+        <h3>${lider[0]}</h3>
+        <div class="puntos">${lider[1]} puntos</div>
+        <div class="extra">
+          Categoría: ${categoriaActual}<br>
+          🏆 Victorias: ${victoriasLider}
+        </div>
       </div>
     </div>
   `;
 
-  // TABLA
   ranking.forEach(([piloto, total],i)=>{
-  tablaBody.innerHTML += `
-    <tr>
-      <td>${i+1}</td>
-      <td>
-        <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(categoriaActual)}">
-          ${piloto}
-        </a>
-      </td>
-      <td>${total}</td>
-      <td>${victorias[piloto] || 0}</td>
-    </tr>
-  `;
-});
-}  // ← CIERRE DE actualizarCampeonato()
+    tablaBody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>
+          <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(categoriaActual)}">
+            ${piloto}
+          </a>
+        </td>
+        <td>${total}</td>
+        <td>${victorias[piloto] || 0}</td>
+      </tr>
+    `;
+  });
+
+}
 
 </script>
-
 
 </body>
 </html>
