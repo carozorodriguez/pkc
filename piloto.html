@@ -262,6 +262,12 @@ const SHEETS = {
 /* ===============================
    CARGA + CALCULOS
 ================================ */
+function normalizar(texto){
+  return texto
+    ?.toLowerCase()
+    .trim();
+}
+
 fetch(SHEETS[categoria])
 .then(r=>r.text())
 .then(text=>{
@@ -272,7 +278,8 @@ fetch(SHEETS[categoria])
 
   filas.forEach(f=>{
     const c=f.split('\t');
-    if(c[1]===piloto){
+
+    if(normalizar(c[1]) === normalizar(piloto)){
       const puesto=parseInt(c[2]);
       const pts=parseInt(c[3]);
 
@@ -296,6 +303,7 @@ fetch(SHEETS[categoria])
   document.getElementById('statPromedio').textContent =
     carreras ? (suma/carreras).toFixed(2) : '—';
 });
+
 </script>
 
 </body>
