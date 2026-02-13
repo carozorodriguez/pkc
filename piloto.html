@@ -230,6 +230,7 @@ footer{
 const params = new URLSearchParams(window.location.search);
 const piloto = params.get('piloto');
 const categoria = params.get('categoria');
+const pilotoNormalizado = piloto.toLowerCase().trim();
 
 document.getElementById('nombrePiloto').textContent = piloto;
 document.getElementById('categoriaPiloto').textContent = categoria;
