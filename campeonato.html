@@ -81,6 +81,40 @@ a:hover{text-decoration:underline}
   font-size:16px;
   opacity:.9;
 }
+  @keyframes fadeSlide {
+  from {
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.lider-card{
+  animation:fadeSlide .6s ease-out;
+}
+
+.badge-campeon{
+  display:inline-block;
+  margin-top:12px;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.habilitado{
+  background:#ffd700;
+  color:#000;
+}
+
+.no-habilitado{
+  background:#444;
+  color:#fff;
+}
+
 </style>
 </head>
 
@@ -204,12 +238,15 @@ function actualizarCampeonato(){
   if(ranking.length === 0) return;
 
   const lider = ranking[0];
+const segundo = ranking[1];
+const diferencia = segundo ? lider[1] - segundo[1] : 0;
 
   const nombreImagen = lider[0]
     .toLowerCase()
     .replaceAll(" ","_");
 
   const victoriasLider = victorias[lider[0]] || 0;
+const habilitado = victoriasLider > 0;
 
   liderCard.innerHTML = `
     <div class="lider-card">
