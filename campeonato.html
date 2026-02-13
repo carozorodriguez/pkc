@@ -249,20 +249,25 @@ const diferencia = segundo ? lider[1] - segundo[1] : 0;
 const habilitado = victoriasLider > 0;
 
   liderCard.innerHTML = `
-    <div class="lider-card">
-      <img src="pilotos/${nombreImagen}.jpg"
-           onerror="this.src='pilotos/default.jpg'">
-      <div class="lider-info">
-        <h2>🥇 LÍDER DEL CAMPEONATO</h2>
-        <h3>${lider[0]}</h3>
-        <div class="puntos">${lider[1]} puntos</div>
-        <div class="extra">
-          Categoría: ${categoriaActual}<br>
-          🏆 Victorias: ${victoriasLider}
-        </div>
+  <div class="lider-card">
+    <img src="pilotos/${nombreImagen}.jpg"
+         onerror="this.src='pilotos/default.jpg'">
+    <div class="lider-info">
+      <h2>🥇 LÍDER DEL CAMPEONATO</h2>
+      <h3>${lider[0]}</h3>
+      <div class="puntos">${lider[1]} puntos</div>
+      <div class="extra">
+        Categoría: ${categoriaActual}<br>
+        🏆 Victorias: ${victoriasLider}<br>
+        ${segundo ? `📊 Diferencia con 2°: +${diferencia} pts` : ""}
+      </div>
+      <div class="badge-campeon ${habilitado ? 'habilitado' : 'no-habilitado'}">
+        ${habilitado ? '✔ Habilitado para Campeón' : '✖ Sin victorias necesarias'}
       </div>
     </div>
-  `;
+  </div>
+`;
+
 
   ranking.forEach(([piloto, total],i)=>{
     tablaBody.innerHTML += `
