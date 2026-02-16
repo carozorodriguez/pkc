@@ -248,16 +248,82 @@ foto.onerror = () => foto.src = 'pilotos/default.jpg';
 document.getElementById('qrPiloto').innerHTML =
   `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
 
-/* ===============================
-   SHEETS POR CATEGORIA
-================================ */
-const SHEETS = {
-  "PRE JUNIOR":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=0&single=true&output=tsv",
-  "JUNIOR":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=1173158505&single=true&output=tsv",
-  "110 Cajeros":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=796482582&single=true&output=tsv",
-  "200 Master":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=2021979125&single=true&output=tsv",
-  "200 STD":"https://docs.google.com/spreadsheets/d/e/2PACX-1vQFypnuhKrIq3bwVhehER3JFHbPukGhNGqrAqC2avomKgLPdu6C069biQFU5lAcJ3_6kt7Jntl4dre0/pub?gid=660182728&single=true&output=tsv"
-};
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+
+function normalizar(t){
+  return t?.toLowerCase().trim();
+}
+
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(csv=>{
+
+  const filas = csv.split(/\r?\n/).slice(1);
+  const tabla = document.getElementById('tablaHistorial');
+
+  let carreras = 0;
+  let puntos = 0;
+  let mejorPuesto = 999;
+  let sumaPosiciones = 0;
+
+  filas.forEach(f=>{
+    const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+    if(!col) return;
+
+    const fecha = col[1]?.replace(/^"|"$/g,'').trim();
+    const categoriaFila = col[2]?.replace(/^"|"$/g,'').trim();
+    const pilotoFila = col[3]?.replace(/^"|"$/g,'').trim();
+    const pts = Number(col[4]?.replace(/^"|"$/g,'').trim()) || 0;
+
+    if(
+      normalizar(pilotoFila) === normalizar(piloto) &&
+      normalizar(categoriaFila) === normalizar(categoria)
+    ){
+
+      carreras++;
+      puntos += pts;
+
+      // calcular puesto según puntos en esa fecha
+      const fechaDatos = filas
+        .map(x => x.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g))
+        .filter(x =>
+          x &&
+          normalizar(x[1]?.replace(/^"|"$/g,'')) === normalizar(fecha) &&
+          normalizar(x[2]?.replace(/^"|"$/g,'')) === normalizar(categoria)
+        )
+        .map(x => ({
+          piloto: x[3]?.replace(/^"|"$/g,'').trim(),
+          puntos: Number(x[4]?.replace(/^"|"$/g,'').trim()) || 0
+        }))
+        .sort((a,b)=>b.puntos-a.puntos);
+
+      const posicion = fechaDatos.findIndex(x =>
+        normalizar(x.piloto) === normalizar(piloto)
+      ) + 1;
+
+      sumaPosiciones += posicion;
+      if(posicion < mejorPuesto) mejorPuesto = posicion;
+
+      tabla.innerHTML += `
+        <tr>
+          <td>${fecha}</td>
+          <td>${posicion}</td>
+          <td>${pts}</td>
+        </tr>
+      `;
+    }
+  });
+
+  document.getElementById('statCarreras').textContent = carreras;
+  document.getElementById('statPuntos').textContent = puntos;
+  document.getElementById('statMejor').textContent =
+    mejorPuesto === 999 ? '—' : mejorPuesto;
+
+  document.getElementById('statPromedio').textContent =
+    carreras ? (sumaPosiciones / carreras).toFixed(2) : '—';
+
+});
+
 
 /* ===============================
    CARGA + CALCULOS
