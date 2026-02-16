@@ -187,6 +187,67 @@ fetch(SHEET_URL)
 
 });
 </script>
+<script>
+function recalcular(){
+
+  const contenedor = document.getElementById("resultadoCampeonato");
+  contenedor.innerHTML = "Calculando...";
+
+  fetch(SHEET_URL)
+  .then(r=>r.text())
+  .then(csv=>{
+
+    const filas = csv.split(/\r?\n/).slice(1)
+      .filter(f=>f.trim()!=='');
+
+    const datos = filas.map(f=>{
+      const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+      return {
+        categoria: limpiar(col[2]),
+        piloto: limpiar(col[3]),
+        puntos: Number(limpiar(col[4])) || 0
+      };
+    });
+
+    const categorias = [...new Set(datos.map(d=>d.categoria))];
+
+    let html = "";
+
+    categorias.forEach(cat=>{
+
+      const ranking = {};
+
+      datos
+        .filter(d=>d.categoria===cat)
+        .forEach(d=>{
+          ranking[d.piloto] = (ranking[d.piloto] || 0) + d.puntos;
+        });
+
+      const ordenado = Object.entries(ranking)
+        .sort((a,b)=>b[1]-a[1]);
+
+      if(ordenado.length===0) return;
+
+      const lider = ordenado[0];
+      const segundo = ordenado[1];
+
+      const diferencia = segundo ? lider[1] - segundo[1] : 0;
+
+      html += `
+        <div style="margin-bottom:15px; padding:15px; background:#f4f4f4; border-radius:8px;">
+          <strong>${cat}</strong><br>
+          🥇 ${lider[0]} — ${lider[1]} pts<br>
+          ${segundo ? `🥈 ${segundo[0]} — ${segundo[1]} pts<br>
+          Diferencia: ${diferencia} pts` : ""}
+        </div>
+      `;
+    });
+
+    contenedor.innerHTML = html || "Sin datos disponibles.";
+
+  });
+}
+</script>
 
 
 </body>
