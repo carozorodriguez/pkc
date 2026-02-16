@@ -28,7 +28,7 @@ header{
 }
 
 section{
-  max-width:1100px;
+  max-width:1000px;
   margin:auto;
   padding:40px 20px;
 }
@@ -36,10 +36,11 @@ section{
 input{
   width:100%;
   padding:12px;
-  margin-bottom:25px;
+  margin-bottom:30px;
   border-radius:6px;
   border:1px solid #ccc;
   font-family:'Oswald';
+  font-size:16px;
 }
 
 .categoria{
@@ -51,42 +52,32 @@ input{
   padding-left:12px;
 }
 
-.grid{
+.lista{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
+  gap:15px;
 }
 
 .card{
   background:#fff;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  padding:18px;
+  border-radius:8px;
+  box-shadow:0 4px 10px rgba(0,0,0,.12);
 }
 
-.card img{
-  width:100%;
-  height:180px;
-  object-fit:cover;
-  border-radius:8px;
+.card strong{
+  display:block;
   margin-bottom:10px;
 }
 
 .btn{
   display:inline-block;
-  margin-top:10px;
   padding:8px 12px;
   background:var(--rojo);
   color:#fff;
   text-decoration:none;
   border-radius:5px;
   font-size:14px;
-}
-
-.falta-foto{
-  color:red;
-  font-size:13px;
-  margin-top:5px;
 }
 
 .volver{
@@ -123,7 +114,7 @@ function limpiar(v){
   return v?.replace(/^"|"$/g,'').trim();
 }
 
-let pilotosGlobal = [];
+let pilotosGlobal = {};
 
 fetch(SHEET_URL)
 .then(r=>r.text())
@@ -140,7 +131,6 @@ fetch(SHEET_URL)
     };
   });
 
-  // Pilotos únicos por categoría
   const mapa = {};
 
   datos.forEach(d=>{
@@ -165,19 +155,17 @@ function renderizar(mapa){
     div.className = "categoria";
 
     let html = `<h2>${cat} (${mapa[cat].size})</h2>`;
-    html += `<div class="grid">`;
+    html += `<div class="lista">`;
 
     [...mapa[cat]].sort().forEach(nombre=>{
 
-      const nombreArchivo = nombre.replaceAll(" ","_");
-
       html += `
         <div class="card">
-          <img src="../pilotos/${nombreArchivo}.jpg" 
-               onerror="this.src='../pilotos/default.jpg'">
-          <strong>${nombre}</strong><br>
-          <a class="btn" href="../piloto.html?piloto=${encodeURIComponent(nombre)}&categoria=${encodeURIComponent(cat)}" target="_blank">
-            Ver Ficha Pública
+          <strong>${nombre}</strong>
+          <a class="btn" 
+             href="../piloto.html?piloto=${encodeURIComponent(nombre)}&categoria=${encodeURIComponent(cat)}" 
+             target="_blank">
+             Ver Ficha Pública
           </a>
         </div>
       `;
@@ -195,7 +183,6 @@ function renderizar(mapa){
 document.getElementById("buscador").addEventListener("input", function(){
 
   const texto = this.value.toLowerCase();
-
   const filtrado = {};
 
   Object.keys(pilotosGlobal).forEach(cat=>{
