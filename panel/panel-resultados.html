@@ -1,117 +1,151 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Organizador | Carga de Resultados</title>
+<title>Panel Resultados | PROKART</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
-:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
-body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
-header{background:#000;color:#fff;text-align:center;padding:30px}
-section{max-width:700px;margin:auto;padding:40px 20px}
-.card{background:#fff;padding:30px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+:root{
+  --rojo:#e10600;
+  --negro:#111;
+  --gris:#f4f4f4;
+}
 
-label{display:block;margin-top:15px}
-select,input{width:100%;padding:10px;margin-top:5px}
+body{
+  margin:0;
+  font-family:'Oswald',Arial;
+  background:var(--gris);
+}
 
-button{
-  margin-top:25px;
-  width:100%;
+header{
+  background:#000;
+  color:#fff;
+  padding:40px 20px;
+  text-align:center;
+}
+
+section{
+  max-width:900px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 5px 18px rgba(0,0,0,.15);
+  margin-bottom:30px;
+}
+
+.btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:12px 18px;
   background:var(--rojo);
   color:#fff;
-  border:none;
-  padding:14px;
-  font-size:1.1rem;
+  text-decoration:none;
   border-radius:6px;
-  cursor:pointer;
 }
-button:hover{opacity:.9}
 
-.ok{color:green;margin-top:15px;text-align:center}
+.stats p{
+  margin:8px 0;
+  font-size:18px;
+}
+
+.volver{
+  text-align:center;
+  margin-top:30px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Panel Organizador</h1>
-  <p>Carga de Resultados por Fecha</p>
+  <h1>Panel de Resultados</h1>
+  <p>Control de Cargas Oficiales</p>
 </header>
 
 <section>
+
 <div class="card">
-
-  <label>Fecha (Ronda)</label>
-  <select id="fecha">
-    <option>Fecha 1</option>
-    <option>Fecha 2</option>
-    <option>Fecha 3</option>
-    <option>Fecha 4</option>
-    <option>Fecha 5</option>
-    <option>Fecha 6</option>
-    <option>Fecha 7</option>
-    <option>Fecha 8</option>
-  </select>
-
-  <label>Categoría</label>
-  <select id="categoria">
-    <option>PRE JUNIOR</option>
-    <option>JUNIOR</option>
-    <option>110 Cajeros</option>
-    <option>200 Master</option>
-    <option>200 STD</option>
-  </select>
-
-  <label>Piloto</label>
-  <input id="piloto" placeholder="Nombre del piloto">
-
-  <label>Puntos</label>
-  <input id="puntos" type="number" placeholder="Ej: 18">
-
-  <button onclick="enviar()">Cargar Resultado</button>
-
-  <div id="msg" class="ok"></div>
-
+  <h3>📋 Cargar Resultados</h3>
+  <a class="btn" href="PEGAR_AQUI_LINK_FORM_B" target="_blank">Abrir Formulario (Form B)</a>
 </div>
+
+<div class="card">
+  <h3>📄 Ver Sheet Oficial</h3>
+  <a class="btn" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pubhtml" target="_blank">
+    Ver Hoja en Vivo
+  </a>
+</div>
+
+<div class="card stats">
+  <h3>📊 Estado Actual</h3>
+  <p><strong>Última fecha cargada:</strong> <span id="ultimaFecha">Cargando...</span></p>
+  <p><strong>Pilotos en esa fecha:</strong> <span id="pilotosUltima">—</span></p>
+  <p><strong>Total de registros en el año:</strong> <span id="totalRegistros">—</span></p>
+</div>
+
+<div class="volver">
+  <a class="btn" href="index.html">Volver al Panel</a>
+</div>
+
 </section>
 
+<script src="auth.js"></script>
+
 <script>
-const FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSeYeX1MeBEeYgyWg-4HBE4UJS98ardXP7Po2TP39Yr9SCapYg/formResponse";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
 
-function enviar(){
-  const fecha = document.getElementById('fecha').value;
-  const categoria = document.getElementById('categoria').value;
-  const piloto = document.getElementById('piloto').value;
-  const puntos = document.getElementById('puntos').value;
+function limpiar(v){
+  return v?.replace(/^"|"$/g,'').trim();
+}
 
-  if(!piloto || !puntos){
-    alert('Completá piloto y puntos');
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(csv=>{
+
+  const filas = csv.split(/\r?\n/).slice(1)
+    .filter(f=>f.trim()!=='');
+
+  document.getElementById("totalRegistros").textContent = filas.length;
+
+  if(filas.length === 0){
+    document.getElementById("ultimaFecha").textContent = "Sin datos";
     return;
   }
 
-  const data = new URLSearchParams({
-    "entry.181150003": fecha,
-    "entry.1272725453": categoria,
-    "entry.1291739805": piloto,
-    "entry.183586144": puntos
+  const datos = filas.map(f=>{
+    const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+    return {
+      fecha: limpiar(col[1]),
+      piloto: limpiar(col[3])
+    };
   });
 
-  fetch(FORM_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: data
-  });
+  const fechas = [...new Set(datos.map(d=>d.fecha))];
 
-  document.getElementById('msg').textContent = "✅ Resultado cargado";
-  document.getElementById('piloto').value = '';
-  document.getElementById('puntos').value = '';
-}
+  const ultima = fechas.sort((a,b)=>{
+    const nA = parseInt(a.replace(/\D/g,''));
+    const nB = parseInt(b.replace(/\D/g,''));
+    return nB - nA;
+  })[0];
+
+  document.getElementById("ultimaFecha").textContent = ultima;
+
+  const pilotosUltima = datos
+    .filter(d=>d.fecha===ultima)
+    .length;
+
+  document.getElementById("pilotosUltima").textContent = pilotosUltima;
+
+});
 </script>
-<script src="auth.js"></script>
 
 </body>
 </html>
