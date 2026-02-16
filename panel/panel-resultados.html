@@ -124,10 +124,13 @@ fetch(SHEET_URL)
     const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
     return {
       fecha: limpiar(col[1]),
-      piloto: limpiar(col[3])
+      categoria: limpiar(col[2]),
+      piloto: limpiar(col[3]),
+      puntos: Number(limpiar(col[4])) || 0
     };
   });
 
+  // 🔹 Última fecha
   const fechas = [...new Set(datos.map(d=>d.fecha))];
 
   const ultima = fechas.sort((a,b)=>{
@@ -138,14 +141,47 @@ fetch(SHEET_URL)
 
   document.getElementById("ultimaFecha").textContent = ultima;
 
-  const pilotosUltima = datos
-    .filter(d=>d.fecha===ultima)
-    .length;
+  const datosUltima = datos.filter(d=>d.fecha===ultima);
 
-  document.getElementById("pilotosUltima").textContent = pilotosUltima;
+  document.getElementById("pilotosUltima").textContent = datosUltima.length;
+
+  // 🔹 Categorías en esa fecha
+  const categoriasUltima = [...new Set(datosUltima.map(d=>d.categoria))];
+
+  // 🔹 Piloto con más puntos en la fecha
+  const ranking = {};
+  datosUltima.forEach(d=>{
+    ranking[d.piloto] = (ranking[d.piloto] || 0) + d.puntos;
+  });
+
+  const mejor = Object.entries(ranking)
+    .sort((a,b)=>b[1]-a[1])[0];
+
+  // 🔹 Duplicados
+  const registrosUnicos = new Set();
+  let duplicados = 0;
+
+  datosUltima.forEach(d=>{
+    const clave = d.fecha + d.categoria + d.piloto;
+    if(registrosUnicos.has(clave)){
+      duplicados++;
+    } else {
+      registrosUnicos.add(clave);
+    }
+  });
+
+  // 🔹 Mostrar info extra
+  const bloque = document.querySelector(".stats");
+
+  bloque.innerHTML += `
+    <p><strong>Categorías en la fecha:</strong> ${categoriasUltima.length}</p>
+    <p><strong>Máximo anotador:</strong> ${mejor ? mejor[0] + " (" + mejor[1] + " pts)" : "—"}</p>
+    <p><strong>Posibles duplicados:</strong> ${duplicados}</p>
+  `;
 
 });
 </script>
+
 
 </body>
 </html>
