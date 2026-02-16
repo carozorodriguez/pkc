@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Administrativo | PROKART</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --rojo:#e10600;
+  --negro:#111;
+  --gris:#f4f4f4;
+}
+
+body{
+  margin:0;
+  font-family:'Oswald',Arial;
+  background:var(--gris);
+}
+
+header{
+  background:#000;
+  color:#fff;
+  padding:40px 20px;
+  text-align:center;
+}
+
+section{
+  max-width:1000px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:25px;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 5px 18px rgba(0,0,0,.15);
+  text-align:center;
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+}
+
+.btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:12px 18px;
+  background:var(--rojo);
+  color:#fff;
+  text-decoration:none;
+  border-radius:6px;
+}
+
+.volver{
+  text-align:center;
+  margin-top:40px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Administrativo</h1>
+  <p>PROKART CALETENSE</p>
+</header>
+
+<section>
+
+<div class="grid">
+
+  <div class="card">
+    <h3>📊 Resultados</h3>
+    <p>Carga oficial Form B</p>
+    <a class="btn" href="panel-resultados.html">Ingresar</a>
+  </div>
+
+  <div class="card">
+    <h3>👤 Pilotos</h3>
+    <p>Gestión y altas</p>
+    <a class="btn" href="pilotos.html">Ingresar</a>
+  </div>
+
+  <div class="card">
+    <h3>⚙ Organizador</h3>
+    <p>Configuraciones generales</p>
+    <a class="btn" href="panel-organizador.html">Ingresar</a>
+  </div>
+
+  <div class="card">
+    <h3>🛞 Control Técnico</h3>
+    <p>Gestión de gomas</p>
+    <a class="btn" href="#">Próximamente</a>
+  </div>
+
+</div>
+
+<div class="volver">
+  <a class="btn" href="../index.html">Volver al sitio</a>
+</div>
+
+</section>
+
+</body>
+</html>
