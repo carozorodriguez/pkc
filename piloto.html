@@ -239,7 +239,7 @@ document.getElementById('categoriaPiloto').textContent = categoria;
    FOTO PILOTO
 ================================ */
 const foto = document.getElementById('fotoPiloto');
-foto.src = `pilotos/${piloto.replaceAll(' ','_')}.jpg`;
+foto.src = `pilotos/${piloto.toLowerCase().replaceAll(' ','_')}.jpg`;
 foto.onerror = () => foto.src = 'pilotos/default.jpg';
 
 /* ===============================
