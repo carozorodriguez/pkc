@@ -13,7 +13,16 @@
 <style>
 :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
 *{box-sizing:border-box}
-body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+header{
+  background:
+    linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
+    url("img/fondo-karting.jpg") center/cover no-repeat;
+  color:#fff;
+  text-align:center;
+  padding:120px 20px;
+}
+
+  body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 header{background:#000;color:#fff;text-align:center;padding:60px 20px}
 header img{max-width:320px;width:90%}
 nav{position:sticky;top:0;background:var(--negro);display:flex;justify-content:center;gap:25px;padding:15px;z-index:10}
