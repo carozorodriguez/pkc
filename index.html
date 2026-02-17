@@ -23,7 +23,6 @@ header{
 }
 
   body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
-header{background:#000;color:#fff;text-align:center;padding:60px 20px}
 header img{max-width:320px;width:90%}
 nav{position:sticky;top:0;background:var(--negro);display:flex;justify-content:center;gap:25px;padding:15px;z-index:10}
 nav a{color:#fff;text-decoration:none}
@@ -395,7 +394,44 @@ function cargarRankingCategorias(){
 }
 
 </script>
-  
+/* ===============================
+   SECCION INSTITUCIONAL
+================================ */
+
+.institucional{
+  text-align:center;
+  padding:60px 20px;
+  background:#fff;
+}
+
+.institucional h2{
+  margin-bottom:40px;
+  border-left:5px solid var(--rojo);
+  display:inline-block;
+  padding-left:12px;
+}
+
+.logos-federaciones{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:40px;
+}
+
+.logos-federaciones img{
+  height:90px;
+  object-fit:contain;
+  filter:grayscale(100%);
+  transition:.3s;
+}
+
+.logos-federaciones img:hover{
+  filter:grayscale(0%);
+  transform:scale(1.05);
+}
+
+  footer{background:var(--negro);color:#fff;text-align:center;padding:30px;margin-top:60px}
+
 <section id="aclaracion" style="background:#fff;border-top:4px solid var(--rojo);padding:40px 20px;text-align:center">
   <div style="max-width:900px;margin:auto">
     <h3 style="margin-bottom:15px">Nota Aclaratoria</h3>
