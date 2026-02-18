@@ -181,6 +181,103 @@ th{background:var(--negro);color:#fff}
 </div>
 <p>© 2026 PROKART CALETENSE</p>
 </footer>
+<script>
+const SHEET_URL = "aca va el Sheet";
+
+let datos = [];
+
+async function cargarDatos(){
+  try{
+    const res = await fetch(SHEET_URL);
+    const text = await res.text();
+    const filas = text.split("\n").slice(1);
+
+    datos = filas.map(f=>{
+      const c = f.split(",");
+      return {
+        fecha: c[1]?.trim(),
+        categoria: c[2]?.trim(),
+        piloto: c[3]?.trim(),
+        puntos: parseInt(c[4]) || 0
+      }
+    }).filter(d=>d.fecha && d.categoria && d.piloto);
+
+    cargarCategorias();
+  }catch(e){
+    console.error("Error cargando datos:", e);
+  }
+}
+
+function cargarCategorias(){
+  const categorias = [...new Set(datos.map(d=>d.categoria))];
+  const select = document.getElementById("categoriaSelect");
+  select.innerHTML = categorias.map(c=>`<option value="${c}">${c}</option>`).join("");
+  select.addEventListener("change", cargarFechas);
+  cargarFechas();
+}
+
+function cargarFechas(){
+  const categoria = document.getElementById("categoriaSelect").value;
+  const fechas = [...new Set(
+    datos.filter(d=>d.categoria===categoria).map(d=>d.fecha)
+  )];
+
+  const select = document.getElementById("fechaSelect");
+  select.innerHTML = fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+  select.addEventListener("change", mostrarResultados);
+  mostrarResultados();
+}
+
+function mostrarResultados(){
+  const categoria = document.getElementById("categoriaSelect").value;
+  const fecha = document.getElementById("fechaSelect").value;
+
+  const filtrados = datos
+    .filter(d=>d.categoria===categoria && d.fecha===fecha)
+    .sort((a,b)=>b.puntos-a.puntos);
+
+  const tbody = document.querySelector("#tablaResultados tbody");
+  tbody.innerHTML = "";
+
+  filtrados.forEach((d,i)=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${d.piloto}</td>
+        <td>${d.puntos}</td>
+      </tr>`;
+  });
+
+  mostrarGeneral(categoria);
+}
+
+function mostrarGeneral(categoria){
+  const acumulado = {};
+
+  datos
+    .filter(d=>d.categoria===categoria)
+    .forEach(d=>{
+      acumulado[d.piloto] = (acumulado[d.piloto]||0)+d.puntos;
+    });
+
+  const ranking = Object.entries(acumulado)
+    .sort((a,b)=>b[1]-a[1]);
+
+  const tbody = document.querySelector("#tablaGeneral tbody");
+  tbody.innerHTML = "";
+
+  ranking.forEach((d,i)=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${d[0]}</td>
+        <td>${d[1]}</td>
+      </tr>`;
+  });
+}
+
+cargarDatos();
+</script>
 
 </body>
 </html>
