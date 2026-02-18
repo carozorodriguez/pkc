@@ -1,18 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PROKART CALETENSE | Campeonato Oficial</title>
 
-<!-- FUENTES -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
 :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
 *{box-sizing:border-box}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+
+/* HEADER */
 header{
   background:
     linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
@@ -21,26 +22,28 @@ header{
   text-align:center;
   padding:120px 20px;
 }
-
-  body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 header img{max-width:320px;width:90%}
-nav{position:sticky;top:0;background:var(--negro);display:flex;justify-content:center;gap:25px;padding:15px;z-index:10}
+
+/* NAV */
+nav{
+  position:sticky;
+  top:0;
+  background:var(--negro);
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:15px;
+  z-index:10
+}
 nav a{color:#fff;text-decoration:none}
 nav a:hover{color:var(--rojo)}
+
+/* SECCIONES */
 section{max-width:1100px;margin:auto;padding:60px 20px}
 h2{border-left:6px solid var(--rojo);padding-left:15px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
 .card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
-
-.btn{
-  display:inline-block;
-  margin:10px 0 20px;
-  padding:12px 18px;
-  background:var(--rojo);
-  color:#fff;
-  text-decoration:none;
-  border-radius:6px;
-}
+.btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
 .btn:hover{opacity:.85}
 
 /* TABLAS */
@@ -48,13 +51,7 @@ table{width:100%;border-collapse:collapse;margin-top:20px}
 th,td{padding:12px;border-bottom:1px solid #ddd}
 th{background:var(--negro);color:#fff}
 
-/* TABLA GENERAL – ESTILO DEPORTIVO */
-#tablaGeneral{
-  margin-top:30px;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
-}
+#tablaGeneral{margin-top:30px;background:#fff;border-radius:10px;overflow:hidden}
 #tablaGeneral th{text-align:center;letter-spacing:1px}
 #tablaGeneral td{text-align:center;font-weight:500}
 #tablaGeneral td:nth-child(2){text-align:left;padding-left:20px}
@@ -63,7 +60,19 @@ th{background:var(--negro);color:#fff}
 #tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
 #tablaGeneral tbody tr:hover{background:#f1f1f1}
 
-footer{background:var(--negro);color:#fff;text-align:center;padding:30px;margin-top:60px}
+/* ACLARACION */
+#aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
+
+/* INSTITUCIONAL */
+.institucional{text-align:center;padding:60px 20px;background:#fff}
+.institucional h2{margin-bottom:40px;border-left:5px solid var(--rojo);display:inline-block;padding-left:12px}
+.logos-federaciones{display:flex;justify-content:center;flex-wrap:wrap;gap:40px}
+.logos-federaciones img{height:90px;object-fit:contain;filter:grayscale(100%);transition:.3s}
+.logos-federaciones img:hover{filter:grayscale(0%);transform:scale(1.05)}
+
+/* FOOTER */
+.footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;margin-top:40px}
+.sponsors img{height:45px;margin:0 10px}
 </style>
 </head>
 
@@ -83,97 +92,41 @@ footer{background:var(--negro);color:#fff;text-align:center;padding:30px;margin-
   <a href="#inscripcion">Inscripciones</a>
 </nav>
 
-  <section id="fechas">
+<!-- ================= FECHAS ================= -->
+<section id="fechas">
 <h2>Calendario Oficial 2026</h2>
-
 <div class="grid">
 
-<a href="fecha.html?fecha=Fecha%201" class="card">
-<h3>Fecha 1 - Apertura</h3>
-<p>📅 8 de Marzo</p>
-<p>📍 Caleta Olivia</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%202" class="card">
-<h3>Fecha 2</h3>
-<p>📅 3 de Mayo</p>
-<p>📍 Caleta Olivia</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%203" class="card">
-<h3>Fecha 3</h3>
-<p>📅 7 de Junio</p>
-<p>📍 Caleta Olivia</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%204" class="card">
-<h3>Fecha 4</h3>
-<p>📅 2 de Agosto</p>
-<p>📍 Caleta Olivia</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%205" class="card">
-<h3>Fecha 5 - Fecha Doble</h3>
-<p>📅 6 de Septiembre</p>
-<p>📍 Puerto Deseado</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%206" class="card">
-<h3>Fecha 6</h3>
-<p>📅 4 de Octubre</p>
-<p>📍 Pico Truncado</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%207" class="card">
-<h3>Fecha 7</h3>
-<p>📅 1 de Noviembre</p>
-<p>📍 Las Heras</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%208" class="card">
-<h3>Fecha 8</h3>
-<p>📅 3 de Diciembre</p>
-<p>Caleta Olivia</p>
-</a>
-
-<a href="fecha.html?fecha=Fecha%209" class="card">
-<h3>📅 Fecha 9 - Cierre</h3>
-<p>A confirmar</p>
-<p>📍 Caleta Olivia</p>
-</a>
+<a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1 - Apertura</h3><p>📅 8 de Marzo</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2</h3><p>📅 3 de Mayo</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3</h3><p>📅 7 de Junio</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%204" class="card"><h3>Fecha 4</h3><p>📅 2 de Agosto</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%205" class="card"><h3>Fecha 5 - Fecha Doble</h3><p>📅 6 de Septiembre</p><p>📍 Puerto Deseado</p></a>
+<a href="fecha.html?fecha=Fecha%206" class="card"><h3>Fecha 6</h3><p>📅 4 de Octubre</p><p>📍 Pico Truncado</p></a>
+<a href="fecha.html?fecha=Fecha%207" class="card"><h3>Fecha 7</h3><p>📅 1 de Noviembre</p><p>📍 Las Heras</p></a>
+<a href="fecha.html?fecha=Fecha%208" class="card"><h3>Fecha 8</h3><p>📅 3 de Diciembre</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 9 - Cierre</h3><p>A confirmar</p><p>📍 Caleta Olivia</p></a>
 
 </div>
 </section>
-  
+
+<!-- ================= CATEGORIAS ================= -->
 <section id="categorias">
 <h2>Categorías</h2>
 
-<div class="card"><h3>PRE JUNIOR</h3>
-<p><strong>Reglamento:</strong> Categoría formativa destinada a pilotos en etapa inicial.</p>
-<a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a>
-<h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+<div class="card"><h3>PRE JUNIOR</h3><p><strong>Reglamento:</strong> Categoría formativa destinada a pilotos en etapa inicial.</p><a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-<div class="card"><h3>JUNIOR</h3>
-<p><strong>Reglamento:</strong> Categoría juvenil competitiva.</p>
-<a class="btn" href="reglamentos/Reglamento_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a>
-<h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+<div class="card"><h3>JUNIOR</h3><p><strong>Reglamento:</strong> Categoría juvenil competitiva.</p><a class="btn" href="reglamentos/Reglamento_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-<div class="card"><h3>110 Cajeros</h3>
-<p><strong>Reglamento:</strong> Motores 110cc – preparación controlada.</p>
-<a class="btn" href="reglamentos/Reglamento_110_Cajeros.pdf" target="_blank">Descargar Reglamento PDF</a>
-<h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+<div class="card"><h3>110 Cajeros</h3><p><strong>Reglamento:</strong> Motores 110cc – preparación controlada.</p><a class="btn" href="reglamentos/Reglamento_110_Cajeros.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-<div class="card"><h3>200 Master</h3>
-<p><strong>Reglamento:</strong> Categoría para pilotos experimentados.</p>
-<a class="btn" href="reglamentos/Reglamento_200_Master.pdf" target="_blank">Descargar Reglamento PDF</a>
-<h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+<div class="card"><h3>200 Master</h3><p><strong>Reglamento:</strong> Categoría para pilotos experimentados.</p><a class="btn" href="reglamentos/Reglamento_200_Master.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-<div class="card"><h3>200 STD</h3>
-<p><strong>Reglamento:</strong> Categoría estándar – igualdad mecánica.</p>
-<a class="btn" href="reglamentos/Reglamento_200_STD.pdf" target="_blank">Descargar Reglamento PDF</a>
-<h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+<div class="card"><h3>200 STD</h3><p><strong>Reglamento:</strong> Categoría estándar – igualdad mecánica.</p><a class="btn" href="reglamentos/Reglamento_200_STD.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+
 </section>
 
+<!-- ================= RESULTADOS ================= -->
 <section id="posiciones">
 <h2>Resultados</h2>
 <select id="categoriaSelect"></select>
@@ -190,6 +143,7 @@ footer{background:var(--negro);color:#fff;text-align:center;padding:30px;margin-
 </table>
 </section>
 
+<!-- ================= INSCRIPCION ================= -->
 <section id="inscripcion">
 <h2>Inscripciones</h2>
 <div class="card">
@@ -198,270 +152,32 @@ footer{background:var(--negro);color:#fff;text-align:center;padding:30px;margin-
 </div>
 </section>
 
-<footer>© 2026 PROKART CALETENSE</footer>
-
-<script>
-
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
-
-const catSel = document.getElementById('categoriaSelect');
-const fecSel = document.getElementById('fechaSelect');
-
-let datos = [];
-
-cargarDatos();
-
-async function cargarDatos(){
-  const response = await fetch(SHEET_URL);
-  const csv = await response.text();
-
-  const filas = csv.split(/\r?\n/).slice(1);
-
-  datos = filas
-    .filter(f => f.trim() !== "")
-    .map(f => {
-
-      // Divide respetando comillas
-      const columnas = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-      if(!columnas) return null;
-
-      return {
-        fecha: limpiar(columnas[1]),        // Columna B
-        categoria: limpiar(columnas[2]),    // Columna C
-        piloto: limpiar(columnas[3]),       // Columna D
-        puntos: Number(limpiar(columnas[4])) || 0 // Columna E
-      };
-    })
-    .filter(Boolean);
-
-  console.log("DATOS LEIDOS:", datos);
-
-  cargarCategorias();
-  cargarRankingCategorias();
-}
-
-function limpiar(valor){
-  return valor?.replace(/^"|"$/g,'').trim();
-}
-
-/* ===============================
-   CATEGORIAS DINAMICAS
-================================ */
-
-function cargarCategorias(){
-  catSel.innerHTML = '';
-
-  const categoriasUnicas = [...new Set(datos.map(d=>d.categoria))];
-
-  categoriasUnicas.forEach(c=>{
-    const o = document.createElement('option');
-    o.value = c;
-    o.textContent = c;
-    catSel.appendChild(o);
-  });
-
-  catSel.onchange = actualizarVista;
-
-  actualizarVista();
-}
-
-/* ===============================
-   ACTUALIZAR TABLAS
-================================ */
-
-function actualizarVista(){
-  const categoriaActual = catSel.value;
-  const datosFiltrados = datos.filter(d=>d.categoria===categoriaActual);
-
-  cargarFechas(datosFiltrados);
-  cargarGeneral(datosFiltrados);
-}
-
-/* ===============================
-   FECHAS
-================================ */
-
-function cargarFechas(datosCat){
-  fecSel.innerHTML = '';
-
-  const fechasUnicas = [...new Set(datosCat.map(d=>d.fecha))];
-
-  fechasUnicas.forEach(f=>{
-    const o = document.createElement('option');
-    o.value = f;
-    o.textContent = f;
-    fecSel.appendChild(o);
-  });
-
-  fecSel.onchange = ()=> filtrarFecha(datosCat);
-
-  filtrarFecha(datosCat);
-}
-
-/* ===============================
-   RESULTADOS POR FECHA
-================================ */
-
-function filtrarFecha(datosCat){
-  const tb = document.querySelector('#tablaResultados tbody');
-  tb.innerHTML = '';
-
-  const fechaActual = fecSel.value;
-
-  datosCat
-    .filter(d=>d.fecha===fechaActual)
-    .sort((a,b)=>b.puntos-a.puntos)
-    .forEach((d,i)=>{
-      tb.innerHTML += `
-        <tr>
-          <td>${i+1}</td>
-          <td>
-            <a href="piloto.html?piloto=${encodeURIComponent(d.piloto)}&categoria=${encodeURIComponent(d.categoria)}">
-              ${d.piloto}
-            </a>
-          </td>
-          <td>${d.puntos}</td>
-        </tr>`;
-    });
-}
-
-/* ===============================
-   TABLA GENERAL
-================================ */
-
-function cargarGeneral(datosCat){
-  const tb = document.querySelector('#tablaGeneral tbody');
-  tb.innerHTML = '';
-
-  const mapa = {};
-
-  datosCat.forEach(d=>{
-    mapa[d.piloto] = (mapa[d.piloto] || 0) + d.puntos;
-  });
-
-  Object.entries(mapa)
-    .sort((a,b)=>b[1]-a[1])
-    .forEach((p,i)=>{
-      tb.innerHTML += `
-        <tr>
-          <td>${i+1}</td>
-          <td>
-            <a href="piloto.html?piloto=${encodeURIComponent(p[0])}&categoria=${encodeURIComponent(catSel.value)}">
-              ${p[0]}
-            </a>
-          </td>
-          <td>${p[1]}</td>
-        </tr>`;
-    });
-}
-
-/* ===============================
-   RANKING EN TARJETAS DE CATEGORIAS
-================================ */
-
-function cargarRankingCategorias(){
-
-  const categoriasCards = document.querySelectorAll('#categorias .card');
-
-  categoriasCards.forEach(card=>{
-    const nombreCategoria = card.querySelector('h3').textContent;
-    const grid = card.querySelector('.grid');
-
-    const datosCat = datos.filter(d=>d.categoria===nombreCategoria);
-
-    const mapa = {};
-    datosCat.forEach(d=>{
-      mapa[d.piloto] = (mapa[d.piloto] || 0) + d.puntos;
-    });
-
-    grid.innerHTML = '';
-
-    Object.entries(mapa)
-      .sort((a,b)=>b[1]-a[1])
-      .forEach(([piloto, pts],i)=>{
-        grid.innerHTML += `
-          <div class="card">
-            <img src="pilotos/${piloto.replaceAll(' ','_')}.jpg"
-                 onerror="this.src='pilotos/default.jpg'"
-                 style="width:100%;border-radius:8px">
-            <p><strong>#${i+1} ${piloto}</strong><br>${pts} pts</p>
-            <a href="piloto.html?piloto=${encodeURIComponent(piloto)}&categoria=${encodeURIComponent(nombreCategoria)}">
-              Ver ficha
-            </a>
-          </div>`;
-      });
-  });
-}
-
-</script>
-/* ===============================
-   SECCION INSTITUCIONAL
-================================ */
-
-.institucional{
-  text-align:center;
-  padding:60px 20px;
-  background:#fff;
-}
-
-.institucional h2{
-  margin-bottom:40px;
-  border-left:5px solid var(--rojo);
-  display:inline-block;
-  padding-left:12px;
-}
-
-.logos-federaciones{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:40px;
-}
-
-.logos-federaciones img{
-  height:90px;
-  object-fit:contain;
-  filter:grayscale(100%);
-  transition:.3s;
-}
-
-.logos-federaciones img:hover{
-  filter:grayscale(0%);
-  transform:scale(1.05);
-}
-
-  footer{background:var(--negro);color:#fff;text-align:center;padding:30px;margin-top:60px}
-
-<section id="aclaracion" style="background:#fff;border-top:4px solid var(--rojo);padding:40px 20px;text-align:center">
-  <div style="max-width:900px;margin:auto">
-    <h3 style="margin-bottom:15px">Nota Aclaratoria</h3>
-    <p style="font-weight:400;line-height:1.6">
-      El ProKart Caletense no se hace responsable de los datos suministrados por la 
-      FRAD de Santa Cruz Zona Norte para la confección de los puntajes y 
-      estadísticas publicadas en esta aplicación.
-    </p>
-  </div>
-</section>
-  <section class="institucional">
-  <h2>Instituciones que nos respaldan</h2>
-
-  <div class="logos-federaciones">
-    <img src="img/frad.png" alt="FRAD SCZN">
-    <img src="img/cda.png" alt="CDA">
-    <img src="img/aca.png" alt="ACA">
-  </div>
+<!-- ================= ACLARACION ================= -->
+<section id="aclaracion">
+<div style="max-width:900px;margin:auto">
+<h3>Nota Aclaratoria</h3>
+<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FRAD de Santa Cruz Zona Norte para la confección de los puntajes y estadísticas publicadas en esta aplicación.</p>
+</div>
 </section>
 
-<!-- ===============================
-     FOOTER + SPONSORS
-================================ -->
+<!-- ================= INSTITUCIONAL ================= -->
+<section class="institucional">
+<h2>Instituciones que nos respaldan</h2>
+<div class="logos-federaciones">
+<img src="img/frad.png" alt="FRAD SCZN">
+<img src="img/cda.png" alt="CDA">
+<img src="img/aca.png" alt="ACA">
+</div>
+</section>
+
+<!-- ================= FOOTER ================= -->
 <footer class="footer">
-  <div class="sponsors">
-    <img src="sponsors/vintage.png" alt="Vintage Motors 4T">
-    <img src="sponsors/caleta.png" alt="Repuestos Santiago">
-       <img src="sponsors/dany.png" alt="Dany Kart">
-  </div>
-  <p>© 2026 PROKART CALETENSE</p>
+<div class="sponsors">
+<img src="sponsors/vintage.png" alt="Vintage Motors 4T">
+<img src="sponsors/caleta.png" alt="Repuestos Santiago">
+<img src="sponsors/dany.png" alt="Dany Kart">
+</div>
+<p>© 2026 PROKART CALETENSE</p>
 </footer>
 
 </body>
