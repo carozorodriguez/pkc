@@ -182,34 +182,70 @@ th{background:var(--negro);color:#fff}
 <p>© 2026 PROKART CALETENSE</p>
 </footer>
 <script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+
+const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
 let datos = [];
+let pilotosDB = {};
 
 async function cargarDatos(){
   try{
-    const res = await fetch(SHEET_URL);
-    const text = await res.text();
 
-    const filas = text.split("\n").map(f => f.split(","));
-    const encabezados = filas[0].map(h => h.trim());
+    // ================= RESULTADOS =================
+    const resResultados = await fetch(SHEET_RESULTADOS);
+    const textResultados = await resResultados.text();
+    const filasR = textResultados.split("\n").map(f => f.split(","));
+    const encabezadosR = filasR[0].map(h => h.trim());
 
-    const idxFecha = encabezados.indexOf("Fecha");
-    const idxCategoria = encabezados.indexOf("Categoria");
-    const idxPiloto = encabezados.indexOf("Piloto");
-    const idxPuntos = encabezados.indexOf("Puntos Obtenidos");
-    const idxNumero = encabezados.indexOf("Numero");
+    const idxFecha = encabezadosR.indexOf("Fecha");
+    const idxCategoria = encabezadosR.indexOf("Categoria");
+    const idxPiloto = encabezadosR.indexOf("Piloto");
+    const idxPuntos = encabezadosR.indexOf("Puntos Obtenidos");
+    const idxNumero = encabezadosR.indexOf("Numero");
 
-    datos = filas.slice(1).map(f=>{
+    datos = filasR.slice(1).map(f=>{
+      const categoria = f[idxCategoria]?.trim();
+      const numero = f[idxNumero]?.trim();
+      const id = categoria + "_" + numero;
+
       return {
         fecha: f[idxFecha]?.trim(),
-        categoria: f[idxCategoria]?.trim(),
+        categoria: categoria,
         piloto: f[idxPiloto]?.trim(),
+        numero: numero,
         puntos: parseInt(f[idxPuntos]) || 0,
-        numero: f[idxNumero]?.trim(),
-        id: f[idxCategoria]?.trim() + "_" + f[idxNumero]?.trim()
-      }
-    }).filter(d=>d.fecha && d.categoria && d.piloto && d.numero);
+        id: id
+      };
+    }).filter(d=>d.fecha && d.categoria && d.piloto);
+
+    // ================= PILOTOS =================
+    const resPilotos = await fetch(SHEET_PILOTOS);
+    const textPilotos = await resPilotos.text();
+    const filasP = textPilotos.split("\n").map(f => f.split(","));
+    const encabezadosP = filasP[0].map(h => h.trim());
+
+    const idxID = encabezadosP.indexOf("ID");
+    const idxNombre = encabezadosP.indexOf("Nombre");
+    const idxEquipo = encabezadosP.indexOf("Equipo");
+    const idxLocalidad = encabezadosP.indexOf("Localidad");
+    const idxFoto = encabezadosP.indexOf("FotoURL");
+    const idxEstado = encabezadosP.indexOf("Estado");
+
+    pilotosDB = {};
+
+    filasP.slice(1).forEach(f=>{
+      const id = f[idxID]?.trim();
+      if(!id) return;
+
+      pilotosDB[id] = {
+        nombre: f[idxNombre]?.trim(),
+        equipo: f[idxEquipo]?.trim(),
+        localidad: f[idxLocalidad]?.trim(),
+        foto: f[idxFoto]?.trim(),
+        estado: f[idxEstado]?.trim()
+      };
+    });
 
     cargarCategorias();
 
@@ -221,7 +257,9 @@ async function cargarDatos(){
 function cargarCategorias(){
   const categorias = [...new Set(datos.map(d=>d.categoria))];
   const select = document.getElementById("categoriaSelect");
+
   select.innerHTML = categorias.map(c=>`<option value="${c}">${c}</option>`).join("");
+
   select.addEventListener("change", cargarFechas);
   cargarFechas();
 }
@@ -234,7 +272,9 @@ function cargarFechas(){
   )];
 
   const select = document.getElementById("fechaSelect");
+
   select.innerHTML = fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+
   select.addEventListener("change", mostrarResultados);
   mostrarResultados();
 }
@@ -251,10 +291,12 @@ function mostrarResultados(){
   tbody.innerHTML = "";
 
   filtrados.forEach((d,i)=>{
+    const pilotoInfo = pilotosDB[d.id];
+
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
-        <td>#${d.numero} - ${d.piloto}</td>
+        <td>${pilotoInfo?.nombre || d.piloto}</td>
         <td>${d.puntos}</td>
       </tr>`;
   });
@@ -268,26 +310,23 @@ function mostrarGeneral(categoria){
   datos
     .filter(d=>d.categoria===categoria)
     .forEach(d=>{
-      acumulado[d.id] = acumulado[d.id] || {
-        nombre: d.piloto,
-        numero: d.numero,
-        total: 0
-      };
-      acumulado[d.id].total += d.puntos;
+      acumulado[d.id] = (acumulado[d.id]||0) + d.puntos;
     });
 
-  const ranking = Object.values(acumulado)
-    .sort((a,b)=>b.total-a.total);
+  const ranking = Object.entries(acumulado)
+    .sort((a,b)=>b[1]-a[1]);
 
   const tbody = document.querySelector("#tablaGeneral tbody");
   tbody.innerHTML = "";
 
   ranking.forEach((d,i)=>{
+    const pilotoInfo = pilotosDB[d[0]];
+
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
-        <td>#${d.numero} - ${d.nombre}</td>
-        <td>${d.total}</td>
+        <td>${pilotoInfo?.nombre || d[0]}</td>
+        <td>${d[1]}</td>
       </tr>`;
   });
 }
