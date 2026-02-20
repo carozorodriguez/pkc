@@ -190,19 +190,29 @@ async function cargarDatos(){
   try{
     const res = await fetch(SHEET_URL);
     const text = await res.text();
-    const filas = text.split("\n").slice(1);
 
-    datos = filas.map(f=>{
-      const c = f.split(",");
+    const filas = text.split("\n").map(f => f.split(","));
+    const encabezados = filas[0].map(h => h.trim());
+
+    const idxFecha = encabezados.indexOf("Fecha");
+    const idxCategoria = encabezados.indexOf("Categoria");
+    const idxPiloto = encabezados.indexOf("Piloto");
+    const idxPuntos = encabezados.indexOf("Puntos Obtenidos");
+    const idxNumero = encabezados.indexOf("Numero");
+
+    datos = filas.slice(1).map(f=>{
       return {
-        fecha: c[1]?.trim(),
-        categoria: c[2]?.trim(),
-        piloto: c[3]?.trim(),
-        puntos: parseInt(c[4]) || 0
+        fecha: f[idxFecha]?.trim(),
+        categoria: f[idxCategoria]?.trim(),
+        piloto: f[idxPiloto]?.trim(),
+        puntos: parseInt(f[idxPuntos]) || 0,
+        numero: f[idxNumero]?.trim(),
+        id: f[idxCategoria]?.trim() + "_" + f[idxNumero]?.trim()
       }
-    }).filter(d=>d.fecha && d.categoria && d.piloto);
+    }).filter(d=>d.fecha && d.categoria && d.piloto && d.numero);
 
     cargarCategorias();
+
   }catch(e){
     console.error("Error cargando datos:", e);
   }
@@ -218,6 +228,7 @@ function cargarCategorias(){
 
 function cargarFechas(){
   const categoria = document.getElementById("categoriaSelect").value;
+
   const fechas = [...new Set(
     datos.filter(d=>d.categoria===categoria).map(d=>d.fecha)
   )];
@@ -243,7 +254,7 @@ function mostrarResultados(){
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
-        <td>${d.piloto}</td>
+        <td>#${d.numero} - ${d.piloto}</td>
         <td>${d.puntos}</td>
       </tr>`;
   });
@@ -257,11 +268,16 @@ function mostrarGeneral(categoria){
   datos
     .filter(d=>d.categoria===categoria)
     .forEach(d=>{
-      acumulado[d.piloto] = (acumulado[d.piloto]||0)+d.puntos;
+      acumulado[d.id] = acumulado[d.id] || {
+        nombre: d.piloto,
+        numero: d.numero,
+        total: 0
+      };
+      acumulado[d.id].total += d.puntos;
     });
 
-  const ranking = Object.entries(acumulado)
-    .sort((a,b)=>b[1]-a[1]);
+  const ranking = Object.values(acumulado)
+    .sort((a,b)=>b.total-a.total);
 
   const tbody = document.querySelector("#tablaGeneral tbody");
   tbody.innerHTML = "";
@@ -270,8 +286,8 @@ function mostrarGeneral(categoria){
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
-        <td>${d[0]}</td>
-        <td>${d[1]}</td>
+        <td>#${d.numero} - ${d.nombre}</td>
+        <td>${d.total}</td>
       </tr>`;
   });
 }
