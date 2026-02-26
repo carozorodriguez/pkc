@@ -108,7 +108,9 @@ input{
 <script src="auth.js"></script>
 
 <script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+<script>
+
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
 function limpiar(v){
   return v?.replace(/^"|"$/g,'').trim();
@@ -126,16 +128,19 @@ fetch(SHEET_URL)
   const datos = filas.map(f=>{
     const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
     return {
+      id: limpiar(col[0]),
+      nombre: limpiar(col[1]),
       categoria: limpiar(col[2]),
-      piloto: limpiar(col[3])
+      numero: limpiar(col[3]),
+      fotoURL: limpiar(col[4])
     };
   });
 
   const mapa = {};
 
   datos.forEach(d=>{
-    if(!mapa[d.categoria]) mapa[d.categoria] = new Set();
-    mapa[d.categoria].add(d.piloto);
+    if(!mapa[d.categoria]) mapa[d.categoria] = [];
+    mapa[d.categoria].push(d);
   });
 
   pilotosGlobal = mapa;
@@ -154,16 +159,18 @@ function renderizar(mapa){
     const div = document.createElement("div");
     div.className = "categoria";
 
-    let html = `<h2>${cat} (${mapa[cat].size})</h2>`;
+    let html = `<h2>${cat} (${mapa[cat].length})</h2>`;
     html += `<div class="lista">`;
 
-    [...mapa[cat]].sort().forEach(nombre=>{
+    mapa[cat]
+      .sort((a,b)=>a.nombre.localeCompare(b.nombre))
+      .forEach(p=>{
 
       html += `
         <div class="card">
-          <strong>${nombre}</strong>
+          <strong>#${p.numero} - ${p.nombre}</strong>
           <a class="btn" 
-             href="../piloto.html?piloto=${encodeURIComponent(nombre)}&categoria=${encodeURIComponent(cat)}" 
+             href="../piloto.html?id=${encodeURIComponent(p.id)}" 
              target="_blank">
              Ver Ficha Pública
           </a>
@@ -186,18 +193,19 @@ document.getElementById("buscador").addEventListener("input", function(){
   const filtrado = {};
 
   Object.keys(pilotosGlobal).forEach(cat=>{
-    const filtrados = [...pilotosGlobal[cat]]
-      .filter(p=>p.toLowerCase().includes(texto));
+
+    const filtrados = pilotosGlobal[cat]
+      .filter(p=>p.nombre.toLowerCase().includes(texto));
 
     if(filtrados.length>0){
-      filtrado[cat] = new Set(filtrados);
+      filtrado[cat] = filtrados;
     }
   });
 
   renderizar(filtrado);
 
 });
-</script>
 
+</script>
 </body>
 </html>
