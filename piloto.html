@@ -224,151 +224,144 @@ footer{
 </footer>
 
 <script>
+
 /* ===============================
-   PARAMETROS URL
+   PARAMETRO ID DESDE URL
 ================================ */
 const params = new URLSearchParams(window.location.search);
-const piloto = params.get('piloto');
-const categoria = params.get('categoria');
-const pilotoNormalizado = piloto.toLowerCase().trim();
+const id = params.get("id"); // ejemplo: 200 Master_7
 
-document.getElementById('nombrePiloto').textContent = piloto;
-document.getElementById('categoriaPiloto').textContent = categoria;
+if(!id){
+  document.getElementById("nombrePiloto").textContent = "Piloto no encontrado";
+  throw new Error("ID no definido en URL");
+}
+
+const [categoria, numero] = id.split("_");
 
 /* ===============================
-   FOTO PILOTO
+   SHEETS
 ================================ */
-const foto = document.getElementById('fotoPiloto');
-foto.src = `pilotos/${piloto.toLowerCase().replaceAll(' ','_')}.jpg`;
-foto.onerror = () => foto.src = 'pilotos/default.jpg';
+const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+
+const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+
+
+function parseCSV(text){
+  return text.split("\n").map(row =>
+    row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+       .map(c => c.replace(/^"|"$/g,'').trim())
+  );
+}
 
 /* ===============================
-   QR PILOTO
+   CARGAR DATOS PILOTO
+================================ */
+async function cargarPiloto(){
+
+  // ===== CARGAR BASE PILOTOS =====
+  const rPil = await fetch(SHEET_PILOTOS);
+  const tPil = await rPil.text();
+  const fPil = parseCSV(tPil);
+
+  const hPil = fPil[0];
+
+  const iID   = hPil.indexOf("ID");
+  const iNom  = hPil.indexOf("Nombre");
+  const iFoto = hPil.indexOf("fotoURL");
+
+  let nombrePiloto = "";
+  let fotoURL = "";
+
+  fPil.slice(1).forEach(f=>{
+    if(f[iID] === id){
+      nombrePiloto = f[iNom];
+      fotoURL = f[iFoto];
+    }
+  });
+
+  document.getElementById("nombrePiloto").textContent = nombrePiloto || id;
+  document.getElementById("categoriaPiloto").textContent = categoria;
+
+  const img = document.getElementById("fotoPiloto");
+
+  if(fotoURL){
+    img.src = fotoURL;
+  }else{
+    img.src = "pilotos/default.jpg";
+  }
+
+  img.onerror = () => img.src = "pilotos/default.jpg";
+
+
+  // ===== CARGAR RESULTADOS =====
+  const rRes = await fetch(SHEET_RESULTADOS);
+  const tRes = await rRes.text();
+  const fRes = parseCSV(tRes);
+
+  const hRes = fRes[0];
+
+  const iFecha = hRes.indexOf("Fecha");
+  const iCat   = hRes.indexOf("Categoria");
+  const iNum   = hRes.indexOf("Numero");
+  const iPts   = hRes.indexOf("Puntos Obtenidos");
+
+  const tabla = document.getElementById("tablaHistorial");
+
+  let carreras = 0;
+  let puntos = 0;
+  let mejor = 999;
+  let sumaPos = 0;
+
+  const datosPiloto = fRes.slice(1).filter(f =>
+    f[iCat] === categoria && f[iNum] === numero
+  );
+
+  datosPiloto.forEach(f => {
+
+    const fecha = f[iFecha];
+    const pts = Number(f[iPts]) || 0;
+
+    carreras++;
+    puntos += pts;
+
+    // calcular puesto en esa fecha
+    const fechaDatos = fRes.slice(1)
+      .filter(x => x[iFecha] === fecha && x[iCat] === categoria)
+      .map(x => ({
+        numero: x[iNum],
+        puntos: Number(x[iPts]) || 0
+      }))
+      .sort((a,b)=>b.puntos-a.puntos);
+
+    const posicion = fechaDatos.findIndex(x => x.numero === numero) + 1;
+
+    sumaPos += posicion;
+    if(posicion < mejor) mejor = posicion;
+
+    tabla.innerHTML += `
+      <tr>
+        <td>${fecha}</td>
+        <td>${posicion}</td>
+        <td>${pts}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("statCarreras").textContent = carreras;
+  document.getElementById("statPuntos").textContent = puntos;
+  document.getElementById("statMejor").textContent = mejor === 999 ? "—" : mejor;
+  document.getElementById("statPromedio").textContent =
+    carreras ? (sumaPos/carreras).toFixed(2) : "—";
+
+}
+
+/* ===============================
+   QR
 ================================ */
 document.getElementById('qrPiloto').innerHTML =
   `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
 
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
-
-function normalizar(t){
-  return t?.toLowerCase().trim();
-}
-
-fetch(SHEET_URL)
-.then(r=>r.text())
-.then(csv=>{
-
-  const filas = csv.split(/\r?\n/).slice(1);
-  const tabla = document.getElementById('tablaHistorial');
-
-  let carreras = 0;
-  let puntos = 0;
-  let mejorPuesto = 999;
-  let sumaPosiciones = 0;
-
-  filas.forEach(f=>{
-    const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-    if(!col) return;
-
-    const fecha = col[1]?.replace(/^"|"$/g,'').trim();
-    const categoriaFila = col[2]?.replace(/^"|"$/g,'').trim();
-    const pilotoFila = col[3]?.replace(/^"|"$/g,'').trim();
-    const pts = Number(col[4]?.replace(/^"|"$/g,'').trim()) || 0;
-
-    if(
-      normalizar(pilotoFila) === normalizar(piloto) &&
-      normalizar(categoriaFila) === normalizar(categoria)
-    ){
-
-      carreras++;
-      puntos += pts;
-
-      // calcular puesto según puntos en esa fecha
-      const fechaDatos = filas
-        .map(x => x.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g))
-        .filter(x =>
-          x &&
-          normalizar(x[1]?.replace(/^"|"$/g,'')) === normalizar(fecha) &&
-          normalizar(x[2]?.replace(/^"|"$/g,'')) === normalizar(categoria)
-        )
-        .map(x => ({
-          piloto: x[3]?.replace(/^"|"$/g,'').trim(),
-          puntos: Number(x[4]?.replace(/^"|"$/g,'').trim()) || 0
-        }))
-        .sort((a,b)=>b.puntos-a.puntos);
-
-      const posicion = fechaDatos.findIndex(x =>
-        normalizar(x.piloto) === normalizar(piloto)
-      ) + 1;
-
-      sumaPosiciones += posicion;
-      if(posicion < mejorPuesto) mejorPuesto = posicion;
-
-      tabla.innerHTML += `
-        <tr>
-          <td>${fecha}</td>
-          <td>${posicion}</td>
-          <td>${pts}</td>
-        </tr>
-      `;
-    }
-  });
-
-  document.getElementById('statCarreras').textContent = carreras;
-  document.getElementById('statPuntos').textContent = puntos;
-  document.getElementById('statMejor').textContent =
-    mejorPuesto === 999 ? '—' : mejorPuesto;
-
-  document.getElementById('statPromedio').textContent =
-    carreras ? (sumaPosiciones / carreras).toFixed(2) : '—';
-
-});
-
-
-/* ===============================
-   CARGA + CALCULOS
-================================ */
-function normalizar(texto){
-  return texto
-    ?.toLowerCase()
-    .trim();
-}
-
-fetch(SHEETS[categoria])
-.then(r=>r.text())
-.then(text=>{
-  const filas = text.trim().split('\n').slice(1);
-  const tabla = document.getElementById('tablaHistorial');
-
-  let carreras=0, puntos=0, mejor=999, suma=0;
-
-  filas.forEach(f=>{
-    const c=f.split('\t');
-
-    if(normalizar(c[1]) === normalizar(piloto)){
-      const puesto=parseInt(c[2]);
-      const pts=parseInt(c[3]);
-
-      carreras++;
-      puntos+=pts;
-      suma+=puesto;
-      if(puesto<mejor) mejor=puesto;
-
-      tabla.innerHTML+=`
-        <tr>
-          <td>${c[0]}</td>
-          <td>${puesto}</td>
-          <td>${pts}</td>
-        </tr>`;
-    }
-  });
-
-  document.getElementById('statCarreras').textContent = carreras;
-  document.getElementById('statPuntos').textContent = puntos;
-  document.getElementById('statMejor').textContent = mejor===999?'—':mejor;
-  document.getElementById('statPromedio').textContent =
-    carreras ? (suma/carreras).toFixed(2) : '—';
-});
+cargarPiloto();
 
 </script>
 
