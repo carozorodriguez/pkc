@@ -176,93 +176,127 @@ const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ
 let datos=[];
 let pilotosDB={};
 
-async function cargarDatos(){
-const r1=await fetch(SHEET_RESULTADOS);
-const t1=await r1.text();
-const f1=t1.split("\n").map(f=>f.split(","));
-const h1=f1[0];
-
-const iFecha=h1.indexOf("Fecha");
-const iCat=h1.indexOf("Categoria");
-const iPil=h1.indexOf("Piloto");
-const iPts=h1.indexOf("Puntos Obtenidos");
-const iNum=h1.indexOf("Numero");
-
-datos=f1.slice(1).map(f=>{
-const categoria=f[iCat]?.trim();
-const numero=f[iNum]?.trim();
-return{
-fecha:f[iFecha]?.trim(),
-categoria,
-piloto:f[iPil]?.trim(),
-numero,
-puntos:Number(f[iPts])||0,
-id:categoria+"_"+numero
+function parseCSV(text){
+  return text.split("\n").map(row =>
+    row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+       .map(c => c.replace(/^"|"$/g,'').trim())
+  );
 }
-}).filter(d=>d.fecha&&d.categoria&&d.numero);
 
-const r2=await fetch(SHEET_PILOTOS);
-const t2=await r2.text();
-const f2=t2.split("\n").map(f=>f.split(","));
-const h2=f2[0];
+async function cargarDatos(){
 
-const iID=h2.indexOf("ID");
-const iNom=h2.indexOf("Nombre");
+  // ===== RESULTADOS =====
+  const r1 = await fetch(SHEET_RESULTADOS);
+  const t1 = await r1.text();
+  const f1 = parseCSV(t1);
 
-f2.slice(1).forEach(f=>{
-pilotosDB[f[iID]?.trim()]={nombre:f[iNom]?.trim()};
-});
+  const h1 = f1[0] || [];
 
-cargarCategorias();
+  const iFecha = h1.indexOf("Fecha");
+  const iCat   = h1.indexOf("Categoria");
+  const iPil   = h1.indexOf("Piloto");
+  const iPts   = h1.indexOf("Puntos Obtenidos");
+  const iNum   = h1.indexOf("Numero");
+
+  datos = f1.slice(1).map(f=>{
+    if(!f.length) return null;
+
+    const categoria = f[iCat];
+    const numero    = f[iNum];
+
+    return {
+      fecha: f[iFecha],
+      categoria,
+      piloto: f[iPil],
+      numero,
+      puntos: Number(f[iPts]) || 0,
+      id: categoria && numero ? categoria+"_"+numero : null
+    };
+
+  }).filter(d => d && d.fecha && d.categoria && d.numero);
+
+
+  // ===== PILOTOS =====
+  const r2 = await fetch(SHEET_PILOTOS);
+  const t2 = await r2.text();
+  const f2 = parseCSV(t2);
+
+  const h2 = f2[0] || [];
+
+  const iID  = h2.indexOf("ID");
+  const iNom = h2.indexOf("Nombre");
+
+  f2.slice(1).forEach(f=>{
+    if(f[iID]){
+      pilotosDB[f[iID]] = { nombre: f[iNom] };
+    }
+  });
+
+  cargarCategorias();
 }
 
 function cargarCategorias(){
-const cats=[...new Set(datos.map(d=>d.categoria))];
-categoriaSelect.innerHTML=cats.map(c=>`<option>${c}</option>`).join("");
-cargarFechas();
+  const selectCat = document.getElementById("categoriaSelect");
+  const cats=[...new Set(datos.map(d=>d.categoria))];
+
+  selectCat.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  cargarFechas();
 }
 
 function cargarFechas(){
-const cat=categoriaSelect.value;
-const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-fechaSelect.innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
-mostrarResultados();
+  const selectCat = document.getElementById("categoriaSelect");
+  const selectFecha = document.getElementById("fechaSelect");
+
+  const cat=selectCat.value;
+  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+
+  selectFecha.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+  mostrarResultados();
 }
 
 function mostrarResultados(){
-const cat=categoriaSelect.value;
-const fec=fechaSelect.value;
+  const cat=document.getElementById("categoriaSelect").value;
+  const fec=document.getElementById("fechaSelect").value;
 
-const filtrados=datos.filter(d=>d.categoria===cat&&d.fecha===fec).sort((a,b)=>b.puntos-a.puntos);
+  const filtrados=datos
+    .filter(d=>d.categoria===cat && d.fecha===fec)
+    .sort((a,b)=>b.puntos-a.puntos);
 
-document.querySelector("#tablaResultados tbody").innerHTML=filtrados.map((d,i)=>`
+  document.querySelector("#tablaResultados tbody").innerHTML=
+    filtrados.map((d,i)=>`
 <tr>
 <td>${i+1}</td>
-<td><a href="piloto.html?id=${encodeURIComponent(d.id)}">${pilotosDB[d.id]?.nombre||d.piloto}</a></td>
+<td><a href="piloto.html?id=${encodeURIComponent(d.id)}">
+${pilotosDB[d.id]?.nombre || d.piloto}
+</a></td>
 <td>${d.puntos}</td>
 </tr>`).join("");
 
-mostrarGeneral(cat);
+  mostrarGeneral(cat);
 }
 
 function mostrarGeneral(cat){
-const mapa={};
-datos.filter(d=>d.categoria===cat).forEach(d=>{
-mapa[d.id]=(mapa[d.id]||0)+d.puntos;
-});
+  const mapa={};
 
-const ranking=Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
+  datos.filter(d=>d.categoria===cat).forEach(d=>{
+    mapa[d.id]=(mapa[d.id]||0)+d.puntos;
+  });
 
-document.querySelector("#tablaGeneral tbody").innerHTML=ranking.map((d,i)=>`
+  const ranking=Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
+
+  document.querySelector("#tablaGeneral tbody").innerHTML=
+    ranking.map((d,i)=>`
 <tr>
 <td>${i+1}</td>
-<td><a href="piloto.html?id=${encodeURIComponent(d[0])}">${pilotosDB[d[0]]?.nombre||d[0]}</a></td>
+<td><a href="piloto.html?id=${encodeURIComponent(d[0])}">
+${pilotosDB[d[0]]?.nombre || d[0]}
+</a></td>
 <td>${d[1]}</td>
 </tr>`).join("");
 }
 
-categoriaSelect.addEventListener('change',cargarFechas);
-fechaSelect.addEventListener('change',mostrarResultados);
+document.getElementById("categoriaSelect").addEventListener('change',cargarFechas);
+document.getElementById("fechaSelect").addEventListener('change',mostrarResultados);
 
 cargarDatos();
 </script>
