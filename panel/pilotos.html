@@ -277,13 +277,15 @@ function guardarPiloto(){
   const categoriaID = categoria.toUpperCase().replace(/\s+/g,"").replace(/[^A-Z0-9]/g,"");
   const id = categoriaID + "_" + numero;
 
-  if(pilotosGlobal[categoria]){
-    const existe = pilotosGlobal[categoria].some(p => p.numero === numero);
-    if(existe){
-      alert("Ya existe un piloto con ese número en esta categoría.");
-      return;
-    }
-  }
+  const duplicado = pilotosTodos.some(p =>
+  p.categoria === categoria &&
+  p.numero === numero
+);
+
+if(duplicado){
+  alert("Ya existe un piloto con ese número en esta categoría (activo o inactivo).");
+  return;
+}
 
   const datos = new FormData();
   datos.append("id", id);
