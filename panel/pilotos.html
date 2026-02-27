@@ -205,15 +205,24 @@ function renderizar(mapa){
       .forEach(p=>{
 
       html += `
-        <div class="card">
-          <strong>#${p.numero} - ${p.nombre}</strong>
-          <a class="btn" 
-             href="../piloto.html?id=${encodeURIComponent(p.id)}" 
-             target="_blank">
-             Ver Ficha Pública
-          </a>
-        </div>
-      `;
+  <div class="card">
+    <strong>#${p.numero} - ${p.nombre}</strong>
+
+    <a class="btn" 
+       href="../piloto.html?id=${encodeURIComponent(p.id)}" 
+       target="_blank">
+       Ver Ficha Pública
+    </a>
+
+    <br><br>
+
+    <button class="btn"
+            style="background:#555"
+            onclick="desactivarPiloto('${p.id}')">
+      Desactivar
+    </button>
+  </div>
+`;
     });
 
     html += `</div>`;
