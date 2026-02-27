@@ -33,10 +33,10 @@ section{
   padding:40px 20px;
 }
 
-input{
+input, select{
   width:100%;
   padding:12px;
-  margin-bottom:30px;
+  margin-bottom:15px;
   border-radius:6px;
   border:1px solid #ccc;
   font-family:'Oswald';
@@ -72,17 +72,23 @@ input{
 
 .btn{
   display:inline-block;
-  padding:8px 12px;
+  padding:10px 14px;
   background:var(--rojo);
   color:#fff;
   text-decoration:none;
   border-radius:5px;
   font-size:14px;
+  border:none;
+  cursor:pointer;
 }
 
 .volver{
   text-align:center;
   margin-top:40px;
+}
+
+hr{
+  margin:40px 0;
 }
 </style>
 </head>
@@ -94,6 +100,25 @@ input{
 </header>
 
 <section>
+
+<h2>Agregar Nuevo Piloto</h2>
+
+<input type="text" id="nombreNuevo" placeholder="Nombre">
+<input type="text" id="categoriaNueva" placeholder="Categoría">
+<input type="number" id="numeroNuevo" placeholder="Número">
+<input type="text" id="localidadNueva" placeholder="Localidad">
+<input type="text" id="equipoNuevo" placeholder="Equipo">
+<input type="text" id="chasisNuevo" placeholder="Chasis">
+<input type="text" id="motorNuevo" placeholder="Motor">
+<input type="text" id="fotoNueva" placeholder="FotoURL (opcional)">
+<select id="estadoNuevo">
+  <option value="Activo">Activo</option>
+  <option value="Inactivo">Inactivo</option>
+</select>
+
+<button class="btn" onclick="guardarPiloto()">Guardar Piloto</button>
+
+<hr>
 
 <input type="text" id="buscador" placeholder="Buscar piloto...">
 
@@ -108,7 +133,8 @@ input{
 <script src="auth.js"></script>
 
 <script>
-<script>
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWJU_qn1gUPo9Byc6b-7WVAK_OdBx8TdPtHz6zbeTDmNPVWTKzruRWzvbW7ZTcR2xt/exec";
 
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
@@ -122,29 +148,34 @@ fetch(SHEET_URL)
 .then(r=>r.text())
 .then(csv=>{
 
-  const filas = csv.split(/\r?\n/).slice(1)
-    .filter(f=>f.trim()!=='');
+  const filas = csv.split(/\r?\n/).slice(1).filter(f=>f.trim()!=='');
 
   const datos = filas.map(f=>{
     const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
     return {
       id: limpiar(col[0]),
-      nombre: limpiar(col[1]),
-      categoria: limpiar(col[2]),
-      numero: limpiar(col[3]),
-      fotoURL: limpiar(col[4])
+      categoria: limpiar(col[1]),
+      numero: limpiar(col[2]),
+      nombre: limpiar(col[3]),
+      localidad: limpiar(col[4]),
+      equipo: limpiar(col[5]),
+      chasis: limpiar(col[6]),
+      motor: limpiar(col[7]),
+      fotoURL: limpiar(col[8]),
+      estado: limpiar(col[9])
     };
   });
 
+  const activos = datos.filter(p=>p.estado === "Activo");
+
   const mapa = {};
 
-  datos.forEach(d=>{
+  activos.forEach(d=>{
     if(!mapa[d.categoria]) mapa[d.categoria] = [];
     mapa[d.categoria].push(d);
   });
 
   pilotosGlobal = mapa;
-
   renderizar(mapa);
 
 });
@@ -180,20 +211,17 @@ function renderizar(mapa){
 
     html += `</div>`;
     div.innerHTML = html;
-
     contenedor.appendChild(div);
   });
-
 }
 
-// 🔎 Buscador
+// Buscador
 document.getElementById("buscador").addEventListener("input", function(){
 
   const texto = this.value.toLowerCase();
   const filtrado = {};
 
   Object.keys(pilotosGlobal).forEach(cat=>{
-
     const filtrados = pilotosGlobal[cat]
       .filter(p=>p.nombre.toLowerCase().includes(texto));
 
@@ -203,9 +231,49 @@ document.getElementById("buscador").addEventListener("input", function(){
   });
 
   renderizar(filtrado);
-
 });
 
+function guardarPiloto(){
+
+  const nombre = document.getElementById("nombreNuevo").value.trim();
+  const categoria = document.getElementById("categoriaNueva").value.trim();
+  const numero = document.getElementById("numeroNuevo").value.trim();
+  const localidad = document.getElementById("localidadNueva").value.trim();
+  const equipo = document.getElementById("equipoNuevo").value.trim();
+  const chasis = document.getElementById("chasisNuevo").value.trim();
+  const motor = document.getElementById("motorNuevo").value.trim();
+  const fotoURL = document.getElementById("fotoNueva").value.trim();
+  const estado = document.getElementById("estadoNuevo").value;
+
+  if(!nombre || !categoria || !numero){
+    alert("Complete Nombre, Categoría y Número");
+    return;
+  }
+
+  const id = categoria + "_" + numero;
+
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      id,categoria,numero,nombre,localidad,equipo,chasis,motor,fotoURL,estado
+    })
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.result==="ok"){
+      alert("Piloto guardado correctamente");
+      location.reload();
+    }else{
+      alert("Error al guardar");
+    }
+  })
+  .catch(()=>{
+    alert("Error de conexión con Apps Script");
+  });
+}
+
 </script>
+
 </body>
 </html>
