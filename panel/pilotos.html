@@ -163,6 +163,8 @@ fetch(SHEET_URL)
   const filas = csv.split(/\r?\n/).slice(1).filter(f=>f.trim()!=='');
 
   const datos = filas.map(f=>{
+    let pilotosGlobal = {};
+let pilotosTodos = [];
     const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
     return {
       id: limpiar(col[0]),
