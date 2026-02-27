@@ -173,7 +173,9 @@ fetch(SHEET_URL)
     };
   });
 
-  const activos = datos.filter(p=>p.estado === "Activo");
+ const activos = datos.filter(p =>
+  p.estado && p.estado.trim().toLowerCase() === "activo"
+);
 
   const mapa = {};
 
