@@ -316,13 +316,38 @@ function guardarPiloto(){
     location.reload();
 
   })
+    function desactivarPiloto(id){
+
+  if(!confirm("¿Seguro que querés desactivar este piloto?")){
+    return;
+  }
+
+  const datos = new FormData();
+  datos.append("accion", "desactivar");
+  datos.append("id", id);
+
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    body:datos
+  })
+  .then(r=>r.text())
+  .then(res=>{
+    if(res.includes("ERROR")){
+      alert(res);
+      return;
+    }
+
+    alert("Piloto desactivado correctamente");
+    location.reload();
+  })
   .catch(err=>{
     console.error(err);
     alert("Error de conexión con Apps Script");
   });
-
 }
+
 </script>
+  
 
 </body>
 </html>
