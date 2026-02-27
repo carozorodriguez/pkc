@@ -259,25 +259,32 @@ function guardarPiloto(){
 
   const id = categoria + "_" + numero;
 
+  const datos = new FormData();
+  datos.append("id", id);
+  datos.append("categoria", categoria);
+  datos.append("numero", numero);
+  datos.append("nombre", nombre);
+  datos.append("localidad", localidad);
+  datos.append("equipo", equipo);
+  datos.append("chasis", chasis);
+  datos.append("motor", motor);
+  datos.append("fotoURL", fotoURL);
+  datos.append("estado", estado);
+
   fetch(APPS_SCRIPT_URL,{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      id,categoria,numero,nombre,localidad,equipo,chasis,motor,fotoURL,estado
-    })
+    body:datos
   })
-  .then(r=>r.json())
+  .then(r=>r.text())
   .then(res=>{
-    if(res.result==="ok"){
-      alert("Piloto guardado correctamente");
-      location.reload();
-    }else{
-      alert("Error al guardar");
-    }
+    alert("Piloto guardado correctamente");
+    location.reload();
   })
-  .catch(()=>{
+  .catch(err=>{
+    console.error(err);
     alert("Error de conexión con Apps Script");
   });
+
 }
 
 </script>
