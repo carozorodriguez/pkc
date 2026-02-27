@@ -180,9 +180,10 @@ let pilotosTodos = [];
     };
   });
 
-  const activos = datos.filter(p =>
-    p.estado && p.estado.trim().toLowerCase() === "activo"
-  );
+  const activos = datos.filter(p => {
+  if(!p.estado) return false;
+  return p.estado.toString().trim().toLowerCase() === "activo";
+});
 
   const mapa = {};
 
