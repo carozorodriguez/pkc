@@ -257,7 +257,22 @@ function guardarPiloto(){
     return;
   }
 
-  const id = categoria + "_" + numero;
+  // 🔹 Limpiar categoría para ID
+  const categoriaID = categoria
+    .toUpperCase()
+    .replace(/\s+/g, "")
+    .replace(/[^A-Z0-9]/g, "");
+
+  const id = categoriaID + "_" + numero;
+
+  // 🔴 VALIDAR DUPLICADOS
+  if(pilotosGlobal[categoria]){
+    const existe = pilotosGlobal[categoria].some(p => p.numero === numero);
+    if(existe){
+      alert("Ya existe un piloto con ese número en esta categoría.");
+      return;
+    }
+  }
 
   const datos = new FormData();
   datos.append("id", id);
@@ -277,8 +292,20 @@ function guardarPiloto(){
   })
   .then(r=>r.text())
   .then(res=>{
+
+    if(res.includes("ERROR")){
+      alert(res);
+      return;
+    }
+
     alert("Piloto guardado correctamente");
+
+    // Limpiar formulario sin recargar
+    document.querySelectorAll("input").forEach(i=>i.value="");
+
+    // Recargar lista
     location.reload();
+
   })
   .catch(err=>{
     console.error(err);
@@ -286,7 +313,6 @@ function guardarPiloto(){
   });
 
 }
-
 </script>
 
 </body>
