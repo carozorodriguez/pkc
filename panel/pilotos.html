@@ -104,22 +104,25 @@ hr{
 <h2>Agregar Nuevo Piloto</h2>
 
 <input type="text" id="nombreNuevo" placeholder="Nombre">
-  <select id="categoriaNueva">
+
+<select id="categoriaNueva">
   <option value="">Seleccionar Categoría</option>
   <option value="Pre Junior">Pre Junior</option>
   <option value="Junior">Junior</option>
   <option value="110 Cajeros">110 Cajeros</option>
   <option value="200 STD">200 STD</option>
-    <option value="200 Master">200 Master</option>
+  <option value="200 Master">200 Master</option>
 </select>
+
 <input type="number" id="numeroNuevo" placeholder="Número">
 <input type="text" id="localidadNueva" placeholder="Localidad">
 <input type="text" id="equipoNuevo" placeholder="Equipo">
 <input type="text" id="chasisNuevo" placeholder="Chasis">
 <input type="text" id="motorNuevo" placeholder="Motor">
 <input type="text" id="fotoNueva" placeholder="FotoURL (opcional)">
+
 <select id="estadoNuevo">
-  <option value="Activo">Activo</option>
+  <option value="Activo" selected>Activo</option>
   <option value="Inactivo">Inactivo</option>
 </select>
 
@@ -151,6 +154,7 @@ function limpiar(v){
 
 let pilotosGlobal = {};
 
+function cargarPilotos(){
 fetch(SHEET_URL)
 .then(r=>r.text())
 .then(csv=>{
@@ -173,9 +177,9 @@ fetch(SHEET_URL)
     };
   });
 
- const activos = datos.filter(p =>
-  p.estado && p.estado.trim().toLowerCase() === "activo"
-);
+  const activos = datos.filter(p =>
+    p.estado && p.estado.trim().toLowerCase() === "activo"
+  );
 
   const mapa = {};
 
@@ -188,6 +192,7 @@ fetch(SHEET_URL)
   renderizar(mapa);
 
 });
+}
 
 function renderizar(mapa){
 
@@ -207,24 +212,24 @@ function renderizar(mapa){
       .forEach(p=>{
 
       html += `
-  <div class="card">
-    <strong>#${p.numero} - ${p.nombre}</strong>
+        <div class="card">
+          <strong>#${p.numero} - ${p.nombre}</strong>
 
-    <a class="btn" 
-       href="../piloto.html?id=${encodeURIComponent(p.id)}" 
-       target="_blank">
-       Ver Ficha Pública
-    </a>
+          <a class="btn" 
+             href="../piloto.html?id=${encodeURIComponent(p.id)}" 
+             target="_blank">
+             Ver Ficha Pública
+          </a>
 
-    <br><br>
+          <br><br>
 
-    <button class="btn"
-            style="background:#555"
-            onclick="desactivarPiloto('${p.id}')">
-      Desactivar
-    </button>
-  </div>
-`;
+          <button class="btn"
+                  style="background:#555"
+                  onclick="desactivarPiloto('${p.id}')">
+            Desactivar
+          </button>
+        </div>
+      `;
     });
 
     html += `</div>`;
@@ -233,9 +238,7 @@ function renderizar(mapa){
   });
 }
 
-// Buscador
 document.getElementById("buscador").addEventListener("input", function(){
-
   const texto = this.value.toLowerCase();
   const filtrado = {};
 
@@ -268,15 +271,9 @@ function guardarPiloto(){
     return;
   }
 
-  // 🔹 Limpiar categoría para ID
-  const categoriaID = categoria
-    .toUpperCase()
-    .replace(/\s+/g, "")
-    .replace(/[^A-Z0-9]/g, "");
-
+  const categoriaID = categoria.toUpperCase().replace(/\s+/g,"").replace(/[^A-Z0-9]/g,"");
   const id = categoriaID + "_" + numero;
 
-  // 🔴 VALIDAR DUPLICADOS
   if(pilotosGlobal[categoria]){
     const existe = pilotosGlobal[categoria].some(p => p.numero === numero);
     if(existe){
@@ -303,22 +300,21 @@ function guardarPiloto(){
   })
   .then(r=>r.text())
   .then(res=>{
-
     if(res.includes("ERROR")){
       alert(res);
       return;
     }
-
     alert("Piloto guardado correctamente");
-
-    // Limpiar formulario sin recargar
-    document.querySelectorAll("input").forEach(i=>i.value="");
-
-    // Recargar lista
-    location.reload();
-
+    cargarPilotos();
   })
-    function desactivarPiloto(id){
+  .catch(err=>{
+    console.error(err);
+    alert("Error de conexión con Apps Script");
+  });
+
+}
+
+function desactivarPiloto(id){
 
   if(!confirm("¿Seguro que querés desactivar este piloto?")){
     return;
@@ -338,9 +334,8 @@ function guardarPiloto(){
       alert(res);
       return;
     }
-
     alert("Piloto desactivado correctamente");
-    location.reload();
+    cargarPilotos();
   })
   .catch(err=>{
     console.error(err);
@@ -348,8 +343,9 @@ function guardarPiloto(){
   });
 }
 
+cargarPilotos();
+
 </script>
-  
 
 </body>
 </html>
