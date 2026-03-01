@@ -325,13 +325,13 @@ async function cargarPiloto(){
   } 
   // Si no tiene → usar default
   else {
-    img.src = "/piloto/default.jpg";
+    img.src = "piloto/default.jpg";
   }
 
   // Si la imagen falla (permiso o URL mala)
   img.onerror = function () {
     this.onerror = null;
-    this.src = "/piloto/default.jpg";
+    this.src = "piloto/default.jpg";
   };
 
 
