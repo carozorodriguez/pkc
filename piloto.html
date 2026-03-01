@@ -225,26 +225,41 @@ footer{
 
 <script>
 
-/* ===============================
-   PARAMETRO ID DESDE URL
-================================ */
+/* =====================================================
+   1) OBTENER ID DESDE LA URL
+   Ejemplo: piloto.html?id=JUNIOR_1
+===================================================== */
+
+// Leemos parámetros de la URL
 const params = new URLSearchParams(window.location.search);
+
+// Obtenemos el id y eliminamos espacios invisibles
 const id = params.get("id")?.trim();
 
+// Si no hay ID en la URL, detenemos ejecución
 if(!id){
   document.getElementById("nombrePiloto").textContent = "Piloto no encontrado";
   throw new Error("ID no definido en URL");
 }
 
+// Separamos categoría y número desde el ID
+// Ejemplo: JUNIOR_1 → ["JUNIOR", "1"]
 const [categoria, numero] = id.split("_");
 
-/* ===============================
-   SHEETS
-================================ */
-const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
 
-const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+/* =====================================================
+   2) URLs DE GOOGLE SHEETS (PUBLICADAS COMO CSV)
+===================================================== */
 
+const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+
+const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+
+
+/* =====================================================
+   3) FUNCIÓN PARA PARSEAR CSV CORRECTAMENTE
+   (Soporta comillas y limpia espacios)
+===================================================== */
 
 function parseCSV(text){
   return text.split("\n").map(row =>
@@ -253,60 +268,87 @@ function parseCSV(text){
   );
 }
 
-/* ===============================
-   CARGAR DATOS PILOTO
-================================ */
+
+/* =====================================================
+   4) FUNCIÓN PRINCIPAL QUE CARGA TODO EL PILOTO
+===================================================== */
+
 async function cargarPiloto(){
 
-  // ===== CARGAR BASE PILOTOS =====
+  /* -------------------------------------------
+     4.1) CARGAR BASE DE PILOTOS
+  --------------------------------------------*/
+
   const rPil = await fetch(SHEET_PILOTOS);
   const tPil = await rPil.text();
   const fPil = parseCSV(tPil);
 
-  const hPil = fPil[0].map(h => h.trim());
+  // Encabezados
+  const hPil = fPil[0].map(h => h.trim().toUpperCase());
 
-  const iID   = hPil.findIndex(h => h.toUpperCase() === "ID");
-  const iNom  = hPil.findIndex(h => h.toUpperCase() === "NOMBRE");
-  const iFoto = hPil.findIndex(h => h.toUpperCase() === "FOTOURl".toUpperCase());
+  // Buscamos posiciones de columnas sin importar mayúsculas
+  const iID   = hPil.indexOf("ID");
+  const iNom  = hPil.indexOf("NOMBRE");
+  const iFoto = hPil.indexOf("FOTOURl".toUpperCase()); // FotoURL
 
   let nombrePiloto = "";
   let fotoURL = "";
 
+  // Recorremos todas las filas
   fPil.slice(1).forEach(f=>{
     const idSheet = f[iID]?.trim();
+
+    // Comparamos ignorando mayúsculas/minúsculas
     if(idSheet && idSheet.toUpperCase() === id.toUpperCase()){
       nombrePiloto = f[iNom]?.trim();
       fotoURL = f[iFoto]?.trim();
     }
   });
 
-  document.getElementById("nombrePiloto").textContent = nombrePiloto || id;
-  document.getElementById("categoriaPiloto").textContent = categoria;
+  // Mostramos nombre
+  document.getElementById("nombrePiloto").textContent =
+    nombrePiloto || id;
+
+  // Mostramos categoría
+  document.getElementById("categoriaPiloto").textContent =
+    categoria;
+
+  /* -------------------------------------------
+     4.2) CARGAR IMAGEN DEL PILOTO
+  --------------------------------------------*/
 
   const img = document.getElementById("fotoPiloto");
 
+  // Si tiene foto cargada → usarla
   if (fotoURL && fotoURL !== "") {
     img.src = fotoURL;
-  } else {
+  } 
+  // Si no tiene → usar default
+  else {
     img.src = "/piloto/default.jpg";
   }
 
+  // Si la imagen falla (permiso o URL mala)
   img.onerror = function () {
     this.onerror = null;
     this.src = "/piloto/default.jpg";
   };
 
-  // ===== CARGAR RESULTADOS =====
+
+  /* -------------------------------------------
+     4.3) CARGAR RESULTADOS DEL CAMPEONATO
+  --------------------------------------------*/
+
   const rRes = await fetch(SHEET_RESULTADOS);
   const tRes = await rRes.text();
   const fRes = parseCSV(tRes);
 
-  const hRes = fRes[0].map(h => h.trim());
+  const hRes = fRes[0].map(h => h.trim().toUpperCase());
 
-  const iFecha = hRes.findIndex(h => h.toUpperCase() === "FECHA");
-  const iCat   = hRes.findIndex(h => h.toUpperCase() === "CATEGORIA");
-  const iNum   = hRes.findIndex(h => h.toUpperCase() === "NUMERO");
-  const iPts   = hRes.findIndex(h => h.toUpperCase() === "PUNTOS OBTENIDOS");
+  const iFecha = hRes.indexOf("FECHA");
+  const iCat   = hRes.indexOf("CATEGORIA");
+  const iNum   = hRes.indexOf("NUMERO");
+  const iPts   = hRes.indexOf("PUNTOS OBTENIDOS");
 
   const tabla = document.getElementById("tablaHistorial");
   tabla.innerHTML = "";
@@ -316,11 +358,13 @@ async function cargarPiloto(){
   let mejor = 999;
   let sumaPos = 0;
 
+  // Filtrar solo las filas de este piloto
   const datosPiloto = fRes.slice(1).filter(f =>
     f[iCat]?.trim() === categoria &&
     f[iNum]?.trim() === numero
   );
 
+  // Recorrer cada carrera del piloto
   datosPiloto.forEach(f => {
 
     const fecha = f[iFecha];
@@ -329,19 +373,25 @@ async function cargarPiloto(){
     carreras++;
     puntos += pts;
 
+    // Calcular posición en esa fecha
     const fechaDatos = fRes.slice(1)
-      .filter(x => x[iFecha] === fecha && x[iCat] === categoria)
+      .filter(x =>
+        x[iFecha] === fecha &&
+        x[iCat] === categoria
+      )
       .map(x => ({
         numero: x[iNum],
         puntos: Number(x[iPts]) || 0
       }))
       .sort((a,b)=>b.puntos-a.puntos);
 
-    const posicion = fechaDatos.findIndex(x => x.numero === numero) + 1;
+    const posicion =
+      fechaDatos.findIndex(x => x.numero === numero) + 1;
 
     sumaPos += posicion;
     if(posicion < mejor) mejor = posicion;
 
+    // Agregar fila a tabla
     tabla.innerHTML += `
       <tr>
         <td>${fecha}</td>
@@ -351,20 +401,34 @@ async function cargarPiloto(){
     `;
   });
 
+  /* -------------------------------------------
+     4.4) MOSTRAR ESTADÍSTICAS
+  --------------------------------------------*/
+
   document.getElementById("statCarreras").textContent = carreras;
   document.getElementById("statPuntos").textContent = puntos;
-  document.getElementById("statMejor").textContent = mejor === 999 ? "—" : mejor;
+  document.getElementById("statMejor").textContent =
+    mejor === 999 ? "—" : mejor;
+
   document.getElementById("statPromedio").textContent =
     carreras ? (sumaPos/carreras).toFixed(2) : "—";
-
 }
+
+
+/* =====================================================
+   5) GENERAR QR AUTOMÁTICO DE LA FICHA
+===================================================== */
 
 document.getElementById('qrPiloto').innerHTML =
   `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
 
+
+/* =====================================================
+   6) INICIAR CARGA
+===================================================== */
+
 cargarPiloto();
 
 </script>
-
 </body>
 </html>
