@@ -229,7 +229,7 @@ footer{
    PARAMETRO ID DESDE URL
 ================================ */
 const params = new URLSearchParams(window.location.search);
-const id = params.get("id"); // ejemplo: 200 Master_7
+const id = params.get("id")?.trim();
 
 if(!id){
   document.getElementById("nombrePiloto").textContent = "Piloto no encontrado";
@@ -263,19 +263,20 @@ async function cargarPiloto(){
   const tPil = await rPil.text();
   const fPil = parseCSV(tPil);
 
-  const hPil = fPil[0];
+  const hPil = fPil[0].map(h => h.trim());
 
-  const iID   = hPil.indexOf("ID");
-  const iNom  = hPil.indexOf("Nombre");
-  const iFoto = hPil.indexOf("fotoURL");
+  const iID   = hPil.findIndex(h => h.toUpperCase() === "ID");
+  const iNom  = hPil.findIndex(h => h.toUpperCase() === "NOMBRE");
+  const iFoto = hPil.findIndex(h => h.toUpperCase() === "FOTOURl".toUpperCase());
 
   let nombrePiloto = "";
   let fotoURL = "";
 
   fPil.slice(1).forEach(f=>{
-    if(f[iID] === id){
-      nombrePiloto = f[iNom];
-      fotoURL = f[iFoto];
+    const idSheet = f[iID]?.trim();
+    if(idSheet && idSheet.toUpperCase() === id.toUpperCase()){
+      nombrePiloto = f[iNom]?.trim();
+      fotoURL = f[iFoto]?.trim();
     }
   });
 
@@ -284,32 +285,31 @@ async function cargarPiloto(){
 
   const img = document.getElementById("fotoPiloto");
 
-if (fotoURL && fotoURL.trim() !== "") {
-  img.src = fotoURL.trim();
-} else {
-  img.src = "pilotos/default.jpg";
-}
+  if (fotoURL && fotoURL !== "") {
+    img.src = fotoURL;
+  } else {
+    img.src = "/piloto/default.jpg";
+  }
 
-// Si la imagen falla por permisos o URL incorrecta
-img.onerror = function () {
-  this.onerror = null; // evita loop infinito
-  this.src = "pilotos/default.jpg";
-};
-
+  img.onerror = function () {
+    this.onerror = null;
+    this.src = "/piloto/default.jpg";
+  };
 
   // ===== CARGAR RESULTADOS =====
   const rRes = await fetch(SHEET_RESULTADOS);
   const tRes = await rRes.text();
   const fRes = parseCSV(tRes);
 
-  const hRes = fRes[0];
+  const hRes = fRes[0].map(h => h.trim());
 
-  const iFecha = hRes.indexOf("Fecha");
-  const iCat   = hRes.indexOf("Categoria");
-  const iNum   = hRes.indexOf("Numero");
-  const iPts   = hRes.indexOf("Puntos Obtenidos");
+  const iFecha = hRes.findIndex(h => h.toUpperCase() === "FECHA");
+  const iCat   = hRes.findIndex(h => h.toUpperCase() === "CATEGORIA");
+  const iNum   = hRes.findIndex(h => h.toUpperCase() === "NUMERO");
+  const iPts   = hRes.findIndex(h => h.toUpperCase() === "PUNTOS OBTENIDOS");
 
   const tabla = document.getElementById("tablaHistorial");
+  tabla.innerHTML = "";
 
   let carreras = 0;
   let puntos = 0;
@@ -317,7 +317,8 @@ img.onerror = function () {
   let sumaPos = 0;
 
   const datosPiloto = fRes.slice(1).filter(f =>
-    f[iCat] === categoria && f[iNum] === numero
+    f[iCat]?.trim() === categoria &&
+    f[iNum]?.trim() === numero
   );
 
   datosPiloto.forEach(f => {
@@ -328,7 +329,6 @@ img.onerror = function () {
     carreras++;
     puntos += pts;
 
-    // calcular puesto en esa fecha
     const fechaDatos = fRes.slice(1)
       .filter(x => x[iFecha] === fecha && x[iCat] === categoria)
       .map(x => ({
@@ -359,9 +359,6 @@ img.onerror = function () {
 
 }
 
-/* ===============================
-   QR
-================================ */
 document.getElementById('qrPiloto').innerHTML =
   `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
 
