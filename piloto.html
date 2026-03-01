@@ -317,23 +317,29 @@ async function cargarPiloto(){
      4.2) CARGAR IMAGEN DEL PILOTO
   --------------------------------------------*/
 
-  const img = document.getElementById("fotoPiloto");
+const img = document.getElementById("fotoPiloto");
 
-  // Si tiene foto cargada → usarla
-  if (fotoURL && fotoURL !== "") {
+// Si hay algo en FotoURL
+if (fotoURL && fotoURL !== "") {
+
+  // Si ya es una URL completa (http...)
+  if (fotoURL.startsWith("http")) {
     img.src = fotoURL;
   } 
-  // Si no tiene → usar default
+  // Si es solo nombre de archivo → lo buscamos en /pilotos/
   else {
-    img.src = "piloto/default.jpg";
+    img.src = "pilotos/" + fotoURL;
   }
 
-  // Si la imagen falla (permiso o URL mala)
-  img.onerror = function () {
-    this.onerror = null;
-    this.src = "piloto/default.jpg";
-  };
+} else {
+  img.src = "pilotos/default.jpg";
+}
 
+// Si falla la imagen
+img.onerror = function () {
+  this.onerror = null;
+  this.src = "pilotos/default.jpg";
+};
 
   /* -------------------------------------------
      4.3) CARGAR RESULTADOS DEL CAMPEONATO
