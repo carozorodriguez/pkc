@@ -74,7 +74,29 @@ section{
 
 <div class="card">
   <h3>📋 Cargar Resultados</h3>
-  <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSeYeX1MeBEeYgyWg-4HBE4UJS98ardXP7Po2TP39Yr9SCapYg/viewform?usp=preview" target="_blank">Abrir Formulario (Form B)</a>
+
+  <form id="formResultados">
+
+    <label>Fecha</label><br>
+    <input type="text" id="fechaResultado" placeholder="Ej: Fecha 3" required><br><br>
+
+    <label>Categoría</label><br>
+    <select id="categoriaResultado" required>
+      <option value="">Seleccione categoría</option>
+    </select><br><br>
+
+    <label>Piloto</label><br>
+    <select id="pilotoResultado" required>
+      <option value="">Seleccione piloto</option>
+    </select><br><br>
+
+    <label>Puntos</label><br>
+    <input type="number" id="puntosResultado" required><br><br>
+
+    <button type="submit" class="btn">Guardar Resultado</button>
+
+  </form>
+
 </div>
 
 <div class="card">
@@ -248,7 +270,120 @@ function recalcular(){
   });
 }
 </script>
+<script>
 
+const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+
+let pilotosActivos = [];
+
+function cargarPilotosBase(){
+
+fetch(SHEET_PILOTOS)
+.then(r=>r.text())
+.then(csv=>{
+
+  const filas = csv.split(/\r?\n/).slice(1)
+    .filter(f=>f.trim()!=='');
+
+  pilotosActivos = filas.map(f=>{
+    const col = f.split(",");
+    return {
+      id: col[0]?.trim(),
+      categoria: col[1]?.trim(),
+      numero: col[2]?.trim(),
+      nombre: col[3]?.trim(),
+      estado: col[9]?.trim()
+    };
+  }).filter(p=>p.estado==="Activo");
+
+  cargarCategorias();
+});
+}
+
+function cargarCategorias(){
+
+  const categorias = [...new Set(pilotosActivos.map(p=>p.categoria))];
+
+  const select = document.getElementById("categoriaResultado");
+
+  categorias.sort().forEach(cat=>{
+    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+document.getElementById("categoriaResultado")
+.addEventListener("change", function(){
+
+  const categoria = this.value;
+
+  const filtrados = pilotosActivos
+    .filter(p=>p.categoria===categoria)
+    .sort((a,b)=>Number(a.numero)-Number(b.numero));
+
+  const selectPiloto = document.getElementById("pilotoResultado");
+
+  selectPiloto.innerHTML = '<option value="">Seleccione piloto</option>';
+
+  filtrados.forEach(p=>{
+    selectPiloto.innerHTML += `
+      <option value="${p.id}">
+        #${p.numero} - ${p.nombre}
+      </option>
+    `;
+  });
+
+});
+
+document.getElementById("formResultados")
+.addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const fecha = document.getElementById("fechaResultado").value.trim();
+  const categoria = document.getElementById("categoriaResultado").value;
+  const pilotoID = document.getElementById("pilotoResultado").value;
+  const puntos = document.getElementById("puntosResultado").value;
+
+  if(!fecha || !categoria || !pilotoID || !puntos){
+    alert("Complete todos los campos");
+    return;
+  }
+
+  const pilotoObj = pilotosActivos.find(p=>p.id===pilotoID);
+
+  const datos = new FormData();
+
+  datos.append("accion","cargarResultado");
+  datos.append("fecha", fecha);
+  datos.append("categoria", categoria);
+  datos.append("piloto", pilotoObj.nombre);
+  datos.append("puntos", puntos);
+  datos.append("numero", pilotoObj.numero);
+
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    body:datos
+  })
+  .then(r=>r.text())
+  .then(res=>{
+    if(res.includes("ERROR")){
+      alert(res);
+      return;
+    }
+
+    alert("Resultado cargado correctamente");
+    this.reset();
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Error de conexión con Apps Script");
+  });
+
+});
+
+cargarPilotosBase();
+
+</script>
 
 </body>
 </html>
