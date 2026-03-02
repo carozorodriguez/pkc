@@ -148,13 +148,13 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbysrY6r-WN3aoYL
 
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
-function limpiar(v){
-  return v?.replace(/^"|"$/g,'').trim();
-}
-
 let pilotosGlobal = {};
 let pilotosTodos = [];
+let idEditando = null; // 🔥 controla si estamos editando
 
+/* =====================================================
+   CARGAR PILOTOS DESDE SHEET
+===================================================== */
 function cargarPilotos(){
 
 fetch(SHEET_URL)
@@ -166,29 +166,24 @@ fetch(SHEET_URL)
   const datos = filas.map(f=>{
 
     let col = f.split(",");
+    while(col.length < 10){ col.push(""); }
 
-    // Forzar 10 columnas
-    while(col.length < 10){
-      col.push("");
-    }
-
-    const limpiarValor = (v) => 
-      (v || "")
-        .replace(/^"|"$/g,'')
-        .replace(/\u00A0/g,"") // elimina espacios invisibles
-        .trim();
+    const limpiar = (v)=>(v||"")
+      .replace(/^"|"$/g,'')
+      .replace(/\u00A0/g,"")
+      .trim();
 
     return {
-      id: limpiarValor(col[0]),
-      categoria: limpiarValor(col[1]),
-      numero: limpiarValor(col[2]),
-      nombre: limpiarValor(col[3]),
-      localidad: limpiarValor(col[4]),
-      equipo: limpiarValor(col[5]),
-      chasis: limpiarValor(col[6]),
-      motor: limpiarValor(col[7]),
-      fotoURL: limpiarValor(col[8]) || "/piloto/default.jpg",
-      estado: limpiarValor(col[9]) || "Activo"
+      id: limpiar(col[0]),
+      categoria: limpiar(col[1]),
+      numero: limpiar(col[2]),
+      nombre: limpiar(col[3]),
+      localidad: limpiar(col[4]),
+      equipo: limpiar(col[5]),
+      chasis: limpiar(col[6]),
+      motor: limpiar(col[7]),
+      fotoURL: limpiar(col[8]),
+      estado: limpiar(col[9]) || "Activo"
     };
 
   });
@@ -214,8 +209,11 @@ fetch(SHEET_URL)
   console.error(err);
   alert("Error cargando pilotos");
 });
-
 }
+
+/* =====================================================
+   RENDERIZAR PILOTOS
+===================================================== */
 function renderizar(mapa){
 
   const contenedor = document.getElementById("contenedor");
@@ -237,13 +235,19 @@ function renderizar(mapa){
         <div class="card">
           <strong>#${p.numero} - ${p.nombre}</strong>
 
-          <a class="btn" 
-             href="../piloto.html?id=${encodeURIComponent(p.id)}" 
+          <br><br>
+
+          <a class="btn"
+             href="../piloto.html?id=${encodeURIComponent(p.id)}"
              target="_blank">
              Ver Ficha Pública
           </a>
 
-          <br><br>
+          <button class="btn"
+                  style="background:#007bff"
+                  onclick="editarPiloto('${p.id}')">
+            Editar
+          </button>
 
           <button class="btn"
                   style="background:#555"
@@ -260,22 +264,32 @@ function renderizar(mapa){
   });
 }
 
-document.getElementById("buscador").addEventListener("input", function(){
-  const texto = this.value.toLowerCase();
-  const filtrado = {};
+/* =====================================================
+   EDITAR PILOTO
+===================================================== */
+function editarPiloto(id){
 
-  Object.keys(pilotosGlobal).forEach(cat=>{
-    const filtrados = pilotosGlobal[cat]
-      .filter(p=>p.nombre.toLowerCase().includes(texto));
+  const piloto = pilotosTodos.find(p => p.id === id);
+  if(!piloto) return;
 
-    if(filtrados.length>0){
-      filtrado[cat] = filtrados;
-    }
-  });
+  idEditando = piloto.id;
 
-  renderizar(filtrado);
-});
+  document.getElementById("nombreNuevo").value = piloto.nombre;
+  document.getElementById("categoriaNueva").value = piloto.categoria;
+  document.getElementById("numeroNuevo").value = piloto.numero;
+  document.getElementById("localidadNueva").value = piloto.localidad;
+  document.getElementById("equipoNuevo").value = piloto.equipo;
+  document.getElementById("chasisNuevo").value = piloto.chasis;
+  document.getElementById("motorNuevo").value = piloto.motor;
+  document.getElementById("fotoNueva").value = piloto.fotoURL;
+  document.getElementById("estadoNuevo").value = piloto.estado;
 
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =====================================================
+   GUARDAR (CREAR O EDITAR)
+===================================================== */
 function guardarPiloto(){
 
   const nombre = document.getElementById("nombreNuevo").value.trim();
@@ -293,21 +307,35 @@ function guardarPiloto(){
     return;
   }
 
-  const categoriaID = categoria.toUpperCase().replace(/\s+/g,"").replace(/[^A-Z0-9]/g,"");
-  const id = categoriaID + "_" + numero;
+  const categoriaID = categoria.toUpperCase()
+    .replace(/\s+/g,"")
+    .replace(/[^A-Z0-9]/g,"");
 
+  const idNuevo = categoriaID + "_" + numero;
+
+  // 🔥 Validación inteligente de duplicado
   const duplicado = pilotosTodos.some(p =>
-  p.categoria === categoria &&
-  p.numero === numero
-);
+    p.categoria === categoria &&
+    p.numero === numero &&
+    p.id !== idEditando // permite guardar si es el mismo piloto
+  );
 
-if(duplicado){
-  alert("Ya existe un piloto con ese número en esta categoría (activo o inactivo).");
-  return;
-}
+  if(duplicado){
+    alert("Ya existe un piloto con ese número en esta categoría.");
+    return;
+  }
 
   const datos = new FormData();
-  datos.append("id", id);
+
+  if(idEditando){
+    datos.append("accion","editar");
+    datos.append("idOriginal", idEditando);
+    datos.append("idNuevo", idNuevo);
+  } else {
+    datos.append("accion","crear");
+    datos.append("id", idNuevo);
+  }
+
   datos.append("categoria", categoria);
   datos.append("numero", numero);
   datos.append("nombre", nombre);
@@ -328,16 +356,22 @@ if(duplicado){
       alert(res);
       return;
     }
-    alert("Piloto guardado correctamente");
+
+    alert(idEditando ? "Piloto actualizado correctamente" : "Piloto creado correctamente");
+
+    idEditando = null;
+    document.querySelector("form").reset();
     cargarPilotos();
   })
   .catch(err=>{
     console.error(err);
     alert("Error de conexión con Apps Script");
   });
-
 }
 
+/* =====================================================
+   DESACTIVAR
+===================================================== */
 function desactivarPiloto(id){
 
   if(!confirm("¿Seguro que querés desactivar este piloto?")){
@@ -367,9 +401,9 @@ function desactivarPiloto(id){
   });
 }
 
+/* ===================================================== */
 cargarPilotos();
 
 </script>
-
 </body>
 </html>
