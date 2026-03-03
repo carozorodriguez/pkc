@@ -6,19 +6,19 @@
   <title>PROKART CALETENSE | Campeonato Oficial</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com" rel="stylesheet">
 
+  <!-- ==========================================
+       ESTILOS DEL POP-UP (Agregados por nosotros)
+       ========================================== -->
   <style>
-    /* ============================================================
-       ESTILOS DEL POP-UP (Mantenlos aquí en el head)
-    ============================================================ */
     .modal {
       display: none; 
       position: fixed;
-      z-index: 1000;
+      z-index: 2000; /* Mayor que el nav */
       left: 0; top: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.6);
+      background-color: rgba(0,0,0,0.7);
       backdrop-filter: blur(5px);
     }
     .modal-content {
@@ -26,141 +26,232 @@
       margin: 15% auto;
       padding: 30px;
       border-radius: 15px;
-      width: 80%;
-      max-width: 400px;
+      width: 85%;
+      max-width: 450px;
       text-align: center;
       position: relative;
-      font-family: 'Oswald', sans-serif; /* Ajustado a tu fuente */
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      font-family: 'Oswald', sans-serif;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.5);
     }
     .close-btn {
       position: absolute;
       right: 15px; top: 10px;
-      font-size: 24px;
+      font-size: 28px;
       cursor: pointer;
       color: #888;
+      line-height: 1;
     }
     .cta-button {
-      background: #e10600; /* Ajustado a tu color rojo */
+      background: #e10600; /* Tu rojo corporativo */
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 25px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 15px;
+      margin-top: 20px;
       font-family: 'Oswald';
       text-transform: uppercase;
+      font-weight: 700;
+      width: 100%;
     }
+    .cta-button:hover { opacity: 0.9; }
+  </style>
 
-    /* ============================================================
-       TUS ESTILOS ORIGINALES
-    ============================================================ */
+  <!-- ==========================================
+       TUS ESTILOS ORIGINALES (Sin cambios)
+       ========================================== -->
+  <style>
     :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
     *{box-sizing:border-box}
     body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+
+    /* HEADER */
     header{
-      background: linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url("img/23610.jpg") center/cover no-repeat;
-      color:#fff; text-align:center; padding:120px 20px;
+      background:
+        linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
+        url("img/23610.jpg") center/cover no-repeat;
+      color:#fff;
+      text-align:center;
+      padding:120px 20px;
     }
     header img{max-width:320px;width:90%}
-    nav{ position:sticky; top:0; background:var(--negro); display:flex; justify-content:center; gap:25px; padding:15px; z-index:10}
+
+    /* NAV */
+    nav{
+      position:sticky;
+      top:0;
+      background:var(--negro);
+      display:flex;
+      justify-content:center;
+      gap:25px;
+      padding:15px;
+      z-index:10
+    }
     nav a{color:#fff;text-decoration:none}
     nav a:hover{color:var(--rojo)}
+
+    /* SECCIONES */
     section{max-width:1100px;margin:auto;padding:60px 20px}
     h2{border-left:6px solid var(--rojo);padding-left:15px}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
     .card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
     .btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
     .btn:hover{opacity:.85}
+
+    /* TABLAS */
     table{width:100%;border-collapse:collapse;margin-top:20px}
     th,td{padding:12px;border-bottom:1px solid #ddd}
     th{background:var(--negro);color:#fff}
+
     #tablaGeneral{margin-top:30px;background:#fff;border-radius:10px;overflow:hidden}
+    #tablaGeneral th{text-align:center;letter-spacing:1px}
+    #tablaGeneral td{text-align:center;font-weight:500}
+    #tablaGeneral td:nth-child(2){text-align:left;padding-left:20px}
     #tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
+    #tablaGeneral tbody tr:nth-child(2){background:#c0c0c033}
+    #tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
+    #tablaGeneral tbody tr:hover{background:#f1f1f1}
+
+    /* ACLARACION */
     #aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
+
+    /* INSTITUCIONAL */
+    .institucional{text-align:center;padding:60px 20px;background:#fff}
+    .institucional h2{margin-bottom:40px;border-left:5px solid var(--rojo);display:inline-block;padding-left:12px}
+    .logos-federaciones{display:flex;justify-content:center;flex-wrap:wrap;gap:40px}
+    .logos-federaciones img{height:90px;object-fit:contain;filter:grayscale(100%);transition:.3s}
+    .logos-federaciones img:hover{filter:grayscale(0%);transform:scale(1.05)}
+
+    /* FOOTER */
     .footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;margin-top:40px}
+    .sponsors img{height:45px;margin:0 10px}
   </style>
 </head>
 
 <body>
 
-  <!-- INICIO ESTRUCTURA POP-UP -->
-  <div id="welcome-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn">&times;</span>
-      <h2>¡BIENVENIDO A PROKART! 👋</h2>
-      <p>Ya está disponible el calendario oficial 2026. ¡Prepárate para la velocidad!</p>
-      <button class="cta-button">Ver Fechas</button>
-    </div>
+<!-- ==========================================
+     HTML DEL POP-UP (Al inicio del body)
+     ========================================== -->
+<div id="welcome-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="closePopUp">&times;</span>
+    <h2 style="border:none; padding:0; margin-bottom:15px; color:var(--negro)">¡BIENVENIDO AL PROKART! 🏎️</h2>
+    <p>Te damos la bienvenida a la Temporada Oficial 2026. Revisa el calendario y prepárate para la acción.</p>
+    <button class="cta-button" id="ctaPopUp">VER CALENDARIO</button>
   </div>
-  <!-- FIN ESTRUCTURA POP-UP -->
+</div>
 
-  <header>
-    <img src="ProKart.jpg" alt="PROKART CALETENSE">
-    <h1>PROKART CALETENSE</h1>
-    <p>Temporada Oficial 2026</p>
-    <p class="slogan">Velocidad • Pasión • Competencia</p>
-  </header>
+<header>
+  <img src="ProKart.jpg" alt="PROKART CALETENSE">
+  <h1>PROKART CALETENSE</h1>
+  <p>Temporada Oficial 2026</p>
+  <p class="slogan">Velocidad • Pasión • Competencia</p>
+</header>
 
-  <nav>
-    <a href="#fechas">Fechas</a>
-    <a href="#categorias">Categorías</a>
-    <a href="#posiciones">Resultados</a>
-    <a href="campeonato.html">Campeonato</a>
-    <a href="#inscripcion">Inscripciones</a>
-  </nav>
+<nav>
+  <a href="#fechas">Fechas</a>
+  <a href="#categorias">Categorías</a>
+  <a href="#posiciones">Resultados</a>
+  <a href="campeonato.html">Campeonato</a>
+  <a href="#inscripcion">Inscripciones</a>
+</nav>
 
-  <!-- CONTENIDO DE SECCIONES (Resumido para el ejemplo) -->
-  <section id="fechas">
-    <h2>Calendario Oficial 2026</h2>
-    <div class="grid">
-      <a href="#" class="card"><h3>Fecha 1 - Apertura</h3><p>📅 8 de Marzo</p><p>📍 Pico Truncado</p></a>
-      <!-- ... resto de tus fechas ... -->
-    </div>
-  </section>
+<!-- ================= FECHAS ================= -->
+<section id="fechas">
+<h2>Calendario Oficial 2026</h2>
+<div class="grid">
+<a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1 - Apertura</h3><p>📅 8 de Marzo</p><p>📍 Pico Truncado</p></a>
+<a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2</h3><p>📅 5 de Abril</p><p>📍 Pico Truncado</p></a>
+<a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3 - Fecha Doble</h3><p>📅 2 de Mayo</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%204" class="card"><h3>Fecha 4 - Fecha Doble</h3><p>📅 3 de Mayo</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%205" class="card"><h3>Fecha 5</h3><p>📅 7 de Junio</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%206" class="card"><h3>Fecha 6</h3><p>📅 2 de Agosto</p><p>📍 Las Heras</p></a>
+<a href="fecha.html?fecha=Fecha%207" class="card"><h3>Fecha 7- Fecha Doble</h3><p>📅 6 de Setiembre</p><p>📍 Puerto Deseado</p></a>
+<a href="fecha.html?fecha=Fecha%208" class="card"><h3>Fecha 8- Fecha Doble</h3><p>📅 7 de Setiembre</p><p>📍 Puerto Deseado</p></a>
+<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 9</h3><p>📅 4 de Octubre</p><p>📍 Las Heras</p></a>
+<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 10 - Cierre</h3><p>📅1 de Novienbre</p><p>📍 Caleta Olivia</p></a>
+</div>
+</section>
 
-  <!-- ... el resto de tus secciones ... -->
+<!-- ================= CATEGORIAS ================= -->
+<section id="categorias">
+<h2>Categorías</h2>
 
-  <section id="aclaracion">
-    <div style="max-width:900px;margin:auto">
-      <h3>Nota Aclaratoria</h3>
-      <p>El ProKart Caletense no se hace responsable de los datos suministrados por la FR...</p>
-    </div>
-  </section>
+<div class="card"><h3>PRE JUNIOR</h3><p><strong>Reglamento:</strong> Categoría formativa destinada a pilotos en etapa inicial.</p><a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-  <!-- INICIO LÓGICA JAVASCRIPT -->
-  <script>
-    const modal = document.getElementById("welcome-modal");
-    const closeBtn = document.querySelector(".close-btn");
-    const ctaBtn = document.querySelector(".cta-button");
+<div class="card"><h3>JUNIOR</h3><p><strong>Reglamento:</strong> Categoría juvenil competitiva.</p><a class="btn" href="reglamentos/Reglamento_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-    // Función para cerrar y guardar en localStorage
-    const cerrarPopUp = () => {
-      modal.style.display = "none";
-      localStorage.setItem("popup_visto_2026", "true");
-    };
+<div class="card"><h3>110 Cajeros</h3><p><strong>Reglamento:</strong> Motores 110cc – preparación controlada.</p><a class="btn" href="reglamentos/Reglamento_110_Cajeros.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-    window.onload = () => {
-      // Si NO ha visto el popup antes, se lo mostramos
-      if (!localStorage.getItem("popup_visto_2026")) {
-        setTimeout(() => {
-          modal.style.display = "block";
-        }, 1000); // Aparece tras 1 segundo
-      }
-    };
+<div class="card"><h3>200 Master</h3><p><strong>Reglamento:</strong> Categoría para pilotos experimentados.</p><a class="btn" href="reglamentos/Reglamento_200_Master.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
 
-    // Eventos de cierre
-    closeBtn.onclick = cerrarPopUp;
-    ctaBtn.onclick = cerrarPopUp;
+<div class="card"><h3>200 STD</h3><p><strong>Reglamento:</strong> Categoría estándar – igualdad mecánica.</p><a class="btn" href="reglamentos/Reglamento_200_STD.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+</section>
 
-    // Cerrar si hace clic fuera del recuadro blanco
-    window.onclick = (event) => {
-      if (event.target == modal) {
-        cerrarPopUp();
-      }
-    };
-  </script>
-  <!-- FIN LÓGICA JAVASCRIPT -->
+<!-- ================= RESULTADOS ================= -->
+<section id="posiciones">
+<h2>Resultados</h2>
+<select id="categoriaSelect"></select>
+<select id="fechaSelect"></select>
+
+<table id="tablaResultados">
+<thead><tr><th>Puesto</th><th>Piloto</th><th>Puntos</th></tr></thead>
+<tbody></tbody>
+</table>
+
+<table id="tablaGeneral">
+<thead><tr><th>Pos</th><th>Piloto</th><th>Total</th></tr></thead>
+<tbody></tbody>
+</table>
+</section>
+
+<!-- ================= INSCRIPCION ================= -->
+<section id="inscripcion">
+<h2>Inscripciones</h2>
+<div class="card">
+<p>Las inscripciones se realizan mediante el formulario oficial.</p>
+<a class="btn" href="https://docs.google.com" target="_blank">Ir al Formulario</a>
+</div>
+</section>
+
+<!-- ================= ACLARACION ================= -->
+<section id="aclaracion">
+<div style="max-width:900px;margin:auto">
+<h3>Nota Aclaratoria</h3>
+<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FR</p>
+</div>
+</section>
+
+<!-- ==========================================
+     LÓGICA JAVASCRIPT (Con localStorage)
+     ========================================== -->
+<script>
+  const modal = document.getElementById("welcome-modal");
+  const closeBtn = document.getElementById("closePopUp");
+  const ctaBtn = document.getElementById("ctaPopUp");
+
+  const closeAndSave = () => {
+    modal.style.display = "none";
+    localStorage.setItem("prokart_popup_visto", "true");
+  };
+
+  window.onload = () => {
+    // Solo mostramos si no se guardó el valor en el navegador
+    if (!localStorage.getItem("prokart_popup_visto")) {
+      setTimeout(() => {
+        modal.style.display = "block";
+      }, 1000);
+    }
+  };
+
+  closeBtn.onclick = closeAndSave;
+  ctaBtn.onclick = closeAndSave;
+
+  window.onclick = (event) => {
+    if (event.target == modal) closeAndSave();
+  };
+</script>
 
 </body>
 </html>
