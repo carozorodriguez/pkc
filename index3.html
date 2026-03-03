@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROKART CALETENSE | Campeonato Oficial</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       ESTILOS DEL POP-UP (Mantenlos aquí en el head)
+    ============================================================ */
+    .modal {
+      display: none; 
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      font-family: 'Oswald', sans-serif; /* Ajustado a tu fuente */
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .close-btn {
+      position: absolute;
+      right: 15px; top: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+    }
+    .cta-button {
+      background: #e10600; /* Ajustado a tu color rojo */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-family: 'Oswald';
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       TUS ESTILOS ORIGINALES
+    ============================================================ */
+    :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+    header{
+      background: linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url("img/23610.jpg") center/cover no-repeat;
+      color:#fff; text-align:center; padding:120px 20px;
+    }
+    header img{max-width:320px;width:90%}
+    nav{ position:sticky; top:0; background:var(--negro); display:flex; justify-content:center; gap:25px; padding:15px; z-index:10}
+    nav a{color:#fff;text-decoration:none}
+    nav a:hover{color:var(--rojo)}
+    section{max-width:1100px;margin:auto;padding:60px 20px}
+    h2{border-left:6px solid var(--rojo);padding-left:15px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+    .card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+    .btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
+    .btn:hover{opacity:.85}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th,td{padding:12px;border-bottom:1px solid #ddd}
+    th{background:var(--negro);color:#fff}
+    #tablaGeneral{margin-top:30px;background:#fff;border-radius:10px;overflow:hidden}
+    #tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
+    #aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
+    .footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;margin-top:40px}
+  </style>
+</head>
+
+<body>
+
+  <!-- INICIO ESTRUCTURA POP-UP -->
+  <div id="welcome-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>¡BIENVENIDO A PROKART! 👋</h2>
+      <p>Ya está disponible el calendario oficial 2026. ¡Prepárate para la velocidad!</p>
+      <button class="cta-button">Ver Fechas</button>
+    </div>
+  </div>
+  <!-- FIN ESTRUCTURA POP-UP -->
+
+  <header>
+    <img src="ProKart.jpg" alt="PROKART CALETENSE">
+    <h1>PROKART CALETENSE</h1>
+    <p>Temporada Oficial 2026</p>
+    <p class="slogan">Velocidad • Pasión • Competencia</p>
+  </header>
+
+  <nav>
+    <a href="#fechas">Fechas</a>
+    <a href="#categorias">Categorías</a>
+    <a href="#posiciones">Resultados</a>
+    <a href="campeonato.html">Campeonato</a>
+    <a href="#inscripcion">Inscripciones</a>
+  </nav>
+
+  <!-- CONTENIDO DE SECCIONES (Resumido para el ejemplo) -->
+  <section id="fechas">
+    <h2>Calendario Oficial 2026</h2>
+    <div class="grid">
+      <a href="#" class="card"><h3>Fecha 1 - Apertura</h3><p>📅 8 de Marzo</p><p>📍 Pico Truncado</p></a>
+      <!-- ... resto de tus fechas ... -->
+    </div>
+  </section>
+
+  <!-- ... el resto de tus secciones ... -->
+
+  <section id="aclaracion">
+    <div style="max-width:900px;margin:auto">
+      <h3>Nota Aclaratoria</h3>
+      <p>El ProKart Caletense no se hace responsable de los datos suministrados por la FR...</p>
+    </div>
+  </section>
+
+  <!-- INICIO LÓGICA JAVASCRIPT -->
+  <script>
+    const modal = document.getElementById("welcome-modal");
+    const closeBtn = document.querySelector(".close-btn");
+    const ctaBtn = document.querySelector(".cta-button");
+
+    // Función para cerrar y guardar en localStorage
+    const cerrarPopUp = () => {
+      modal.style.display = "none";
+      localStorage.setItem("popup_visto_2026", "true");
+    };
+
+    window.onload = () => {
+      // Si NO ha visto el popup antes, se lo mostramos
+      if (!localStorage.getItem("popup_visto_2026")) {
+        setTimeout(() => {
+          modal.style.display = "block";
+        }, 1000); // Aparece tras 1 segundo
+      }
+    };
+
+    // Eventos de cierre
+    closeBtn.onclick = cerrarPopUp;
+    ctaBtn.onclick = cerrarPopUp;
+
+    // Cerrar si hace clic fuera del recuadro blanco
+    window.onclick = (event) => {
+      if (event.target == modal) {
+        cerrarPopUp();
+      }
+    };
+  </script>
+  <!-- FIN LÓGICA JAVASCRIPT -->
+
+</body>
+</html>
