@@ -72,6 +72,10 @@ section{
 
 <section>
 
+<!-- ========================================================= -->
+<!-- 🏁 FORMULARIO CARGA DE RESULTADOS -->
+<!-- ========================================================= -->
+
 <div class="card">
   <h3>📋 Cargar Resultados</h3>
 
@@ -96,24 +100,24 @@ section{
     <button type="submit" class="btn">Guardar Resultado</button>
 
   </form>
-
 </div>
 
-<div class="card">
-  <h3>📄 Ver Sheet Oficial</h3>
-  <a class="btn" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pubhtml" target="_blank">
-    Ver Hoja en Vivo
-  </a>
-</div>
+<!-- ========================================================= -->
+<!-- 📊 ESTADO ACTUAL -->
+<!-- ========================================================= -->
 
 <div class="card stats">
   <h3>📊 Estado Actual</h3>
   <p><strong>Última fecha cargada:</strong> <span id="ultimaFecha">Cargando...</span></p>
   <p><strong>Pilotos en esa fecha:</strong> <span id="pilotosUltima">—</span></p>
-  <p><strong>Total de registros en el año:</strong> <span id="totalRegistros">—</span></p>
+  <p><strong>Total de registros:</strong> <span id="totalRegistros">—</span></p>
 </div>
 
-  <div class="card">
+<!-- ========================================================= -->
+<!-- 🏆 RECALCULAR CAMPEONATO -->
+<!-- ========================================================= -->
+
+<div class="card">
   <h3>🏆 Recalcular Campeonato</h3>
   <button class="btn" onclick="recalcular()">Recalcular Ahora</button>
   <div id="resultadoCampeonato" style="margin-top:20px;"></div>
@@ -128,94 +132,139 @@ section{
 <script src="auth.js"></script>
 
 <script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
+/* =========================================================
+   🔧 CONFIGURACIÓN GLOBAL
+========================================================= */
+
+// URL de tu Web App (Apps Script)
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbysrY6r-WN3aoYLun3s5i811npVI9Tl4zDvhHAtzHgrP39yOFoxyIvBm4UgV4z-uTvE/exec";
+
+// URL pública CSV de la hoja RESULTADOS (IMPORTANTE: gid correcto)
+const SHEET_RESULTADOS_URL = "https://docs.google.com/spreadsheets/d/1LmU_xH4Q8qtH6UE3OEfnYywJrvurUJSFKPJcBRjwHtw/edit?resourcekey=&gid=1201386360#gid=1201386360";
+
+// URL pública CSV hoja PILOTOS
+const SHEET_PILOTOS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
 function limpiar(v){
   return v?.replace(/^"|"$/g,'').trim();
 }
 
-fetch(SHEET_URL)
-.then(r=>r.text())
-.then(csv=>{
+/* =========================================================
+   🚗 CARGAR PILOTOS ACTIVOS
+========================================================= */
 
-  const filas = csv.split(/\r?\n/).slice(1)
-    .filter(f=>f.trim()!=='');
+let pilotosActivos = [];
 
-  document.getElementById("totalRegistros").textContent = filas.length;
+function cargarPilotosBase(){
+  fetch(SHEET_PILOTOS_URL)
+  .then(r=>r.text())
+  .then(csv=>{
+    const filas = csv.split(/\r?\n/).slice(1).filter(f=>f.trim()!=='');
 
-  if(filas.length === 0){
-    document.getElementById("ultimaFecha").textContent = "Sin datos";
+    pilotosActivos = filas.map(f=>{
+      const col = f.split(",");
+      return {
+        id: col[0]?.trim(),
+        categoria: col[1]?.trim(),
+        numero: col[2]?.trim(),
+        nombre: col[3]?.trim(),
+        estado: col[9]?.trim()
+      };
+    }).filter(p=>p.estado==="Activo");
+
+    cargarCategorias();
+  });
+}
+
+function cargarCategorias(){
+  const categorias = [...new Set(pilotosActivos.map(p=>p.categoria))];
+  const select = document.getElementById("categoriaResultado");
+
+  categorias.sort().forEach(cat=>{
+    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+document.getElementById("categoriaResultado")
+.addEventListener("change", function(){
+
+  const categoria = this.value;
+
+  const filtrados = pilotosActivos
+    .filter(p=>p.categoria===categoria)
+    .sort((a,b)=>Number(a.numero)-Number(b.numero));
+
+  const selectPiloto = document.getElementById("pilotoResultado");
+  selectPiloto.innerHTML = '<option value="">Seleccione piloto</option>';
+
+  filtrados.forEach(p=>{
+    selectPiloto.innerHTML += `
+      <option value="${p.id}">
+        #${p.numero} - ${p.nombre}
+      </option>
+    `;
+  });
+});
+
+/* =========================================================
+   📝 ENVIAR RESULTADO AL APPS SCRIPT
+========================================================= */
+
+document.getElementById("formResultados")
+.addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const fecha = document.getElementById("fechaResultado").value.trim();
+  const categoria = document.getElementById("categoriaResultado").value;
+  const pilotoID = document.getElementById("pilotoResultado").value;
+  const puntos = document.getElementById("puntosResultado").value;
+
+  if(!fecha || !categoria || !pilotoID || !puntos){
+    alert("Complete todos los campos");
     return;
   }
 
-  const datos = filas.map(f=>{
-    const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-    return {
-      fecha: limpiar(col[1]),
-      categoria: limpiar(col[2]),
-      piloto: limpiar(col[3]),
-      puntos: Number(limpiar(col[4])) || 0
-    };
-  });
+  const pilotoObj = pilotosActivos.find(p=>p.id===pilotoID);
 
-  // 🔹 Última fecha
-  const fechas = [...new Set(datos.map(d=>d.fecha))];
+  const datos = new FormData();
+  datos.append("accion","cargarResultado");
+  datos.append("fecha", fecha);
+  datos.append("categoria", categoria);
+  datos.append("piloto", pilotoObj.nombre);
+  datos.append("puntos", puntos);
+  datos.append("numero", pilotoObj.numero);
 
-  const ultima = fechas.sort((a,b)=>{
-    const nA = parseInt(a.replace(/\D/g,''));
-    const nB = parseInt(b.replace(/\D/g,''));
-    return nB - nA;
-  })[0];
-
-  document.getElementById("ultimaFecha").textContent = ultima;
-
-  const datosUltima = datos.filter(d=>d.fecha===ultima);
-
-  document.getElementById("pilotosUltima").textContent = datosUltima.length;
-
-  // 🔹 Categorías en esa fecha
-  const categoriasUltima = [...new Set(datosUltima.map(d=>d.categoria))];
-
-  // 🔹 Piloto con más puntos en la fecha
-  const ranking = {};
-  datosUltima.forEach(d=>{
-    ranking[d.piloto] = (ranking[d.piloto] || 0) + d.puntos;
-  });
-
-  const mejor = Object.entries(ranking)
-    .sort((a,b)=>b[1]-a[1])[0];
-
-  // 🔹 Duplicados
-  const registrosUnicos = new Set();
-  let duplicados = 0;
-
-  datosUltima.forEach(d=>{
-    const clave = d.fecha + d.categoria + d.piloto;
-    if(registrosUnicos.has(clave)){
-      duplicados++;
-    } else {
-      registrosUnicos.add(clave);
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    body:datos
+  })
+  .then(r=>r.text())
+  .then(res=>{
+    if(res.includes("ERROR")){
+      alert(res);
+      return;
     }
+
+    alert("Resultado cargado correctamente");
+    this.reset();
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Error de conexión con Apps Script");
   });
-
-  // 🔹 Mostrar info extra
-  const bloque = document.querySelector(".stats");
-
-  bloque.innerHTML += `
-    <p><strong>Categorías en la fecha:</strong> ${categoriasUltima.length}</p>
-    <p><strong>Máximo anotador:</strong> ${mejor ? mejor[0] + " (" + mejor[1] + " pts)" : "—"}</p>
-    <p><strong>Posibles duplicados:</strong> ${duplicados}</p>
-  `;
-
 });
-</script>
-<script>
+
+/* =========================================================
+   📊 RECALCULAR CAMPEONATO
+========================================================= */
+
 function recalcular(){
 
   const contenedor = document.getElementById("resultadoCampeonato");
   contenedor.innerHTML = "Calculando...";
 
-  fetch(SHEET_URL)
+  fetch(SHEET_RESULTADOS_URL)
   .then(r=>r.text())
   .then(csv=>{
 
@@ -250,38 +299,15 @@ function recalcular(){
 
       if(ordenado.length===0) return;
 
-      const puntosLider = ordenado[0][1];
+      html += `<div class="card"><h3>${cat}</h3>`;
 
-      html += `
-        <div style="margin-bottom:25px; padding:20px; background:#fff; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,.1);">
-          <h3 style="margin-bottom:15px;">${cat}</h3>
-          <table style="width:100%; border-collapse:collapse;">
-            <tr style="background:#e10600; color:#fff;">
-              <th style="padding:8px;">Pos</th>
-              <th style="padding:8px;">Piloto</th>
-              <th style="padding:8px;">Puntos</th>
-              <th style="padding:8px;">Dif.</th>
-            </tr>
-      `;
-
-      ordenado.forEach((p, index)=>{
-
-        const diferencia = puntosLider - p[1];
-
+      ordenado.forEach((p,index)=>{
         html += `
-          <tr style="text-align:center; border-bottom:1px solid #ddd;">
-            <td style="padding:6px;">${index+1}</td>
-            <td style="padding:6px; text-align:left;">${p[0]}</td>
-            <td style="padding:6px;">${p[1]}</td>
-            <td style="padding:6px;">${diferencia===0 ? "—" : diferencia}</td>
-          </tr>
+          ${index+1}° - ${p[0]} — ${p[1]} pts<br>
         `;
       });
 
-      html += `
-          </table>
-        </div>
-      `;
+      html += `</div>`;
     });
 
     contenedor.innerHTML = html || "Sin datos disponibles.";
@@ -292,122 +318,8 @@ function recalcular(){
     contenedor.innerHTML = "Error al calcular.";
   });
 }
-</script>
 
-<script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbysrY6r-WN3aoYLun3s5i811npVI9Tl4zDvhHAtzHgrP39yOFoxyIvBm4UgV4z-uTvE/exec";
-</script>
-  
-<script>
-
-const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
-
-let pilotosActivos = [];
-
-function cargarPilotosBase(){
-
-fetch(SHEET_PILOTOS)
-.then(r=>r.text())
-.then(csv=>{
-
-  const filas = csv.split(/\r?\n/).slice(1)
-    .filter(f=>f.trim()!=='');
-
-  pilotosActivos = filas.map(f=>{
-    const col = f.split(",");
-    return {
-      id: col[0]?.trim(),
-      categoria: col[1]?.trim(),
-      numero: col[2]?.trim(),
-      nombre: col[3]?.trim(),
-      estado: col[9]?.trim()
-    };
-  }).filter(p=>p.estado==="Activo");
-
-  cargarCategorias();
-});
-}
-
-function cargarCategorias(){
-
-  const categorias = [...new Set(pilotosActivos.map(p=>p.categoria))];
-
-  const select = document.getElementById("categoriaResultado");
-
-  categorias.sort().forEach(cat=>{
-    select.innerHTML += `<option value="${cat}">${cat}</option>`;
-  });
-}
-
-document.getElementById("categoriaResultado")
-.addEventListener("change", function(){
-
-  const categoria = this.value;
-
-  const filtrados = pilotosActivos
-    .filter(p=>p.categoria===categoria)
-    .sort((a,b)=>Number(a.numero)-Number(b.numero));
-
-  const selectPiloto = document.getElementById("pilotoResultado");
-
-  selectPiloto.innerHTML = '<option value="">Seleccione piloto</option>';
-
-  filtrados.forEach(p=>{
-    selectPiloto.innerHTML += `
-      <option value="${p.id}">
-        #${p.numero} - ${p.nombre}
-      </option>
-    `;
-  });
-
-});
-
-document.getElementById("formResultados")
-.addEventListener("submit", function(e){
-
-  e.preventDefault();
-
-  const fecha = document.getElementById("fechaResultado").value.trim();
-  const categoria = document.getElementById("categoriaResultado").value;
-  const pilotoID = document.getElementById("pilotoResultado").value;
-  const puntos = document.getElementById("puntosResultado").value;
-
-  if(!fecha || !categoria || !pilotoID || !puntos){
-    alert("Complete todos los campos");
-    return;
-  }
-
-  const pilotoObj = pilotosActivos.find(p=>p.id===pilotoID);
-
-  const datos = new FormData();
-
-  datos.append("accion","cargarResultado");
-  datos.append("fecha", fecha);
-  datos.append("categoria", categoria);
-  datos.append("piloto", pilotoObj.nombre);
-  datos.append("puntos", puntos);
-  datos.append("numero", pilotoObj.numero);
-
-  fetch(APPS_SCRIPT_URL,{
-    method:"POST",
-    body:datos
-  })
-  .then(r=>r.text())
-  .then(res=>{
-    if(res.includes("ERROR")){
-      alert(res);
-      return;
-    }
-
-    alert("Resultado cargado correctamente");
-    this.reset();
-  })
-  .catch(err=>{
-    console.error(err);
-    alert("Error de conexión con Apps Script");
-  });
-
-});
+/* ========================================================= */
 
 cargarPilotosBase();
 
