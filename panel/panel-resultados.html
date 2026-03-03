@@ -268,15 +268,31 @@ function recalcular(){
   .then(r=>r.text())
   .then(csv=>{
 
-    const filas = csv.split(/\r?\n/).slice(1)
-      .filter(f=>f.trim()!=='');
+    const filas = csv.split(/\r?\n/).filter(f=>f.trim()!=='');
 
-    const datos = filas.map(f=>{
-      const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+    if(filas.length < 2){
+      contenedor.innerHTML = "Sin datos disponibles.";
+      return;
+    }
+
+    // 👉 Detectar encabezados reales
+    const encabezados = filas[0].split(",").map(h=>h.trim().toLowerCase());
+
+    const idxCategoria = encabezados.indexOf("categoria");
+    const idxPiloto    = encabezados.indexOf("piloto");
+    const idxPuntos    = encabezados.indexOf("puntos");
+
+    if(idxCategoria === -1 || idxPiloto === -1 || idxPuntos === -1){
+      contenedor.innerHTML = "Error: columnas no encontradas.";
+      return;
+    }
+
+    const datos = filas.slice(1).map(f=>{
+      const col = f.split(",");
       return {
-        categoria: limpiar(col[2]),
-        piloto: limpiar(col[3]),
-        puntos: Number(limpiar(col[4])) || 0
+        categoria: col[idxCategoria]?.trim(),
+        piloto: col[idxPiloto]?.trim(),
+        puntos: Number(col[idxPuntos]) || 0
       };
     });
 
