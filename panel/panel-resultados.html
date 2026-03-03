@@ -250,23 +250,46 @@ function recalcular(){
 
       if(ordenado.length===0) return;
 
-      const lider = ordenado[0];
-      const segundo = ordenado[1];
-
-      const diferencia = segundo ? lider[1] - segundo[1] : 0;
+      const puntosLider = ordenado[0][1];
 
       html += `
-        <div style="margin-bottom:15px; padding:15px; background:#f4f4f4; border-radius:8px;">
-          <strong>${cat}</strong><br>
-          🥇 ${lider[0]} — ${lider[1]} pts<br>
-          ${segundo ? `🥈 ${segundo[0]} — ${segundo[1]} pts<br>
-          Diferencia: ${diferencia} pts` : ""}
+        <div style="margin-bottom:25px; padding:20px; background:#fff; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,.1);">
+          <h3 style="margin-bottom:15px;">${cat}</h3>
+          <table style="width:100%; border-collapse:collapse;">
+            <tr style="background:#e10600; color:#fff;">
+              <th style="padding:8px;">Pos</th>
+              <th style="padding:8px;">Piloto</th>
+              <th style="padding:8px;">Puntos</th>
+              <th style="padding:8px;">Dif.</th>
+            </tr>
+      `;
+
+      ordenado.forEach((p, index)=>{
+
+        const diferencia = puntosLider - p[1];
+
+        html += `
+          <tr style="text-align:center; border-bottom:1px solid #ddd;">
+            <td style="padding:6px;">${index+1}</td>
+            <td style="padding:6px; text-align:left;">${p[0]}</td>
+            <td style="padding:6px;">${p[1]}</td>
+            <td style="padding:6px;">${diferencia===0 ? "—" : diferencia}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </table>
         </div>
       `;
     });
 
     contenedor.innerHTML = html || "Sin datos disponibles.";
 
+  })
+  .catch(err=>{
+    console.error(err);
+    contenedor.innerHTML = "Error al calcular.";
   });
 }
 </script>
