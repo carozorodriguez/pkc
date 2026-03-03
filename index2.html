@@ -1,144 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <style>
-/* Estilos del fondo oscuro */
-.modal {
-  display: none; 
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.6);
-  backdrop-filter: blur(5px);
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROKART CALETENSE | Campeonato Oficial</title>
 
-/* El cuadro blanco */
-.modal-content {
-  background-color: #fff;
-  margin: 15% auto;
-  padding: 30px;
-  border-radius: 15px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-  font-family: sans-serif;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com" rel="stylesheet">
 
-/* Botón de cerrar (X) */
-.close-btn {
-  position: absolute;
-  right: 15px; top: 10px;
-  font-size: 24px;
-  cursor: pointer;
-  color: #888;
-}
+  <!-- ==========================================
+       ESTILOS DEL POP-UP (Mantenlos en el head)
+       ========================================== -->
+  <style>
+    .modal {
+      display: none; 
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 15px;
+      width: 85%;
+      max-width: 450px;
+      text-align: center;
+      position: relative;
+      font-family: 'Oswald', sans-serif;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    }
+    .close-btn {
+      position: absolute;
+      right: 15px; top: 10px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #888;
+      line-height: 1;
+    }
+    .cta-button {
+      background: #e10600;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-family: 'Oswald';
+      text-transform: uppercase;
+      font-weight: 700;
+      width: 100%;
+    }
+    .cta-button:hover { opacity: 0.9; }
 
-/* Botón de acción */
-.cta-button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
-}
-</style>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROKART CALETENSE | Campeonato Oficial</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
-
-<style>
-:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
-*{box-sizing:border-box}
-body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
-
-/* HEADER */
-header{
-  background:
-    linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
-    url("img/23610.jpg") center/cover no-repeat;
-  color:#fff;
-  text-align:center;
-  padding:120px 20px;
-}
-header img{max-width:320px;width:90%}
-
-/* NAV */
-nav{
-  position:sticky;
-  top:0;
-  background:var(--negro);
-  display:flex;
-  justify-content:center;
-  gap:25px;
-  padding:15px;
-  z-index:10
-}
-nav a{color:#fff;text-decoration:none}
-nav a:hover{color:var(--rojo)}
-
-/* SECCIONES */
-section{max-width:1100px;margin:auto;padding:60px 20px}
-h2{border-left:6px solid var(--rojo);padding-left:15px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-.card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
-.btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
-.btn:hover{opacity:.85}
-
-/* TABLAS */
-table{width:100%;border-collapse:collapse;margin-top:20px}
-th,td{padding:12px;border-bottom:1px solid #ddd}
-th{background:var(--negro);color:#fff}
-
-#tablaGeneral{margin-top:30px;background:#fff;border-radius:10px;overflow:hidden}
-#tablaGeneral th{text-align:center;letter-spacing:1px}
-#tablaGeneral td{text-align:center;font-weight:500}
-#tablaGeneral td:nth-child(2){text-align:left;padding-left:20px}
-#tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
-#tablaGeneral tbody tr:nth-child(2){background:#c0c0c033}
-#tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
-#tablaGeneral tbody tr:hover{background:#f1f1f1}
-
-/* ACLARACION */
-#aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
-
-/* INSTITUCIONAL */
-.institucional{text-align:center;padding:60px 20px;background:#fff}
-.institucional h2{margin-bottom:40px;border-left:5px solid var(--rojo);display:inline-block;padding-left:12px}
-.logos-federaciones{display:flex;justify-content:center;flex-wrap:wrap;gap:40px}
-.logos-federaciones img{height:90px;object-fit:contain;filter:grayscale(100%);transition:.3s}
-.logos-federaciones img:hover{filter:grayscale(0%);transform:scale(1.05)}
-
-/* FOOTER */
-.footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;margin-top:40px}
-.sponsors img{height:45px;margin:0 10px}
-</style>
+    /* TUS ESTILOS ORIGINALES */
+    :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+    header{
+      background: linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url("img/23610.jpg") center/cover no-repeat;
+      color:#fff; text-align:center; padding:120px 20px;
+    }
+    header img{max-width:320px;width:90%}
+    nav{ position:sticky; top:0; background:var(--negro); display:flex; justify-content:center; gap:25px; padding:15px; z-index:10}
+    nav a{color:#fff;text-decoration:none}
+    nav a:hover{color:var(--rojo)}
+    section{max-width:1100px;margin:auto;padding:60px 20px}
+    h2{border-left:6px solid var(--rojo);padding-left:15px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+    .card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+    .btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
+    .btn:hover{opacity:.85}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th,td{padding:12px;border-bottom:1px solid #ddd}
+    th{background:var(--negro);color:#fff}
+    #tablaGeneral{margin-top:30px;background:#fff;border-radius:10px;overflow:hidden}
+    #tablaGeneral th{text-align:center;letter-spacing:1px}
+    #tablaGeneral td{text-align:center;font-weight:500}
+    #tablaGeneral td:nth-child(2){text-align:left;padding-left:20px}
+    #tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
+    #tablaGeneral tbody tr:nth-child(2){background:#c0c0c033}
+    #tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
+    #tablaGeneral tbody tr:hover{background:#f1f1f1}
+    #aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
+    .footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;margin-top:40px}
+  </style>
 </head>
 
 <body>
-//pop up
-  <!-- Estructura del Pop-up -->
+
+<!-- ESTRUCTURA POP-UP -->
 <div id="welcome-modal" class="modal">
   <div class="modal-content">
-    <span class="close-btn">&times;</span>
-    <h2>¡Qué bueno verte! 👋</h2>
-    <p>Gracias por visitar mi sitio. Suscríbete para no perderte nada.</p>
-    <button class="cta-button">Empezar</button>
+    <span class="close-btn" id="closePopUp">&times;</span>
+    <h2 style="border:none; padding:0; margin-bottom:15px; color:var(--negro)">¡BIENVENIDO AL PROKART! 🏎️</h2>
+    <p>Te damos la bienvenida a la Temporada Oficial 2026. Revisa el calendario y prepárate para la acción.</p>
+    <button class="cta-button" id="ctaPopUp">VER CALENDARIO</button>
   </div>
 </div>
+
 <header>
   <img src="ProKart.jpg" alt="PROKART CALETENSE">
   <h1>PROKART CALETENSE</h1>
   <p>Temporada Oficial 2026</p>
   <p class="slogan">Velocidad • Pasión • Competencia</p>
-
 </header>
 
 <nav>
@@ -149,11 +117,9 @@ th{background:var(--negro);color:#fff}
   <a href="#inscripcion">Inscripciones</a>
 </nav>
 
-<!-- ================= FECHAS ================= -->
 <section id="fechas">
 <h2>Calendario Oficial 2026</h2>
 <div class="grid">
-
 <a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1 - Apertura</h3><p>📅 8 de Marzo</p><p>📍 Pico Truncado</p></a>
 <a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2</h3><p>📅 5 de Abril</p><p>📍 Pico Truncado</p></a>
 <a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3 - Fecha Doble</h3><p>📅 2 de Mayo</p><p>📍 Caleta Olivia</p></a>
@@ -167,260 +133,73 @@ th{background:var(--negro);color:#fff}
 </div>
 </section>
 
-<!-- ================= CATEGORIAS ================= -->
 <section id="categorias">
 <h2>Categorías</h2>
-
 <div class="card"><h3>PRE JUNIOR</h3><p><strong>Reglamento:</strong> Categoría formativa destinada a pilotos en etapa inicial.</p><a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-
 <div class="card"><h3>JUNIOR</h3><p><strong>Reglamento:</strong> Categoría juvenil competitiva.</p><a class="btn" href="reglamentos/Reglamento_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-
 <div class="card"><h3>110 Cajeros</h3><p><strong>Reglamento:</strong> Motores 110cc – preparación controlada.</p><a class="btn" href="reglamentos/Reglamento_110_Cajeros.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-
 <div class="card"><h3>200 Master</h3><p><strong>Reglamento:</strong> Categoría para pilotos experimentados.</p><a class="btn" href="reglamentos/Reglamento_200_Master.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-
 <div class="card"><h3>200 STD</h3><p><strong>Reglamento:</strong> Categoría estándar – igualdad mecánica.</p><a class="btn" href="reglamentos/Reglamento_200_STD.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-
 </section>
 
-<!-- ================= RESULTADOS ================= -->
 <section id="posiciones">
 <h2>Resultados</h2>
 <select id="categoriaSelect"></select>
 <select id="fechaSelect"></select>
-
 <table id="tablaResultados">
 <thead><tr><th>Puesto</th><th>Piloto</th><th>Puntos</th></tr></thead>
 <tbody></tbody>
 </table>
-
 <table id="tablaGeneral">
 <thead><tr><th>Pos</th><th>Piloto</th><th>Total</th></tr></thead>
 <tbody></tbody>
 </table>
 </section>
 
-<!-- ================= INSCRIPCION ================= -->
 <section id="inscripcion">
 <h2>Inscripciones</h2>
 <div class="card">
 <p>Las inscripciones se realizan mediante el formulario oficial.</p>
-<a class="btn" href="https://docs.google.com/forms" target="_blank">Ir al Formulario</a>
+<a class="btn" href="https://docs.google.com" target="_blank">Ir al Formulario</a>
 </div>
 </section>
 
-<!-- ================= ACLARACION ================= -->
 <section id="aclaracion">
 <div style="max-width:900px;margin:auto">
 <h3>Nota Aclaratoria</h3>
-<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FRAD de Santa Cruz Zona Norte para la confección de los puntajes y estadísticas publicadas en esta aplicación.</p>
+<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FR</p>
 </div>
 </section>
 
-<!-- ================= INSTITUCIONAL ================= -->
-<section class="institucional">
-<h2>Instituciones que nos respaldan</h2>
-<div class="logos-federaciones">
-<img src="img/frad.png" alt="FRAD SCZN">
-<img src="img/cda.png" alt="CDA">
-<img src="img/aca.png" alt="ACA">
-</div>
-</section>
-
-<!-- ================= FOOTER ================= -->
-<footer class="footer">
-<div class="sponsors">
-<img src="sponsors/vintage.png" alt="Vintage Motors 4T">
-<img src="sponsors/caleta.png" alt="Repuestos Santiago">
-<img src="sponsors/dany.png" alt="Dany Kart">
-</div>
-<p>© 2026 PROKART CALETENSE</p>
-</footer>
+<!-- ==========================================
+     LÓGICA JAVASCRIPT (Con sessionStorage)
+     ========================================== -->
 <script>
+  const modal = document.getElementById("welcome-modal");
+  const closeBtn = document.getElementById("closePopUp");
+  const ctaBtn = document.getElementById("ctaPopUp");
 
-  // Prueba pop up
-  
-const modal = document.getElementById("welcome-modal");
-const closeBtn = document.querySelector(".close-btn");
-const ctaBtn = document.querySelector(".cta-button");
+  const closeAndSave = () => {
+    modal.style.display = "none";
+    // Cambiado a sessionStorage
+    sessionStorage.setItem("prokart_popup_visto", "true");
+  };
 
-// Función para cerrar el modal y marcar como "visto"
-const closeModal = () => {
-  modal.style.display = "none";
-  // Guardamos en el navegador que ya se mostró
-  localStorage.setItem("modalVisto", "true");
-};
+  window.onload = () => {
+    // Cambiado a sessionStorage
+    if (!sessionStorage.getItem("prokart_popup_visto")) {
+      setTimeout(() => {
+        modal.style.display = "block";
+      }, 1000);
+    }
+  };
 
-window.onload = () => {
-  // Verificamos si ya existe la marca en localStorage
-  const yaSeMostro = localStorage.getItem("modalVisto");
+  closeBtn.onclick = closeAndSave;
+  ctaBtn.onclick = closeAndSave;
 
-  if (!yaSeMostro) {
-    setTimeout(() => {
-      modal.style.display = "block";
-    }, 1000); // Aparece tras 1 segundo
-  }
-};
-
-// Eventos para cerrar
-closeBtn.onclick = closeModal;
-ctaBtn.onclick = closeModal;
-
-window.onclick = (event) => {
-  if (event.target == modal) closeModal();
-};
-// Fin
-
-const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
-
-const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
-
-let datos = [];
-let pilotosDB = {};
-
-async function cargarDatos(){
-  try{
-
-    // ================= RESULTADOS =================
-    const resResultados = await fetch(SHEET_RESULTADOS);
-    const textResultados = await resResultados.text();
-    const filasR = textResultados.split("\n").map(f => f.split(","));
-    const encabezadosR = filasR[0].map(h => h.trim());
-
-    const idxFecha = encabezadosR.indexOf("Fecha");
-    const idxCategoria = encabezadosR.indexOf("Categoria");
-    const idxPiloto = encabezadosR.indexOf("Piloto");
-    const idxPuntos = encabezadosR.indexOf("Puntos Obtenidos");
-    const idxNumero = encabezadosR.indexOf("Numero");
-
-    datos = filasR.slice(1).map(f=>{
-      const categoria = f[idxCategoria]?.trim();
-      const numero = f[idxNumero]?.trim();
-      const id = categoria + "_" + numero;
-
-      return {
-        fecha: f[idxFecha]?.trim(),
-        categoria: categoria,
-        piloto: f[idxPiloto]?.trim(),
-        numero: numero,
-        puntos: parseInt(f[idxPuntos]) || 0,
-        id: id
-      };
-    }).filter(d=>d.fecha && d.categoria && d.piloto);
-
-    // ================= PILOTOS =================
-    const resPilotos = await fetch(SHEET_PILOTOS);
-    const textPilotos = await resPilotos.text();
-    const filasP = textPilotos.split("\n").map(f => f.split(","));
-    const encabezadosP = filasP[0].map(h => h.trim());
-
-    const idxID = encabezadosP.indexOf("ID");
-    const idxNombre = encabezadosP.indexOf("Nombre");
-    const idxEquipo = encabezadosP.indexOf("Equipo");
-    const idxLocalidad = encabezadosP.indexOf("Localidad");
-    const idxFoto = encabezadosP.indexOf("FotoURL");
-    const idxEstado = encabezadosP.indexOf("Estado");
-
-    pilotosDB = {};
-
-    filasP.slice(1).forEach(f=>{
-      const id = f[idxID]?.trim();
-      if(!id) return;
-
-      pilotosDB[id] = {
-        nombre: f[idxNombre]?.trim(),
-        equipo: f[idxEquipo]?.trim(),
-        localidad: f[idxLocalidad]?.trim(),
-        foto: f[idxFoto]?.trim(),
-        estado: f[idxEstado]?.trim()
-      };
-    });
-
-    cargarCategorias();
-
-  }catch(e){
-    console.error("Error cargando datos:", e);
-  }
-}
-
-function cargarCategorias(){
-  const categorias = [...new Set(datos.map(d=>d.categoria))];
-  const select = document.getElementById("categoriaSelect");
-
-  select.innerHTML = categorias.map(c=>`<option value="${c}">${c}</option>`).join("");
-
-  select.addEventListener("change", cargarFechas);
-  cargarFechas();
-}
-
-function cargarFechas(){
-  const categoria = document.getElementById("categoriaSelect").value;
-
-  const fechas = [...new Set(
-    datos.filter(d=>d.categoria===categoria).map(d=>d.fecha)
-  )];
-
-  const select = document.getElementById("fechaSelect");
-
-  select.innerHTML = fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
-
-  select.addEventListener("change", mostrarResultados);
-  mostrarResultados();
-}
-
-function mostrarResultados(){
-  const categoria = document.getElementById("categoriaSelect").value;
-  const fecha = document.getElementById("fechaSelect").value;
-
-  const filtrados = datos
-    .filter(d=>d.categoria===categoria && d.fecha===fecha)
-    .sort((a,b)=>b.puntos-a.puntos);
-
-  const tbody = document.querySelector("#tablaResultados tbody");
-  tbody.innerHTML = "";
-
-  filtrados.forEach((d,i)=>{
-    const pilotoInfo = pilotosDB[d.id];
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${pilotoInfo?.nombre || d.piloto}</td>
-        <td>${d.puntos}</td>
-      </tr>`;
-  });
-
-  mostrarGeneral(categoria);
-}
-
-function mostrarGeneral(categoria){
-  const acumulado = {};
-
-  datos
-    .filter(d=>d.categoria===categoria)
-    .forEach(d=>{
-      acumulado[d.id] = (acumulado[d.id]||0) + d.puntos;
-    });
-
-  const ranking = Object.entries(acumulado)
-    .sort((a,b)=>b[1]-a[1]);
-
-  const tbody = document.querySelector("#tablaGeneral tbody");
-  tbody.innerHTML = "";
-
-  ranking.forEach((d,i)=>{
-    const pilotoInfo = pilotosDB[d[0]];
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${pilotoInfo?.nombre || d[0]}</td>
-        <td>${d[1]}</td>
-      </tr>`;
-  });
-}
-
-cargarDatos();
+  window.onclick = (event) => {
+    if (event.target == modal) closeAndSave();
+  };
 </script>
 
 </body>
