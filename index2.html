@@ -182,6 +182,40 @@ th{background:var(--negro);color:#fff}
 <p>© 2026 PROKART CALETENSE</p>
 </footer>
 <script>
+
+  // Prueba pop up
+  
+const modal = document.getElementById("welcome-modal");
+const closeBtn = document.querySelector(".close-btn");
+const ctaBtn = document.querySelector(".cta-button");
+
+// Función para cerrar el modal y marcar como "visto"
+const closeModal = () => {
+  modal.style.display = "none";
+  // Guardamos en el navegador que ya se mostró
+  localStorage.setItem("modalVisto", "true");
+};
+
+window.onload = () => {
+  // Verificamos si ya existe la marca en localStorage
+  const yaSeMostro = localStorage.getItem("modalVisto");
+
+  if (!yaSeMostro) {
+    setTimeout(() => {
+      modal.style.display = "block";
+    }, 1000); // Aparece tras 1 segundo
+  }
+};
+
+// Eventos para cerrar
+closeBtn.onclick = closeModal;
+ctaBtn.onclick = closeModal;
+
+window.onclick = (event) => {
+  if (event.target == modal) closeModal();
+};
+// Fin
+
 const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
 
 const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
