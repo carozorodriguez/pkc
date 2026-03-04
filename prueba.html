@@ -1,230 +1,408 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PROKART CALETENSE | Campeonato Oficial</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROKART CALETENSE | Campeonato Oficial</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com" rel="stylesheet">
+<style>
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 
-  <style>
-    /* ==========================================
-       ESTILOS DEL POP-UP CON SPONSORS
-       ========================================== */
-    .modal {
-      display: none; 
-      position: fixed;
-      z-index: 2000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.8);
-      backdrop-filter: blur(5px);
-    }
-    .modal-content {
-      background-color: #fff;
-      margin: 10% auto;
-      padding: 25px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      position: relative;
-      font-family: 'Oswald', sans-serif;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .close-btn {
-      position: absolute;
-      right: 15px; top: 10px;
-      font-size: 30px;
-      cursor: pointer;
-      color: #333;
-      line-height: 1;
-    }
-    /* Estilo para la imagen del sponsor */
-    .sponsor-container {
-      margin: 15px 0;
-      min-height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #sponsor-img {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: 8px;
-      object-fit: contain;
-    }
-    .cta-button {
-      background: #e10600;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: 'Oswald';
-      text-transform: uppercase;
-      font-weight: 700;
-      width: 100%;
-    }
+/* ==========================================
+   NUEVOS ESTILOS PARA EL POP-UP DE SPONSORS
+   ========================================== */
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+}
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.close-btn {
+  position: absolute;
+  right: 15px; top: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  color: #333;
+  line-height: 1;
+}
+.sponsor-container {
+  margin: 15px 0;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#sponsor-img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.pop-cta {
+  background: var(--rojo);
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Oswald';
+  text-transform: uppercase;
+  font-weight: 700;
+  width: 100%;
+  text-decoration: none;
+  display: block;
+}
+/* ========================================== */
 
-    /* TUS ESTILOS ORIGINALES */
-    :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
-    header{
-      background: linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url("img/23610.jpg") center/cover no-repeat;
-      color:#fff; text-align:center; padding:120px 20px;
-    }
-    header img{max-width:320px;width:90%}
-    nav{ position:sticky; top:0; background:var(--negro); display:flex; justify-content:center; gap:25px; padding:15px; z-index:10}
-    nav a{color:#fff;text-decoration:none}
-    nav a:hover{color:var(--rojo)}
-    section{max-width:1100px;margin:auto;padding:60px 20px}
-    h2{border-left:6px solid var(--rojo);padding-left:15px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-    .card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
-    .btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
-    .btn:hover{opacity:.85}
-    table{width:100%;border-collapse:collapse;margin-top:20px}
-    th,td{padding:12px;border-bottom:1px solid #ddd}
-    th{background:var(--negro);color:#fff}
-    #tablaGeneral{margin-top:30px;background:#fff;border-radius:10px;overflow:hidden}
-    #aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
-  </style>
+header{
+  background:linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
+  url("img/23610.jpg") center/cover no-repeat;
+  color:#fff;text-align:center;padding:120px 20px;
+}
+header img{max-width:320px;width:90%}
+
+nav{position:sticky;top:0;background:var(--negro);display:flex;justify-content:center;gap:25px;padding:15px;z-index:10}
+nav a{color:#fff;text-decoration:none}
+nav a:hover{color:var(--rojo)}
+
+section{max-width:1100px;margin:auto;padding:60px 20px}
+h2{border-left:6px solid var(--rojo);padding-left:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
+
+/* TABLAS */
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{padding:12px;border-bottom:1px solid #ddd}
+th{background:var(--negro);color:#fff}
+
+#tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
+#tablaGeneral tbody tr:nth-child(2){background:#c0c0c033}
+#tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
+
+#aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
+
+.institucional{text-align:center;padding:60px 20px;background:#fff}
+.logos-federaciones{display:flex;justify-content:center;flex-wrap:wrap;gap:40px}
+.logos-federaciones img{height:90px;object-fit:contain;filter:grayscale(100%);transition:.3s}
+.logos-federaciones img:hover{filter:grayscale(0%);transform:scale(1.05)}
+
+.footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;margin-top:40px}
+.sponsors img{height:45px;margin:0 10px}
+</style>
 </head>
-
 <body>
 
-<!-- ESTRUCTURA DEL POP-UP -->
+<!-- ==========================================
+     NUEVO: ESTRUCTURA DEL POP-UP DE SPONSORS
+     ========================================== -->
 <div id="welcome-modal" class="modal">
   <div class="modal-content">
     <span class="close-btn" id="closePopUp">&times;</span>
-    <p style="margin:0; color:#888; font-size:14px; text-transform:uppercase;">Auspiciante Oficial</p>
+    <p style="margin:0; color:#888; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Auspiciante Oficial</p>
     
-    <!-- Contenedor de la imagen aleatoria -->
     <div class="sponsor-container">
       <img id="sponsor-img" src="" alt="Sponsor ProKart">
     </div>
 
-    <h2 id="sponsor-name" style="border:none; padding:0; margin:10px 0; font-size:20px;">NOMBRE SPONSOR</h2>
-    <button class="cta-button" id="ctaPopUp">INGRESAR AL SITIO</button>
+    <h2 id="sponsor-name" style="border:none; padding:0; margin:10px 0; font-size:22px; color:var(--negro)">CARGANDO...</h2>
+    
+    <!-- Este botón cierra el pop-up y te lleva a tu sección de inscripciones -->
+    <a href="#inscripcion" class="pop-cta" id="ctaPopUp">INSCRIBIRSE AHORA</a>
   </div>
 </div>
+<!-- ========================================== -->
 
-<!-- TU CONTENIDO ORIGINAL COMPLETO -->
 <header>
   <img src="ProKart.jpg" alt="PROKART CALETENSE">
   <h1>PROKART CALETENSE</h1>
   <p>Temporada Oficial 2026</p>
-  <p class="slogan">Velocidad • Pasión • Competencia</p>
 </header>
 
 <nav>
   <a href="#fechas">Fechas</a>
   <a href="#categorias">Categorías</a>
   <a href="#posiciones">Resultados</a>
-  <a href="campeonato.html">Campeonato</a>
+  <a href="index.html">Campeonato</a>
   <a href="#inscripcion">Inscripciones</a>
 </nav>
 
+<!-- ================= FECHAS ================= -->
 <section id="fechas">
 <h2>Calendario Oficial 2026</h2>
 <div class="grid">
-<a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1 - Apertura</h3><p>📅 8 de Marzo</p><p>📍 Pico Truncado</p></a>
-<a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2</h3><p>📅 5 de Abril</p><p>📍 Pico Truncado</p></a>
-<a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3 - Fecha Doble</h3><p>📅 2 de Mayo</p><p>📍 Caleta Olivia</p></a>
-<a href="fecha.html?fecha=Fecha%204" class="card"><h3>Fecha 4 - Fecha Doble</h3><p>📅 3 de Mayo</p><p>📍 Caleta Olivia</p></a>
-<a href="fecha.html?fecha=Fecha%205" class="card"><h3>Fecha 5</h3><p>📅 7 de Junio</p><p>📍 Caleta Olivia</p></a>
-<a href="fecha.html?fecha=Fecha%206" class="card"><h3>Fecha 6</h3><p>📅 2 de Agosto</p><p>📍 Las Heras</p></a>
-<a href="fecha.html?fecha=Fecha%207" class="card"><h3>Fecha 7- Fecha Doble</h3><p>📅 6 de Setiembre</p><p>📍 Puerto Deseado</p></a>
-<a href="fecha.html?fecha=Fecha%208" class="card"><h3>Fecha 8- Fecha Doble</h3><p>📅 7 de Setiembre</p><p>📍 Puerto Deseado</p></a>
-<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 9</h3><p>📅 4 de Octubre</p><p>📍 Las Heras</p></a>
-<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 10 - Cierre</h3><p>📅1 de Novienbre</p><p>📍 Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1 - Apertura</h3><p>8 de Marzo - Pico Truncado</p></a>
+<a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2</h3><p>5 de Abril - Pico Truncado</p></a>
+<a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3 - Doble</h3><p>2 de Mayo - Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%204" class="card"><h3>Fecha 4 - Doble</h3><p>3 de Mayo - Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%205" class="card"><h3>Fecha 5</h3><p>7 de Junio - Caleta Olivia</p></a>
+<a href="fecha.html?fecha=Fecha%206" class="card"><h3>Fecha 6</h3><p>2 de Agosto - Las Heras</p></a>
+<a href="fecha.html?fecha=Fecha%207" class="card"><h3>Fecha 7 - Doble</h3><p>6 de Septiembre - Puerto Deseado</p></a>
+<a href="fecha.html?fecha=Fecha%208" class="card"><h3>Fecha 8 - Doble</h3><p>7 de Septiembre - Puerto Deseado</p></a>
+<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 9</h3><p>4 de Octubre - Las Heras</p></a>
+<a href="fecha.html?fecha=Fecha%2010" class="card"><h3>Fecha 10 - Cierre</h3><p>1 de Noviembre - Caleta Olivia</p></a>
 </div>
 </section>
 
+<!-- ================= CATEGORIAS ================= -->
 <section id="categorias">
-<h2>Categorías</h2>
-<div class="card"><h3>PRE JUNIOR</h3><p><strong>Reglamento:</strong> Categoría formativa destinada a pilotos en etapa inicial.</p><a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-<div class="card"><h3>JUNIOR</h3><p><strong>Reglamento:</strong> Categoría juvenil competitiva.</p><a class="btn" href="reglamentos/Reglamento_JUNIOR.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-<div class="card"><h3>110 Cajeros</h3><p><strong>Reglamento:</strong> Motores 110cc – preparación controlada.</p><a class="btn" href="reglamentos/Reglamento_110_Cajeros.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-<div class="card"><h3>200 Master</h3><p><strong>Reglamento:</strong> Categoría para pilotos experimentados.</p><a class="btn" href="reglamentos/Reglamento_200_Master.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
-<div class="card"><h3>200 STD</h3><p><strong>Reglamento:</strong> Categoría estándar – igualdad mecánica.</p><a class="btn" href="reglamentos/Reglamento_200_STD.pdf" target="_blank">Descargar Reglamento PDF</a><h4>Pilotos Rankeados</h4><div class="grid"></div></div>
+    <h2>Categorías</h2>
+    <p>Selecciona tu categoría para descargar el reglamento correspondiente.</p>
+
+    <div class="grid">
+        <div class="card">
+            <h3>PRE JUNIOR</h3>
+            <p class="edad">desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en el campeonato 2026</p> 
+            <a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR_2026.pdf" target="_blank">Descargar Reglamento</a>
+        </div>
+
+        <div class="card">
+            <h3>JUNIOR</h3>
+            <p class="edad">desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en el campeonato 2026</p>
+            <a class="btn" href="reglamentos/Reglamento_JUNIOR_2026.pdf" target="_blank">Descargar Reglamento</a>
+        </div>
+
+        <div class="card">
+            <h3>110 Cajeros</h3>
+            <p class="edad">desde los 12 años cumplidos en 2025 hasta los 17 años cumplidos en el campeonato 2026</p>
+            <a class="btn" href="reglamentos/Reglamento_110_CAJEROS_2026.pdf" target="_blank">Descargar Reglamento</a>
+        </div>
+
+        <div class="card">
+            <h3>200 STD</h3>
+            <p class="edad">desde los 16 años cumplidos en 2025 hasta los 31 años cumplidos en el campeonato 2026</p>
+            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
+        </div>
+      
+       <div class="card">
+            <h3>200 Master</h3>
+            <p class="edad">desde los 30 años cumplidos en 2025 </p>
+            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
+        </div>
+    </div>
 </section>
 
+<!-- ================= RESULTADOS ================= -->
+<div style="display: none;">
 <section id="posiciones">
 <h2>Resultados</h2>
 <select id="categoriaSelect"></select>
 <select id="fechaSelect"></select>
+
 <table id="tablaResultados">
 <thead><tr><th>Puesto</th><th>Piloto</th><th>Puntos</th></tr></thead>
 <tbody></tbody>
 </table>
+
+<h2>Tabla General</h2>
 <table id="tablaGeneral">
 <thead><tr><th>Pos</th><th>Piloto</th><th>Total</th></tr></thead>
 <tbody></tbody>
 </table>
 </section>
+</div>
 
+<!-- ================= INSCRIPCION ================= -->
 <section id="inscripcion">
 <h2>Inscripciones</h2>
 <div class="card">
-<p>Las inscripciones se realizan mediante el formulario oficial.</p>
-<a class="btn" href="https://docs.google.com" target="_blank">Ir al Formulario</a>
+<a class="btn" href="https://forms.gle/eo6RPdSJH5xjrBCu8" target="_blank">Formulario Oficial</a>
 </div>
 </section>
 
+<!-- ================= ACLARACION ================= -->
 <section id="aclaracion">
 <div style="max-width:900px;margin:auto">
 <h3>Nota Aclaratoria</h3>
-<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FR</p>
+<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FRAD de Santa Cruz Zona Norte para la confección de los puntajes y estadísticas publicadas en esta aplicación.</p>
 </div>
 </section>
 
-<!-- ==========================================
-     LÓGICA JAVASCRIPT CON SPONSORS ALEATORIOS
-     ========================================== -->
+<!-- ================= INSTITUCIONAL ================= -->
+<section class="institucional">
+<h2>Instituciones que nos respaldan</h2>
+<div class="logos-federaciones">
+<img src="img/frad.png" alt="FRAD SCZN">
+<img src="img/cda.png" alt="CDA">
+<img src="img/aca.png" alt="ACA">
+</div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+<div class="sponsors">
+<img src="sponsors/vintage.png" alt="Vintage Motors 4T">
+<img src="sponsors/caleta.png" alt="Repuestos Santiago">
+<img src="sponsors/dany.png" alt="Dany Kart">
+</div>
+<p>© 2026 PROKART CALETENSE</p>
+</footer>
+
+
 <script>
-  // 1. Define aquí tus sponsors (Nombre e imagen)
-  const sponsors = [
-    { nombre: "Lubricantes RM", imagen: "img/sponsor1.jpg" },
-    { nombre: "Repuestos Caleta", imagen: "img/sponsor2.jpg" },
-    { nombre: "Neumáticos Norte", imagen: "img/sponsor3.jpg" },
-    { nombre: "Mecánica Lacrouts", imagen: "img/sponsor4.jpg" }
+  // ==========================================
+  // 1. CONFIGURACIÓN DEL POP-UP DE SPONSORS
+  // ==========================================
+  const sponsorsPop = [
+    { nombre: "Vintage Motors 4T", img: "sponsors/vintage.png" },
+    { nombre: "Repuestos Santiago", img: "sponsors/caleta.png" },
+    { nombre: "Dany Kart", img: "sponsors/dany.png" }
   ];
 
   const modal = document.getElementById("welcome-modal");
   const closeBtn = document.getElementById("closePopUp");
-  const ctaBtn = document.getElementById("ctaPopUp");
-  const sponsorImg = document.getElementById("sponsor-img");
-  const sponsorName = document.getElementById("sponsor-name");
+  const ctaPop = document.getElementById("ctaPopUp");
+  const sImg = document.getElementById("sponsor-img");
+  const sName = document.getElementById("sponsor-name");
 
-  const closeAndSave = () => {
-    modal.style.display = "none";
-    sessionStorage.setItem("prokart_popup_visto", "true");
-  };
+  // Función para inicializar el Pop-up aleatorio
+  function iniciarPopUp() {
+    const rand = Math.floor(Math.random() * sponsorsPop.length);
+    sImg.src = sponsorsPop[rand].img;
+    sName.innerText = sponsorsPop[rand].nombre;
 
-  window.onload = () => {
-    if (!sessionStorage.getItem("prokart_popup_visto")) {
-      
-      // 2. Elegir un sponsor aleatorio
-      const indexAleatorio = Math.floor(Math.random() * sponsors.length);
-      const sponsorElegido = sponsors[indexAleatorio];
+    setTimeout(() => { 
+      modal.style.display = "block"; 
+    }, 800);
+  }
 
-      // 3. Cargar los datos en el pop-up
-      sponsorImg.src = sponsorElegido.imagen;
-      sponsorName.innerText = sponsorElegido.nombre;
+  // Eventos de cierre
+  closeBtn.onclick = () => modal.style.display = "none";
+  ctaPop.onclick = () => modal.style.display = "none";
+  window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
 
-      setTimeout(() => {
-        modal.style.display = "block";
-      }, 1000);
-    }
-  };
+  // ==========================================
+  // 2. TU LÓGICA ORIGINAL DE RESULTADOS
+  // ==========================================
+  const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+  const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
-  closeBtn.onclick = closeAndSave;
-  ctaBtn.onclick = closeAndSave;
-  window.onclick = (event) => { if (event.target == modal) closeAndSave(); };
+  let datos=[];
+  let pilotosDB={};
+
+  function parseCSV(text){
+    return text.split("\n").map(row =>
+      row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+         .map(c => c.replace(/^"|"$/g,'').trim())
+    );
+  }
+
+  async function cargarDatos(){
+    // Lanzar el Pop-up mientras cargan los datos
+    iniciarPopUp();
+
+    // ===== RESULTADOS =====
+    const r1 = await fetch(SHEET_RESULTADOS);
+    const t1 = await r1.text();
+    const f1 = parseCSV(t1);
+
+    const h1 = f1[0] || [];
+    const iFecha = h1.indexOf("Fecha");
+    const iCat   = h1.indexOf("Categoria");
+    const iPil   = h1.indexOf("Piloto");
+    const iPts   = h1.indexOf("Puntos Obtenidos");
+    const iNum   = h1.indexOf("Numero");
+
+    datos = f1.slice(1).map(f=>{
+      if(!f.length) return null;
+      const categoria = f[iCat];
+      const numero    = f[iNum];
+      return {
+        fecha: f[iFecha],
+        categoria,
+        piloto: f[iPil],
+        numero,
+        puntos: Number(f[iPts]) || 0,
+        id: categoria && numero ? categoria+"_"+numero : null
+      };
+    }).filter(d => d && d.fecha && d.categoria && d.numero);
+
+    // ===== PILOTOS =====
+    const r2 = await fetch(SHEET_PILOTOS);
+    const t2 = await r2.text();
+    const f2 = parseCSV(t2);
+    const h2 = f2[0] || [];
+    const iID  = h2.indexOf("ID");
+    const iNom = h2.indexOf("Nombre");
+
+    f2.slice(1).forEach(f=>{
+      if(f[iID]){
+        pilotosDB[f[iID]] = { nombre: f[iNom] };
+      }
+    });
+
+    cargarCategorias();
+  }
+
+  function cargarCategorias(){
+    const selectCat = document.getElementById("categoriaSelect");
+    const cats=[...new Set(datos.map(d=>d.categoria))];
+    selectCat.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+    cargarFechas();
+  }
+
+  function cargarFechas(){
+    const selectCat = document.getElementById("categoriaSelect");
+    const selectFecha = document.getElementById("fechaSelect");
+    const cat=selectCat.value;
+    const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+    selectFecha.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+    mostrarResultados();
+  }
+
+  function mostrarResultados(){
+    const cat=document.getElementById("categoriaSelect").value;
+    const fec=document.getElementById("fechaSelect").value;
+    const filtrados=datos
+      .filter(d=>d.categoria===cat && d.fecha===fec)
+      .sort((a,b)=>b.puntos-a.puntos);
+
+    document.querySelector("#tablaResultados tbody").innerHTML=
+      filtrados.map((d,i)=>`
+  <tr>
+  <td>${i+1}</td>
+  <td><a href="piloto.html?id=${encodeURIComponent(d.id)}">${pilotosDB[d.id]?.nombre || d.piloto}</a></td>
+  <td>${d.puntos}</td>
+  </tr>`).join("");
+    mostrarGeneral(cat);
+  }
+
+  function mostrarGeneral(cat){
+    const mapa={};
+    datos.filter(d=>d.categoria===cat).forEach(d=>{
+      mapa[d.id]=(mapa[d.id]||0)+d.puntos;
+    });
+    const ranking=Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
+    document.querySelector("#tablaGeneral tbody").innerHTML=
+      ranking.map((d,i)=>`
+  <tr>
+  <td>${i+1}</td>
+  <td><a href="piloto.html?id=${encodeURIComponent(d[0])}">${pilotosDB[d[0]]?.nombre || d[0]}</a></td>
+  <td>${d[1]}</td>
+  </tr>`).join("");
+  }
+
+  document.getElementById("categoriaSelect").addEventListener('change',cargarFechas);
+  document.getElementById("fechaSelect").addEventListener('change',mostrarResultados);
+
+  cargarDatos();
 </script>
 
 </body>
