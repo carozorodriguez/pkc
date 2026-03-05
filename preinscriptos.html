@@ -1,0 +1,37 @@
+<!-- ================= LISTA DE INSCRIPTOS ================= -->
+<section id="lista-inscriptos">
+  <h2>Pilotos Confirmados 2026</h2>
+  <div id="contenedor-grupos" class="grid">
+    <!-- Aquí se cargarán las categorías y sus pilotos -->
+    <p>Cargando lista de pilotos...</p>
+  </div>
+</section>
+
+<style>
+  .categoria-grupo {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  .categoria-grupo h3 {
+    color: var(--rojo);
+    border-bottom: 2px solid var(--gris);
+    padding-bottom: 10px;
+    margin-top: 0;
+  }
+  .lista-pilotos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .lista-pilotos li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+  }
+  .lista-pilotos li:last-child { border: none; }
+  .num-piloto { font-weight: bold; color: var(--negro); }
+</style>
