@@ -1,3 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultados por Fecha | PROKART</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+header{background:#000;color:#fff;text-align:center;padding:50px 20px}
+section{max-width:1100px;margin:auto;padding:50px 20px}
+h2{border-left:6px solid var(--rojo);padding-left:15px}
+table{width:100%;border-collapse:collapse;margin-top:20px;background:#fff}
+th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center}
+th{background:#111;color:#fff}
+td:nth-child(2){text-align:left;padding-left:15px}
+a{color:#e10600;text-decoration:none}
+a:hover{text-decoration:underline}
+.categoria{margin-bottom:60px}
+.volver{
+display:inline-block;
+margin-top:30px;
+background:var(--rojo);
+color:#fff;
+padding:12px 20px;
+text-decoration:none;
+border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1 id="tituloFecha"></h1>
+</header>
+
+<section id="contenedor"></section>
+
+<section style="text-align:center">
+<a href="index.html" class="volver">Volver al Inicio</a>
+</section>
+
+
 <!-- ================= LISTA DE INSCRIPTOS ================= -->
 <section id="lista-inscriptos">
   <h2>Pilotos Confirmados 2026</h2>
@@ -35,3 +82,5 @@
   .lista-pilotos li:last-child { border: none; }
   .num-piloto { font-weight: bold; color: var(--negro); }
 </style>
+</body>
+</html>
