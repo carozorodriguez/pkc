@@ -82,5 +82,69 @@ border-radius:6px;
   .lista-pilotos li:last-child { border: none; }
   .num-piloto { font-weight: bold; color: var(--negro); }
 </style>
+  <script>
+// URL de tu Sheet de inscripciones (Publicada como CSV)
+const SHEET_INSCRIPTOS = "TU_URL_DE_RESPUESTAS_AQUI_CSV";
+
+async function cargarInscriptos() {
+  try {
+    const respuesta = await fetch(SHEET_INSCRIPTOS);
+    const texto = await respuesta.text();
+    const filas = parseCSV(texto); // Usamos tu función parseCSV ya existente
+
+    const cabecera = filas[0];
+    // Ajusta estos nombres a como figuran exactamente en tu Excel
+    const idxCat = cabecera.indexOf("Categoría"); 
+    const idxNom = cabecera.indexOf("Nombre y Apellido");
+    const idxNum = cabecera.indexOf("Número de Kart");
+
+    const inscriptos = filas.slice(1).map(f => ({
+      categoria: f[idxCat],
+      nombre: f[idxNom],
+      numero: f[idxNum]
+    })).filter(i => i.categoria && i.nombre);
+
+    // AGRUPAR POR CATEGORÍA
+    const agrupados = inscriptos.reduce((acc, piloto) => {
+      if (!acc[piloto.categoria]) acc[piloto.categoria] = [];
+      acc[piloto.categoria].push(piloto);
+      return acc;
+    }, {});
+
+    renderizarInscriptos(agrupados);
+  } catch (error) {
+    console.error("Error cargando inscriptos:", error);
+  }
+}
+
+function renderizarInscriptos(grupos) {
+  const contenedor = document.getElementById("contenedor-grupos");
+  contenedor.innerHTML = ""; // Limpiar mensaje de carga
+
+  for (const categoria in grupos) {
+    const div = document.createElement("div");
+    div.className = "categoria-grupo";
+    
+    const listaHtml = grupos[categoria].map(p => `
+      <li>
+        <span>${p.nombre}</span>
+        <span class="num-piloto">#${p.numero || 'S/N'}</span>
+      </li>
+    `).join("");
+
+    div.innerHTML = `
+      <h3>${categoria}</h3>
+      <ul class="lista-pilotos">
+        ${listaHtml}
+      </ul>
+    `;
+    contenedor.appendChild(div);
+  }
+}
+
+// Llamar a la función al cargar
+cargarInscriptos();
+</script>
+
 </body>
 </html>
