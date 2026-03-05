@@ -84,7 +84,7 @@ border-radius:6px;
 </style>
   <script>
 // URL de tu Sheet de inscripciones (Publicada como CSV)
-const SHEET_INSCRIPTOS = "TU_URL_DE_RESPUESTAS_AQUI_CSV";
+const SHEET_INSCRIPTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2FvaJyntC2xwX1PPjmO5TrRJtT0fiW57T51VoOQ9DkEGP58QIHqUmkFlx5I2T0cmGVmNMg11ozce6/pub?gid=110027187&single=true&output=csv";
 
 async function cargarInscriptos() {
   try {
@@ -94,9 +94,9 @@ async function cargarInscriptos() {
 
     const cabecera = filas[0];
     // Ajusta estos nombres a como figuran exactamente en tu Excel
-    const idxCat = cabecera.indexOf("Categoría"); 
-    const idxNom = cabecera.indexOf("Nombre y Apellido");
-    const idxNum = cabecera.indexOf("Número de Kart");
+    const idxCat = cabecera.indexOf("Categoria"); 
+    const idxNom = cabecera.indexOf("Piloto (Nombre y Apellido)");
+    const idxNum = cabecera.indexOf("N° de Kart");
 
     const inscriptos = filas.slice(1).map(f => ({
       categoria: f[idxCat],
