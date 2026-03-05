@@ -5,29 +5,96 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Preinscriptos por Fecha | PROKART</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="stylesheet">
 
 <style>
 :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
 body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+
 header{background:#000;color:#fff;text-align:center;padding:50px 20px}
 section{max-width:1100px;margin:auto;padding:50px 20px}
-h2{border-left:6px solid var(--rojo);padding-left:15px}
-table{width:100%;border-collapse:collapse;margin-top:20px;background:#fff}
-th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center}
-th{background:#111;color:#fff}
-td:nth-child(2){text-align:left;padding-left:15px}
-a{color:#e10600;text-decoration:none}
-a:hover{text-decoration:underline}
-.categoria{margin-bottom:60px}
-.volver{
-display:inline-block;
-margin-top:30px;
-background:var(--rojo);
-color:#fff;
-padding:12px 20px;
-text-decoration:none;
-border-radius:6px;
+h2{border-left:6px solid var(--rojo);padding-left:15px; text-transform: uppercase;}
+
+/* Resumen Total */
+.resumen-total {
+  background: var(--negro);
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+.resumen-total span { color: var(--rojo); font-weight: 700; }
+
+/* Estilos de la Cuadrícula */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.categoria-grupo {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-top: 4px solid var(--rojo);
+}
+
+.categoria-grupo h3 {
+  color: var(--negro);
+  border-bottom: 2px solid var(--gris);
+  padding-bottom: 10px;
+  margin-top: 0;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contador-cat {
+  font-size: 0.8em;
+  background: var(--gris);
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: #666;
+}
+
+.lista-pilotos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-pilotos li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-pilotos li:last-child { border: none; }
+
+.num-piloto { 
+  font-weight: 700; 
+  color: var(--rojo); 
+  background: #fdfdfd;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.volver {
+  display: inline-block;
+  margin-top: 30px;
+  background: var(--rojo);
+  color: #fff;
+  padding: 12px 20px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -35,65 +102,41 @@ border-radius:6px;
 <body>
 
 <header>
-<h1 id="tituloFecha"></h1>
+  <h1>PROKART CALETENSE</h1>
+  <p>Pilotos Confirmados para la próxima fecha</p>
 </header>
 
-<section id="contenedor"></section>
-
-<section style="text-align:center">
-<a href="index.html" class="volver">Volver al Inicio</a>
-</section>
-
-
-<!-- ================= LISTA DE INSCRIPTOS ================= -->
 <section id="lista-inscriptos">
-  <h2>Pilotos Confirmados para esta fecha</h2>
+  <div id="resumen-container"></div>
+  
+  <h2>Inscriptos por Categoría</h2>
+  
   <div id="contenedor-grupos" class="grid">
-    <!-- Aquí se cargarán las categorías y sus pilotos -->
     <p>Cargando lista de pilotos...</p>
+  </div>
+
+  <div style="text-align:center">
+    <a href="index.html" class="volver">Volver al Inicio</a>
   </div>
 </section>
 
-<style>
-  .categoria-grupo {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
-  .categoria-grupo h3 {
-    color: var(--rojo);
-    border-bottom: 2px solid var(--gris);
-    padding-bottom: 10px;
-    margin-top: 0;
-  }
-  .lista-pilotos {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .lista-pilotos li {
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-  }
-  .lista-pilotos li:last-child { border: none; }
-  .num-piloto { font-weight: bold; color: var(--negro); }
-</style>
-  <script>
-// URL de tu Sheet de inscripciones (Publicada como CSV)
+<script>
 const SHEET_INSCRIPTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2FvaJyntC2xwX1PPjmO5TrRJtT0fiW57T51VoOQ9DkEGP58QIHqUmkFlx5I2T0cmGVmNMg11ozce6/pub?gid=110027187&single=true&output=csv";
+
+function parseCSV(text) {
+  return text.split("\n").map(row =>
+    row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+       .map(c => c.replace(/^"|"$/g, '').trim())
+  );
+}
 
 async function cargarInscriptos() {
   try {
     const respuesta = await fetch(SHEET_INSCRIPTOS);
     const texto = await respuesta.text();
-    const filas = parseCSV(texto); // Usamos tu función parseCSV ya existente
+    const filas = parseCSV(texto);
 
     const cabecera = filas[0];
-    // Ajusta estos nombres a como figuran exactamente en tu Excel
     const idxCat = cabecera.indexOf("Categoria"); 
     const idxNom = cabecera.indexOf("Piloto (Nombre y Apellido)");
     const idxNum = cabecera.indexOf("N° de Kart");
@@ -104,7 +147,11 @@ async function cargarInscriptos() {
       numero: f[idxNum]
     })).filter(i => i.categoria && i.nombre);
 
-    // AGRUPAR POR CATEGORÍA
+    // Mostrar Total General
+    document.getElementById("resumen-container").innerHTML = `
+      <div class="resumen-total">Total Pilotos Confirmados: <span>${inscriptos.length}</span></div>
+    `;
+
     const agrupados = inscriptos.reduce((acc, piloto) => {
       if (!acc[piloto.categoria]) acc[piloto.categoria] = [];
       acc[piloto.categoria].push(piloto);
@@ -113,36 +160,41 @@ async function cargarInscriptos() {
 
     renderizarInscriptos(agrupados);
   } catch (error) {
-    console.error("Error cargando inscriptos:", error);
+    console.error("Error:", error);
+    document.getElementById("contenedor-grupos").innerHTML = "<p>Error al cargar datos.</p>";
   }
 }
 
 function renderizarInscriptos(grupos) {
   const contenedor = document.getElementById("contenedor-grupos");
-  contenedor.innerHTML = ""; // Limpiar mensaje de carga
+  contenedor.innerHTML = ""; 
 
-  for (const categoria in grupos) {
+  const categoriasOrdenadas = Object.keys(grupos).sort();
+
+  categoriasOrdenadas.forEach(categoria => {
     const div = document.createElement("div");
     div.className = "categoria-grupo";
     
-    const listaHtml = grupos[categoria].map(p => `
+    const cantidad = grupos[categoria].length;
+    const pilotosOrdenados = grupos[categoria].sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    const listaHtml = pilotosOrdenados.map(p => `
       <li>
         <span>${p.nombre}</span>
-        <span class="num-piloto">#${p.numero || 'S/N'}</span>
+        <span class="num-piloto">#${p.numero || '--'}</span>
       </li>
     `).join("");
 
     div.innerHTML = `
-      <h3>${categoria}</h3>
+      <h3>${categoria} <span class="contador-cat">${cantidad}</span></h3>
       <ul class="lista-pilotos">
         ${listaHtml}
       </ul>
     `;
     contenedor.appendChild(div);
-  }
+  });
 }
 
-// Llamar a la función al cargar
 cargarInscriptos();
 </script>
 
