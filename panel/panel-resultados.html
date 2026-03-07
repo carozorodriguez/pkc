@@ -165,37 +165,33 @@ fetch(SHEET_PILOTOS_URL)
 .then(r=>r.text())
 .then(csv=>{
 
-  const filas = csv.split(/\r?\n/)
-  .slice(1)
-  .filter(f=>f.trim()!=='');
+  const filas = csv.split(/\r?\n/).filter(f=>f.trim()!=='');
+  
+  const encabezados = filas[0].split(",").map(h=>h.trim().toLowerCase());
 
-  pilotosActivos = filas.map(f=>{
+  const idxID = encabezados.indexOf("id");
+  const idxCategoria = encabezados.indexOf("categoria");
+  const idxNumero = encabezados.indexOf("numero");
+  const idxNombre = encabezados.indexOf("nombre");
+  const idxEstado = encabezados.indexOf("estado");
 
-  const col = f.split(",");
+  pilotosActivos = filas.slice(1).map(f=>{
 
-  return {
-    id: col[0]?.trim(),
-    categoria: col[1]?.trim(),
-    numero: col[2]?.trim(),
-    nombre: col[3]?.trim(),
-    estado: col[9]?.trim()
-  };
+    const col = f.split(",");
 
-}).filter(p=>p.estado === "Activo");
     return {
-      id: limpiar(col[0]),
-      categoria: limpiar(col[1]),
-      numero: limpiar(col[2]),
-      nombre: limpiar(col[3]),
-      estado: limpiar(col[9])
+      id: col[idxID]?.trim(),
+      categoria: col[idxCategoria]?.trim(),
+      numero: col[idxNumero]?.trim(),
+      nombre: col[idxNombre]?.trim(),
+      estado: col[idxEstado]?.trim()
     };
 
-  }).filter(p=>p.estado==="Activo");
+  }).filter(p=>p.estado === "Activo");
 
   cargarCategorias();
 
 });
-
 }
 
 function cargarCategorias(){
