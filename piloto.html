@@ -227,38 +227,33 @@ footer{
 
 /* =====================================================
    1) OBTENER ID DESDE LA URL
-   Ejemplo: piloto.html?id=JUNIOR_1
 ===================================================== */
 
-// Leemos parámetros de la URL
 const params = new URLSearchParams(window.location.search);
-
-// Obtenemos el id y eliminamos espacios invisibles
 const id = params.get("id")?.trim();
 
-// Si no hay ID en la URL, detenemos ejecución
 if(!id){
   document.getElementById("nombrePiloto").textContent = "Piloto no encontrado";
   throw new Error("ID no definido en URL");
 }
 
-// Separamos categoría y número desde el ID
-// Ejemplo: JUNIOR_1 → ["JUNIOR", "1"]
+// Separar categoria y numero
 const [categoria, numero] = id.split("_");
 
 
 /* =====================================================
-   2) URLs DE GOOGLE SHEETS (PUBLICADAS COMO CSV)
+   2) URL DE GOOGLE SHEETS
 ===================================================== */
 
-const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
+const SHEET_RESULTADOS =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
 
-const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+const SHEET_PILOTOS =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
 
 /* =====================================================
-   3) FUNCIÓN PARA PARSEAR CSV CORRECTAMENTE
-   (Soporta comillas y limpia espacios)
+   3) PARSEADOR DE CSV
 ===================================================== */
 
 function parseCSV(text){
@@ -270,151 +265,150 @@ function parseCSV(text){
 
 
 /* =====================================================
-   4) FUNCIÓN PRINCIPAL QUE CARGA TODO EL PILOTO
+   4) FUNCIÓN PRINCIPAL
 ===================================================== */
 
 async function cargarPiloto(){
 
   /* -------------------------------------------
-     4.1) CARGAR BASE DE PILOTOS
+     4.1 CARGAR PILOTOS
   --------------------------------------------*/
 
   const rPil = await fetch(SHEET_PILOTOS);
   const tPil = await rPil.text();
   const fPil = parseCSV(tPil);
 
-  // Encabezados
   const hPil = fPil[0].map(h => h.trim().toUpperCase());
 
-  // Buscamos posiciones de columnas sin importar mayúsculas
   const iID   = hPil.indexOf("ID");
   const iNom  = hPil.indexOf("NOMBRE");
-  const iFoto = hPil.indexOf("FOTOURl".toUpperCase()); // FotoURL
+  const iFoto = hPil.indexOf("FOTOURL");
 
   let nombrePiloto = "";
   let fotoURL = "";
 
-  // Recorremos todas las filas
   fPil.slice(1).forEach(f=>{
+
     const idSheet = f[iID]?.trim();
 
-    // Comparamos ignorando mayúsculas/minúsculas
     if(idSheet && idSheet.toUpperCase() === id.toUpperCase()){
+
       nombrePiloto = f[iNom]?.trim();
       fotoURL = f[iFoto]?.trim();
+
     }
+
   });
 
-  // Mostramos nombre
   document.getElementById("nombrePiloto").textContent =
     nombrePiloto || id;
 
-  // Mostramos categoría
   document.getElementById("categoriaPiloto").textContent =
     categoria;
 
+
   /* -------------------------------------------
-     4.2) CARGAR IMAGEN DEL PILOTO
+     4.2 CARGAR FOTO DEL PILOTO
   --------------------------------------------*/
 
-const img = document.getElementById("fotoPiloto");
+  const img = document.getElementById("fotoPiloto");
 
-// Si hay algo en FotoURL
-if (fotoURL && fotoURL !== "") {
+  if(fotoURL){
 
-  // Si ya es una URL completa (http...)
-  if (fotoURL.startsWith("http")) {
-    img.src = fotoURL;
-  } 
-  // Si es solo nombre de archivo → lo buscamos en /pilotos/
-  else {
-    img.src = "pilotos/" + fotoURL;
+    if(fotoURL.startsWith("http")){
+      img.src = fotoURL;
+    }else{
+      img.src = "pilotos/" + fotoURL;
+    }
+
+  }else{
+    img.src = "pilotos/default.jpg";
   }
 
-} else {
-  img.src = "pilotos/default.jpg";
-}
+  img.onerror = function(){
+    this.onerror = null;
+    this.src = "pilotos/default.jpg";
+  };
 
-// Si falla la imagen
-img.onerror = function () {
-  this.onerror = null;
-  this.src = "pilotos/default.jpg";
-};
 
   /* -------------------------------------------
-   4.3) CARGAR RESULTADOS DEL CAMPEONATO
---------------------------------------------*/
+     4.3 CARGAR RESULTADOS
+  --------------------------------------------*/
 
-const rRes = await fetch(SHEET_RESULTADOS);
-const tRes = await rRes.text();
-const fRes = parseCSV(tRes);
+  const rRes = await fetch(SHEET_RESULTADOS);
+  const tRes = await rRes.text();
+  const fRes = parseCSV(tRes);
 
-const hRes = fRes[0].map(h => h.trim().toUpperCase());
+  const hRes = fRes[0].map(h => h.trim().toUpperCase());
 
-const iFecha = hRes.indexOf("FECHA");
-const iCat   = hRes.indexOf("CATEGORIA");
-const iNum   = hRes.indexOf("NUMERO");
-const iPuesto= hRes.indexOf("PUESTO");
-const iPts   = hRes.indexOf("PUNTOS");
+  const iFecha  = hRes.indexOf("FECHA");
+  const iCat    = hRes.indexOf("CATEGORIA");
+  const iNum    = hRes.indexOf("NUMERO");
+  const iPuesto = hRes.indexOf("PUESTO");
+  const iPts    = hRes.indexOf("PUNTOS");
 
-const tabla = document.getElementById("tablaHistorial");
-tabla.innerHTML = "";
+  const tabla = document.getElementById("tablaHistorial");
+  tabla.innerHTML = "";
 
-let carreras = 0;
-let puntos = 0;
-let mejor = 999;
-let sumaPos = 0;
+  let carreras = 0;
+  let puntos = 0;
+  let mejor = 999;
+  let sumaPos = 0;
 
-const datosPiloto = fRes.slice(1).filter(f =>
-  f[iCat]?.trim() === categoria &&
-  f[iNum]?.trim() === numero
-);
+  const datosPiloto = fRes.slice(1).filter(f =>
+    f[iCat]?.trim() === categoria &&
+    f[iNum]?.trim() === numero
+  );
 
-datosPiloto.forEach(f => {
+  datosPiloto.forEach(f => {
 
-  const fecha = f[iFecha];
-  const puesto = Number(f[iPuesto]) || 0;
-  const pts = Number(f[iPts]) || 0;
+    const fecha = f[iFecha];
+    const puesto = Number(f[iPuesto]) || 0;
+    const pts = Number(f[iPts]) || 0;
 
-  carreras++;
-  puntos += pts;
+    carreras++;
+    puntos += pts;
 
-  if(puesto && puesto < mejor) mejor = puesto;
-  if(puesto) sumaPos += puesto;
+    if(puesto && puesto < mejor) mejor = puesto;
+    if(puesto) sumaPos += puesto;
 
-  tabla.innerHTML += `
-    <tr>
-      <td>${fecha}</td>
-      <td>${puesto || "—"}</td>
-      <td>${pts}</td>
-    </tr>
-  `;
-});
+    tabla.innerHTML += `
+      <tr>
+        <td>${fecha}</td>
+        <td>${puesto || "—"}</td>
+        <td>${pts}</td>
+      </tr>
+    `;
 
-/* -------------------------------------------
-   4.4) MOSTRAR ESTADÍSTICAS
---------------------------------------------*/
+  });
 
-document.getElementById("statCarreras").textContent = carreras;
-document.getElementById("statPuntos").textContent = puntos;
 
-document.getElementById("statMejor").textContent =
-  mejor === 999 ? "—" : mejor + "°";
+  /* -------------------------------------------
+     4.4 ESTADÍSTICAS
+  --------------------------------------------*/
 
-document.getElementById("statPromedio").textContent =
-  carreras ? (sumaPos/carreras).toFixed(2) : "—";
+  document.getElementById("statCarreras").textContent = carreras;
+  document.getElementById("statPuntos").textContent = puntos;
+
+  document.getElementById("statMejor").textContent =
+    mejor === 999 ? "—" : mejor + "°";
+
+  document.getElementById("statPromedio").textContent =
+    carreras ? (sumaPos/carreras).toFixed(2) : "—";
+
+}
 
 
 /* =====================================================
-   5) GENERAR QR AUTOMÁTICO DE LA FICHA
+   5) GENERAR QR DE LA FICHA
 ===================================================== */
 
-document.getElementById('qrPiloto').innerHTML =
-  `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
+document.getElementById("qrPiloto").innerHTML =
+`<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(location.href)}">`;
 
 
 /* =====================================================
-   6) INICIAR CARGA
+   6) INICIAR
 ===================================================== */
 
 cargarPiloto();
