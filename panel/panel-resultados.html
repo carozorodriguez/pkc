@@ -271,10 +271,11 @@ const datos = new FormData();
 datos.append("accion","cargarResultado");
 datos.append("fecha",fecha);
 datos.append("categoria",categoria);
+datos.append("pilotoID",pilotoObj.id);
 datos.append("piloto",pilotoObj.nombre);
 datos.append("numero",pilotoObj.numero);
-datos.append("puntos",puntos);
 datos.append("puesto",puesto);
+datos.append("puntos",puntos);
 datos.append("observacion",observacion);
 
 fetch(APPS_SCRIPT_URL,{
