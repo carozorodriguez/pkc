@@ -171,8 +171,17 @@ fetch(SHEET_PILOTOS_URL)
 
   pilotosActivos = filas.map(f=>{
 
-    const col = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+  const col = f.split(",");
 
+  return {
+    id: col[0]?.trim(),
+    categoria: col[1]?.trim(),
+    numero: col[2]?.trim(),
+    nombre: col[3]?.trim(),
+    estado: col[9]?.trim()
+  };
+
+}).filter(p=>p.estado === "Activo");
     return {
       id: limpiar(col[0]),
       categoria: limpiar(col[1]),
