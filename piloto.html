@@ -330,7 +330,6 @@ async function cargarPiloto(){
     this.src = "pilotos/default.jpg";
   };
 
-
   /* -------------------------------------------
      4.3 CARGAR RESULTADOS
   --------------------------------------------*/
@@ -341,11 +340,10 @@ async function cargarPiloto(){
 
   const hRes = fRes[0].map(h => h.trim().toUpperCase());
 
-  const iFecha  = hRes.indexOf("FECHA");
-  const iCat    = hRes.indexOf("CATEGORIA");
-  const iNum    = hRes.indexOf("NUMERO");
-  const iPuesto = hRes.indexOf("PUESTO");
-  const iPts    = hRes.indexOf("PUNTOS");
+  const iFecha   = hRes.indexOf("FECHA");
+  const iPilotoID= hRes.indexOf("PILOTOID");
+  const iPuesto  = hRes.indexOf("PUESTO");
+  const iPts     = hRes.indexOf("PUNTOS");
 
   const tabla = document.getElementById("tablaHistorial");
   tabla.innerHTML = "";
@@ -355,10 +353,13 @@ async function cargarPiloto(){
   let mejor = 999;
   let sumaPos = 0;
 
+  /* FILTRAR RESULTADOS DEL PILOTO USANDO SU ID */
+
   const datosPiloto = fRes.slice(1).filter(f =>
-    f[iCat]?.trim() === categoria &&
-    f[iNum]?.trim() === numero
+    f[iPilotoID]?.trim().toUpperCase() === id.toUpperCase()
   );
+
+  /* RECORRER RESULTADOS */
 
   datosPiloto.forEach(f => {
 
@@ -388,16 +389,16 @@ async function cargarPiloto(){
   --------------------------------------------*/
 
   document.getElementById("statCarreras").textContent = carreras;
+
   document.getElementById("statPuntos").textContent = puntos;
 
   document.getElementById("statMejor").textContent =
-    mejor === 999 ? "—" : mejor + "°";
+    carreras ? mejor + "°" : "—";
 
   document.getElementById("statPromedio").textContent =
     carreras ? (sumaPos/carreras).toFixed(2) : "—";
 
 }
-
 
 /* =====================================================
    5) GENERAR QR DE LA FICHA
