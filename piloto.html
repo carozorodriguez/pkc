@@ -342,83 +342,67 @@ img.onerror = function () {
 };
 
   /* -------------------------------------------
-     4.3) CARGAR RESULTADOS DEL CAMPEONATO
-  --------------------------------------------*/
+   4.3) CARGAR RESULTADOS DEL CAMPEONATO
+--------------------------------------------*/
 
-  const rRes = await fetch(SHEET_RESULTADOS);
-  const tRes = await rRes.text();
-  const fRes = parseCSV(tRes);
+const rRes = await fetch(SHEET_RESULTADOS);
+const tRes = await rRes.text();
+const fRes = parseCSV(tRes);
 
-  const hRes = fRes[0].map(h => h.trim().toUpperCase());
+const hRes = fRes[0].map(h => h.trim().toUpperCase());
 
-  const iFecha = hRes.indexOf("FECHA");
-  const iCat   = hRes.indexOf("CATEGORIA");
-  const iNum   = hRes.indexOf("NUMERO");
-  const iPts   = hRes.indexOf("PUNTOS OBTENIDOS");
+const iFecha = hRes.indexOf("FECHA");
+const iCat   = hRes.indexOf("CATEGORIA");
+const iNum   = hRes.indexOf("NUMERO");
+const iPuesto= hRes.indexOf("PUESTO");
+const iPts   = hRes.indexOf("PUNTOS");
 
-  const tabla = document.getElementById("tablaHistorial");
-  tabla.innerHTML = "";
+const tabla = document.getElementById("tablaHistorial");
+tabla.innerHTML = "";
 
-  let carreras = 0;
-  let puntos = 0;
-  let mejor = 999;
-  let sumaPos = 0;
+let carreras = 0;
+let puntos = 0;
+let mejor = 999;
+let sumaPos = 0;
 
-  // Filtrar solo las filas de este piloto
-  const datosPiloto = fRes.slice(1).filter(f =>
-    f[iCat]?.trim() === categoria &&
-    f[iNum]?.trim() === numero
-  );
+const datosPiloto = fRes.slice(1).filter(f =>
+  f[iCat]?.trim() === categoria &&
+  f[iNum]?.trim() === numero
+);
 
-  // Recorrer cada carrera del piloto
-  datosPiloto.forEach(f => {
+datosPiloto.forEach(f => {
 
-    const fecha = f[iFecha];
-    const pts = Number(f[iPts]) || 0;
+  const fecha = f[iFecha];
+  const puesto = Number(f[iPuesto]) || 0;
+  const pts = Number(f[iPts]) || 0;
 
-    carreras++;
-    puntos += pts;
+  carreras++;
+  puntos += pts;
 
-    // Calcular posición en esa fecha
-    const fechaDatos = fRes.slice(1)
-      .filter(x =>
-        x[iFecha] === fecha &&
-        x[iCat] === categoria
-      )
-      .map(x => ({
-        numero: x[iNum],
-        puntos: Number(x[iPts]) || 0
-      }))
-      .sort((a,b)=>b.puntos-a.puntos);
+  if(puesto && puesto < mejor) mejor = puesto;
+  if(puesto) sumaPos += puesto;
 
-    const posicion =
-      fechaDatos.findIndex(x => x.numero === numero) + 1;
+  tabla.innerHTML += `
+    <tr>
+      <td>${fecha}</td>
+      <td>${puesto || "—"}</td>
+      <td>${pts}</td>
+    </tr>
+  `;
+});
 
-    sumaPos += posicion;
-    if(posicion < mejor) mejor = posicion;
+/* -------------------------------------------
+   4.4) MOSTRAR ESTADÍSTICAS
+--------------------------------------------*/
 
-    // Agregar fila a tabla
-    tabla.innerHTML += `
-      <tr>
-        <td>${fecha}</td>
-        <td>${posicion}</td>
-        <td>${pts}</td>
-      </tr>
-    `;
-  });
+document.getElementById("statCarreras").textContent = carreras;
+document.getElementById("statPuntos").textContent = puntos;
 
-  /* -------------------------------------------
-     4.4) MOSTRAR ESTADÍSTICAS
-  --------------------------------------------*/
+document.getElementById("statMejor").textContent =
+  mejor === 999 ? "—" : mejor + "°";
 
-  document.getElementById("statCarreras").textContent = carreras;
-  document.getElementById("statPuntos").textContent = puntos;
-  document.getElementById("statMejor").textContent =
-    mejor === 999 ? "—" : mejor;
-
-  document.getElementById("statPromedio").textContent =
-    carreras ? (sumaPos/carreras).toFixed(2) : "—";
-}
+document.getElementById("statPromedio").textContent =
+  carreras ? (sumaPos/carreras).toFixed(2) : "—";
 
 
 /* =====================================================
