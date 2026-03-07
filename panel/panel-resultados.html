@@ -97,6 +97,9 @@ section{
     <label>Puntos</label><br>
     <input type="number" id="puntosResultado" required><br><br>
 
+    <label>Observación</label><br>
+<input type="text" id="observacionResultado"><br><br>
+
     <button type="submit" class="btn">Guardar Resultado</button>
 
   </form>
@@ -219,6 +222,8 @@ document.getElementById("formResultados")
   const categoria = document.getElementById("categoriaResultado").value;
   const pilotoID = document.getElementById("pilotoResultado").value;
   const puntos = document.getElementById("puntosResultado").value;
+  const puesto = document.getElementById("puestoResultado").value;
+const observacion = document.getElementById("observacionResultado").value;
 
   if(!fecha || !categoria || !pilotoID || !puntos){
     alert("Complete todos los campos");
@@ -228,12 +233,8 @@ document.getElementById("formResultados")
   const pilotoObj = pilotosActivos.find(p=>p.id===pilotoID);
 
   const datos = new FormData();
-  datos.append("accion","cargarResultado");
-  datos.append("fecha", fecha);
-  datos.append("categoria", categoria);
-  datos.append("piloto", pilotoObj.nombre);
-  datos.append("puntos", puntos);
-  datos.append("numero", pilotoObj.numero);
+ const puesto = document.getElementById("puestoResultado").value;
+const observacion = document.getElementById("observacionResultado").value;
 
   fetch(APPS_SCRIPT_URL,{
     method:"POST",
