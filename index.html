@@ -220,12 +220,25 @@ th{background:var(--negro);color:#fff}
 </section>
 </div>
 
-<!-- ================= INSCRIPCION ================= -->
+<!-- ================= INSCRIPCION CON CRONÓMETRO ================= -->
 <section id="inscripcion">
-<h2>Inscripciones</h2>
-<div class="card">
-<a class="btn" href="https://forms.gle/eo6RPdSJH5xjrBCu8" target="_blank">Formulario Oficial</a>
-</div>
+  <h2>Inscripciones Abiertas</h2>
+  <div class="card" style="text-align: center;">
+    
+    <!-- Contenedor del Cronómetro -->
+    <div id="countdown-container" style="margin-bottom: 25px;">
+      <p style="margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; color: #666;">Faltan para la Proxima Fecha:</p>
+      <div id="timer" style="font-size: 2rem; font-weight: 700; color: var(--negro); display: flex; justify-content: center; gap: 15px;">
+        <div><span id="days">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">DÍAS</small></div>
+        <div><span id="hours">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">HORAS</small></div>
+        <div><span id="minutes">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">MIN</small></div>
+        <div><span id="seconds">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">SEG</small></div>
+      </div>
+    </div>
+
+    <p>Asegurá tu lugar en la grilla completando el formulario oficial.</p>
+    <a class="btn" href="https://forms.gle" target="_blank" style="padding: 15px 30px; font-size: 1.2rem;">IR AL FORMULARIO DE INSCRIPCIÓN</a>
+  </div>
 </section>
 
 <!-- =================Pre INSCRIPCION ================= -->
@@ -414,6 +427,40 @@ th{background:var(--negro);color:#fff}
   document.getElementById("fechaSelect").addEventListener('change',mostrarResultados);
 
   cargarDatos();
+  // ==========================================
+// LÓGICA DEL CRONÓMETRO (COUNTDOWN)
+// ==========================================
+function actualizarCronometro() {
+  // CONFIGURA AQUÍ LA FECHA DE LA PRÓXIMA CARRERA
+  const fechaCarrera = new Date("April 5, 2026 09:00:00").getTime();
+  
+  const intervalo = setInterval(function() {
+    const ahora = new Date().getTime();
+    const distancia = fechaCarrera - ahora;
+
+    // Cálculos de tiempo
+    const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+    // Inyectar en el HTML
+    document.getElementById("days").innerText = dias < 10 ? "0" + dias : dias;
+    document.getElementById("hours").innerText = horas < 10 ? "0" + horas : horas;
+    document.getElementById("minutes").innerText = minutos < 10 ? "0" + minutos : minutos;
+    document.getElementById("seconds").innerText = segundos < 10 ? "0" + segundos : segundos;
+
+    // Si la fecha ya pasó
+    if (distancia < 0) {
+      clearInterval(intervalo);
+      document.getElementById("countdown-container").innerHTML = "<h3 style='color:var(--rojo)'>¡LA CARRERA ESTÁ EN MARCHA! 🏁</h3>";
+    }
+  }, 1000);
+}
+
+// Ejecutar al cargar
+actualizarCronometro();
+
 </script>
 
 </body>
