@@ -281,12 +281,16 @@ async function cargarPiloto(){
 
   const hPil = fPil[0].map(h => h.trim().toUpperCase());
 
-  const iID   = hPil.indexOf("ID");
-  const iNom  = hPil.indexOf("NOMBRE");
-  const iFoto = hPil.indexOf("FOTOURL");
+const iID    = hPil.indexOf("ID");
+const iNom   = hPil.indexOf("NOMBRE");
+const iFoto  = hPil.indexOf("FOTOURL");
+const iNum   = hPil.indexOf("NUMERO");
+const iEquipo= hPil.indexOf("EQUIPO");
 
   let nombrePiloto = "";
-  let fotoURL = "";
+let fotoURL = "";
+let numeroPiloto = "";
+let equipoPiloto = "";
 
   fPil.slice(1).forEach(f=>{
 
