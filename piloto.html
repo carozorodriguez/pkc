@@ -164,6 +164,7 @@ footer{
     <div>
       <h1 id="nombrePiloto"></h1>
       <p><strong>Categoría:</strong> <span id="categoriaPiloto"></span></p>
+      <p><strong>Equipo:</strong> <span id="equipoPiloto"></span></p>
     </div>
 
     <div id="qrPiloto"></div>
@@ -306,11 +307,12 @@ let equipoPiloto = "";
   });
 
   document.getElementById("nombrePiloto").textContent =
-    nombrePiloto || id;
+  numeroPiloto ? "#" + numeroPiloto + " - " + nombrePiloto : nombrePiloto;
 
   document.getElementById("categoriaPiloto").textContent =
     categoria;
-
+document.getElementById("equipoPiloto").textContent =
+  equipoPiloto || "—";
 
   /* -------------------------------------------
      4.2 CARGAR FOTO DEL PILOTO
