@@ -282,16 +282,16 @@ async function cargarPiloto(){
 
   const hPil = fPil[0].map(h => h.trim().toUpperCase());
 
-const iID    = hPil.indexOf("ID");
-const iNom   = hPil.indexOf("NOMBRE");
-const iFoto  = hPil.indexOf("FOTOURL");
-const iNum   = hPil.indexOf("NUMERO");
-const iEquipo= hPil.indexOf("EQUIPO");
+  const iID     = hPil.indexOf("ID");
+  const iNom    = hPil.indexOf("NOMBRE");
+  const iFoto   = hPil.indexOf("FOTOURL");
+  const iNum    = hPil.indexOf("NUMERO");
+  const iEquipo = hPil.indexOf("EQUIPO");
 
   let nombrePiloto = "";
-let fotoURL = "";
-let numeroPiloto = "";
-let equipoPiloto = "";
+  let fotoURL = "";
+  let numeroPiloto = "";
+  let equipoPiloto = "";
 
   fPil.slice(1).forEach(f=>{
 
@@ -302,17 +302,23 @@ let equipoPiloto = "";
       nombrePiloto = f[iNom]?.trim();
       fotoURL = f[iFoto]?.trim();
 
+      numeroPiloto = f[iNum]?.trim();     // 🔧 CAMBIO
+      equipoPiloto = f[iEquipo]?.trim();  // 🔧 CAMBIO
+
     }
 
   });
 
+  // 🔧 CAMBIO FORMATO NOMBRE (#numero - nombre)
   document.getElementById("nombrePiloto").textContent =
-  numeroPiloto ? "#" + numeroPiloto + " - " + nombrePiloto : nombrePiloto;
+    numeroPiloto ? "#" + numeroPiloto + " - " + nombrePiloto : nombrePiloto;
 
-  document.getElementById("categoriaPiloto").textContent =
-    categoria;
-document.getElementById("equipoPiloto").textContent =
-  equipoPiloto || "—";
+  document.getElementById("categoriaPiloto").textContent = categoria;
+
+  // 🔧 MOSTRAR EQUIPO
+  document.getElementById("equipoPiloto").textContent =
+    equipoPiloto || "—";
+
 
   /* -------------------------------------------
      4.2 CARGAR FOTO DEL PILOTO
@@ -337,6 +343,7 @@ document.getElementById("equipoPiloto").textContent =
     this.src = "pilotos/default.jpg";
   };
 
+
   /* -------------------------------------------
      4.3 CARGAR RESULTADOS
   --------------------------------------------*/
@@ -360,13 +367,9 @@ document.getElementById("equipoPiloto").textContent =
   let puntos = 0;
   let mejor = 999;
 
-  /* FILTRAR RESULTADOS DEL PILOTO */
-
   const datosPiloto = fRes.slice(1).filter(f =>
     f[iPilotoID]?.trim().toUpperCase() === id.toUpperCase()
   );
-
-  /* RECORRER RESULTADOS */
 
   datosPiloto.forEach(f => {
 
