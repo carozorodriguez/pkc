@@ -198,6 +198,7 @@ footer{
         <th>Fecha</th>
         <th>Puesto</th>
         <th>Puntos</th>
+        <th>Observación</th>
       </tr>
     </thead>
     <tbody id="tablaHistorial"></tbody>
@@ -340,10 +341,11 @@ async function cargarPiloto(){
 
   const hRes = fRes[0].map(h => h.trim().toUpperCase());
 
-  const iFecha   = hRes.indexOf("FECHA");
-  const iPilotoID= hRes.indexOf("PILOTOID");
-  const iPuesto  = hRes.indexOf("PUESTO");
-  const iPts     = hRes.indexOf("PUNTOS");
+  const iFecha    = hRes.indexOf("FECHA");
+  const iPilotoID = hRes.indexOf("PILOTOID");
+  const iPuesto   = hRes.indexOf("PUESTO");
+  const iPts      = hRes.indexOf("PUNTOS");
+  const iObs      = hRes.indexOf("OBSERVACION");
 
   const tabla = document.getElementById("tablaHistorial");
   tabla.innerHTML = "";
@@ -351,9 +353,8 @@ async function cargarPiloto(){
   let carreras = 0;
   let puntos = 0;
   let mejor = 999;
-  let sumaPos = 0;
 
-  /* FILTRAR RESULTADOS DEL PILOTO USANDO SU ID */
+  /* FILTRAR RESULTADOS DEL PILOTO */
 
   const datosPiloto = fRes.slice(1).filter(f =>
     f[iPilotoID]?.trim().toUpperCase() === id.toUpperCase()
@@ -366,18 +367,19 @@ async function cargarPiloto(){
     const fecha = f[iFecha];
     const puesto = Number(f[iPuesto]) || 0;
     const pts = Number(f[iPts]) || 0;
+    const obs = f[iObs] || "—";
 
     carreras++;
     puntos += pts;
 
     if(puesto && puesto < mejor) mejor = puesto;
-    if(puesto) sumaPos += puesto;
 
     tabla.innerHTML += `
       <tr>
         <td>${fecha}</td>
         <td>${puesto || "—"}</td>
         <td>${pts}</td>
+        <td>${obs}</td>
       </tr>
     `;
 
@@ -395,10 +397,8 @@ async function cargarPiloto(){
   document.getElementById("statMejor").textContent =
     carreras ? mejor + "°" : "—";
 
-  document.getElementById("statPromedio").textContent =
-    carreras ? (sumaPos/carreras).toFixed(2) : "—";
-
 }
+
 
 /* =====================================================
    5) GENERAR QR DE LA FICHA
