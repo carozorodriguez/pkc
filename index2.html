@@ -279,8 +279,7 @@ th{background:var(--negro);color:#fff}
 
 <script>
   // ==========================================
-  // 1. CONFIGURACIÓN ÚNICA DE SPONSORS
-  // (Agregas aquí y se actualiza en Popup y Footer)
+  // 1. CONFIGURACIÓN DEL POP-UP DE SPONSORS
   // ==========================================
   const sponsorsPop = [
     { nombre: "Vintage Motors 4T", img: "sponsors/vintage.png" },
@@ -290,13 +289,7 @@ th{background:var(--negro);color:#fff}
     { nombre: "FiftySix", img: "sponsors/56.png" }
   ];
 
-  // Variables globales
-  let datos = [];
-  let pilotosDB = {};
-
-  // ==========================================
-  // 2. FUNCIONES DEL POP-UP Y FOOTER
-  // ==========================================
+  // Función para inicializar el Pop-up aleatorio
   function iniciarPopUp() {
     const modal = document.getElementById("welcome-modal");
     const sImg = document.getElementById("sponsor-img");
@@ -310,15 +303,17 @@ th{background:var(--negro);color:#fff}
     sImg.src = sponsorsPop[rand].img;
     sName.innerText = sponsorsPop[rand].nombre;
 
-    setTimeout(() => { modal.style.display = "block"; }, 800);
+    setTimeout(() => { 
+      modal.style.display = "block"; 
+    }, 800);
 
     // Eventos de cierre
-    const cerrar = () => modal.style.display = "none";
-    if(closeBtn) closeBtn.onclick = cerrar;
-    if(ctaPop) ctaPop.onclick = cerrar;
-    window.onclick = (e) => { if (e.target == modal) cerrar(); };
+    if(closeBtn) closeBtn.onclick = () => modal.style.display = "none";
+    if(ctaPop) ctaPop.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
   }
 
+  // Nueva función para cargar el footer automáticamente
   function cargarSponsorsFooter() {
     const footerContainer = document.getElementById("footer-sponsors");
     if (!footerContainer) return;
@@ -329,10 +324,13 @@ th{background:var(--negro);color:#fff}
   }
 
   // ==========================================
-  // 3. LÓGICA DE RESULTADOS (GOOGLE SHEETS)
+  // 2. TU LÓGICA ORIGINAL DE RESULTADOS
   // ==========================================
-  const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
-  const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+  const SHEET_RESULTADOS="https://docs.google.com";
+  const SHEET_PILOTOS="https://docs.google.com";
+
+  let datos=[];
+  let pilotosDB={};
 
   function parseCSV(text){
     return text.split("\n").map(row =>
@@ -342,30 +340,54 @@ th{background:var(--negro);color:#fff}
   }
 
   async function cargarDatos(){
+    // Lanzar el Pop-up apenas arranca la carga
+    iniciarPopUp();
+
     try {
-      const [r1, r2] = await Promise.all([fetch(SHEET_RESULTADOS), fetch(SHEET_PILOTOS)]);
+      // ===== RESULTADOS =====
+      const r1 = await fetch(SHEET_RESULTADOS);
       const t1 = await r1.text();
-      const t2 = await r2.text();
-      
       const f1 = parseCSV(t1);
+
       const h1 = f1[0] || [];
-      const iFecha = h1.indexOf("Fecha"), iCat = h1.indexOf("Categoria"), 
-            iPil = h1.indexOf("Piloto"), iPts = h1.indexOf("Puntos Obtenidos"), iNum = h1.indexOf("Numero");
+      const iFecha = h1.indexOf("Fecha");
+      const iCat   = h1.indexOf("Categoria");
+      const iPil   = h1.indexOf("Piloto");
+      const iPts   = h1.indexOf("Puntos Obtenidos");
+      const iNum   = h1.indexOf("Numero");
 
-      datos = f1.slice(1).map(f => {
-        if(!f.length) return null;
+      datos = f1.slice(1).map(f=>{
+        if(!f.length || f.length < 2) return null;
+        const categoria = f[iCat];
+        const numero    = f[iNum];
         return {
-          fecha: f[iFecha], categoria: f[iCat], piloto: f[iPil],
-          numero: f[iNum], puntos: Number(f[iPts]) || 0,
-          id: f[iCat] && f[iNum] ? f[iCat]+"_"+f[iNum] : null
+          fecha: f[iFecha],
+          categoria,
+          piloto: f[iPil],
+          numero,
+          puntos: Number(f[iPts]) || 0,
+          id: categoria && numero ? categoria+"_"+numero : null
         };
-      }).filter(d => d && d.fecha);
+      }).filter(d => d && d.fecha && d.categoria);
 
+      // ===== PILOTOS =====
+      const r2 = await fetch(SHEET_PILOTOS);
+      const t2 = await r2.text();
       const f2 = parseCSV(t2);
-      f2.slice(1).forEach(f => { if(f[0]) pilotosDB[f[0]] = { nombre: f[1] }; });
+      const h2 = f2[0] || [];
+      const iID  = h2.indexOf("ID");
+      const iNom = h2.indexOf("Nombre");
+
+      f2.slice(1).forEach(f=>{
+        if(f[iID]){
+          pilotosDB[f[iID]] = { nombre: f[iNom] };
+        }
+      });
 
       cargarCategorias();
-    } catch (e) { console.error("Error cargando datos:", e); }
+    } catch (error) {
+      console.error("Error al cargar los datos de Sheets:", error);
+    }
   }
 
   function cargarCategorias(){
@@ -377,84 +399,106 @@ th{background:var(--negro);color:#fff}
   }
 
   function cargarFechas(){
-    const cat = document.getElementById("categoriaSelect").value;
+    const selectCat = document.getElementById("categoriaSelect");
     const selectFecha = document.getElementById("fechaSelect");
-    const fechas = [...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-    selectFecha.innerHTML = fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+    if(!selectCat || !selectFecha) return;
+    const cat=selectCat.value;
+    const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+    selectFecha.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
     mostrarResultados();
   }
 
   function mostrarResultados(){
-    const cat = document.getElementById("categoriaSelect").value;
-    const fec = document.getElementById("fechaSelect").value;
-    const tabla = document.querySelector("#tablaResultados tbody");
-    if(!tabla) return;
+    const catSelect = document.getElementById("categoriaSelect");
+    const fecSelect = document.getElementById("fechaSelect");
+    if(!catSelect || !fecSelect) return;
 
-    const filtrados = datos.filter(d=>d.categoria===cat && d.fecha===fec).sort((a,b)=>b.puntos-a.puntos);
-    tabla.innerHTML = filtrados.map((d,i)=>`
-      <tr>
-        <td>${i+1}</td>
-        <td><a href="piloto.html?id=${encodeURIComponent(d.id)}">${pilotosDB[d.id]?.nombre || d.piloto}</a></td>
-        <td>${d.puntos}</td>
-      </tr>`).join("");
+    const cat = catSelect.value;
+    const fec = fecSelect.value;
+    const filtrados = datos
+      .filter(d=>d.categoria===cat && d.fecha===fec)
+      .sort((a,b)=>b.puntos-a.puntos);
+
+    const tBody = document.querySelector("#tablaResultados tbody");
+    if(tBody) {
+      tBody.innerHTML = filtrados.map((d,i)=>`
+        <tr>
+          <td>${i+1}</td>
+          <td><a href="piloto.html?id=${encodeURIComponent(d.id)}">${pilotosDB[d.id]?.nombre || d.piloto}</a></td>
+          <td>${d.puntos}</td>
+        </tr>`).join("");
+    }
     mostrarGeneral(cat);
   }
 
   function mostrarGeneral(cat){
-    const tabla = document.querySelector("#tablaGeneral tbody");
-    if(!tabla) return;
-    const mapa = {};
-    datos.filter(d=>d.categoria===cat).forEach(d=>{ mapa[d.id]=(mapa[d.id]||0)+d.puntos; });
-    const ranking = Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
-    tabla.innerHTML = ranking.map((d,i)=>`
-      <tr>
-        <td>${i+1}</td>
-        <td><a href="piloto.html?id=${encodeURIComponent(d[0])}">${pilotosDB[d[0]]?.nombre || d[0]}</a></td>
-        <td>${d[1]}</td>
-      </tr>`).join("");
+    const mapa={};
+    datos.filter(d=>d.categoria===cat).forEach(d=>{
+      mapa[d.id]=(mapa[d.id]||0)+d.puntos;
+    });
+    const ranking=Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
+    const gBody = document.querySelector("#tablaGeneral tbody");
+    if(gBody) {
+      gBody.innerHTML = ranking.map((d,i)=>`
+        <tr>
+          <td>${i+1}</td>
+          <td><a href="piloto.html?id=${encodeURIComponent(d[0])}">${pilotosDB[d[0]]?.nombre || d[0]}</a></td>
+          <td>${d[1]}</td>
+        </tr>`).join("");
+    }
   }
 
   // ==========================================
-  // 4. LÓGICA DEL CRONÓMETRO
+  // LÓGICA DEL CRONÓMETRO (COUNTDOWN)
   // ==========================================
   function actualizarCronometro() {
     const fechaCarrera = new Date("April 5, 2026 09:00:00").getTime();
-    const dEl = document.getElementById("days"), hEl = document.getElementById("hours"),
-          mEl = document.getElementById("minutes"), sEl = document.getElementById("seconds");
-
-    if(!dEl) return;
-
-    const intervalo = setInterval(() => {
+    
+    const intervalo = setInterval(function() {
       const ahora = new Date().getTime();
-      const dist = fechaCarrera - ahora;
+      const distancia = fechaCarrera - ahora;
 
-      if (dist < 0) {
+      const dEl = document.getElementById("days");
+      const hEl = document.getElementById("hours");
+      const mEl = document.getElementById("minutes");
+      const sEl = document.getElementById("seconds");
+
+      if(!dEl) { clearInterval(intervalo); return; }
+
+      const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+      dEl.innerText = dias < 10 ? "0" + dias : dias;
+      hEl.innerText = horas < 10 ? "0" + horas : horas;
+      mEl.innerText = minutos < 10 ? "0" + minutos : minutos;
+      sEl.innerText = segundos < 10 ? "0" + segundos : segundos;
+
+      if (distancia < 0) {
         clearInterval(intervalo);
-        document.getElementById("countdown-container").innerHTML = "<h3>¡EN MARCHA! 🏁</h3>";
-        return;
+        const container = document.getElementById("countdown-container");
+        if(container) container.innerHTML = "<h3 style='color:var(--rojo)'>¡LA CARRERA ESTÁ EN MARCHA! 🏁</h3>";
       }
-
-      dEl.innerText = Math.floor(dist / 86400000).toString().padStart(2, '0');
-      hEl.innerText = Math.floor((dist % 86400000) / 3600000).toString().padStart(2, '0');
-      mEl.innerText = Math.floor((dist % 3600000) / 60000).toString().padStart(2, '0');
-      sEl.innerText = Math.floor((dist % 60000) / 1000).toString().padStart(2, '0');
     }, 1000);
   }
 
   // ==========================================
-  // INICIO DE TODO
+  // EJECUCIÓN AL CARGAR LA PÁGINA
   // ==========================================
   document.addEventListener("DOMContentLoaded", () => {
     actualizarCronometro();
     cargarSponsorsFooter();
-    cargarDatos(); // Inicia datos y el Pop-up
-    
-    const selCat = document.getElementById("categoriaSelect");
-    const selFec = document.getElementById("fechaSelect");
-    if(selCat) selCat.addEventListener('change', cargarFechas);
-    if(selFec) selFec.addEventListener('change', mostrarResultados);
+    cargarDatos(); 
+
+    const cS = document.getElementById("categoriaSelect");
+    const fS = document.getElementById("fechaSelect");
+    if(cS) cS.addEventListener('change', cargarFechas);
+    if(fS) fS.addEventListener('change', mostrarResultados);
   });
+
 </script>
+
 
 </body>
 </html>
