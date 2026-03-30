@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PROKART CALETENSE | Campeonato Oficial</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROKART CALETENSE | Campeonato Oficial</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
 *{box-sizing:border-box}
-body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
+body{margin:0;font-family:'Oswald',Arial,sans-serif;background:var(--gris);scroll-behavior: smooth;}
 
 /* ==========================================
-   SISTEMA DE PUBLICIDAD PROFESIONAL
+   ESTILOS DE PUBLICIDAD PROFESIONAL
    ========================================== */
 .ad-header-container {
     background: #eee;
@@ -42,6 +42,7 @@ body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
     font-size: 9px;
     padding: 2px 5px;
     text-transform: uppercase;
+    z-index: 5;
 }
 .card.ad-card {
     background: #fdfdfd;
@@ -57,7 +58,6 @@ body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
     max-width: 80%;
     max-height: 120px;
     object-fit: contain;
-    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
 }
 .ticker-wrapper {
     width: 100%;
@@ -84,281 +84,335 @@ body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 }
 
 /* ==========================================
-   POP-UP DE SPONSORS (Original)
+   POP-UP DE SPONSORS (ACCESO)
    ========================================== */
 .modal {
-  display: none; 
-  position: fixed;
-  z-index: 2000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
+    display: none; 
+    position: fixed;
+    z-index: 2000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
 }
 .modal-content {
-  background-color: #fff;
-  margin: 10% auto;
-  padding: 25px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .close-btn {
-  position: absolute;
-  right: 15px; top: 10px;
-  font-size: 30px;
-  cursor: pointer;
-  color: #333;
-  line-height: 1;
+    position: absolute;
+    right: 15px; top: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #333;
 }
 .sponsor-container {
-  margin: 15px 0;
-  min-height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    margin: 15px 0;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 #sponsor-img {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  object-fit: contain;
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
 }
 .pop-cta {
-  background: var(--rojo);
-  color: white;
-  border: none;
-  padding: 15px 25px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Oswald';
-  text-transform: uppercase;
-  font-weight: 700;
-  width: 100%;
-  text-decoration: none;
-  display: block;
+    background: var(--rojo);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Oswald';
+    text-transform: uppercase;
+    font-weight: 700;
+    width: 100%;
+    text-decoration: none;
+    display: block;
 }
 
-/* ESTILOS GENERALES */
+/* DISEÑO DE LA WEB */
 header{
-  background:linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
-  url("img/23610.jpg") center/cover no-repeat;
-  color:#fff;text-align:center;padding:120px 20px;
+    background:linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url("img/23610.jpg") center/cover no-repeat;
+    color:#fff; text-align:center; padding:120px 20px;
 }
-header img{max-width:320px;width:90%}
-nav{position:sticky;top:0;background:var(--negro);display:flex;justify-content:center;gap:25px;padding:15px;z-index:10}
-nav a{color:#fff;text-decoration:none}
+header img{max-width:320px; width:90%}
+nav{position:sticky; top:0; background:var(--negro); display:flex; justify-content:center; gap:25px; padding:15px; z-index:10}
+nav a{color:#fff; text-decoration:none; font-weight: bold; text-transform: uppercase;}
 nav a:hover{color:var(--rojo)}
-section{max-width:1100px;margin:auto;padding:60px 20px}
-h2{border-left:6px solid var(--rojo);padding-left:15px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-.card{background:#fff;padding:25px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
-.btn{display:inline-block;margin:10px 0 20px;padding:12px 18px;background:var(--rojo);color:#fff;text-decoration:none;border-radius:6px}
-table{width:100%;border-collapse:collapse;margin-top:20px}
-th,td{padding:12px;border-bottom:1px solid #ddd}
-th{background:var(--negro);color:#fff}
+section{max-width:1100px; margin:auto; padding:60px 20px}
+h2{border-left:6px solid var(--rojo); padding-left:15px; text-transform: uppercase;}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px}
+.card{background:#fff; padding:25px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.btn{display:inline-block; margin:10px 0; padding:12px 18px; background:var(--rojo); color:#fff; text-decoration:none; border-radius:6px; font-weight: bold;}
+table{width:100%; border-collapse:collapse; margin-top:20px; background: #fff;}
+th,td{padding:12px; border-bottom:1px solid #ddd; text-align: left;}
+th{background:var(--negro); color:#fff}
 #tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
 #tablaGeneral tbody tr:nth-child(2){background:#c0c0c033}
 #tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
-#aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
-.institucional{text-align:center;padding:60px 20px;background:#fff}
-.logos-federaciones{display:flex;justify-content:center;flex-wrap:wrap;gap:40px}
-.logos-federaciones img{height:90px;object-fit:contain;filter:grayscale(100%);transition:.3s}
-.logos-federaciones img:hover{filter:grayscale(0%);transform:scale(1.05)}
-.footer{background:var(--negro);color:#fff;text-align:center;padding:40px 20px;}
-.sponsors img{height:45px;margin:0 10px}
+.institucional{text-align:center; background:#fff; padding: 60px 20px;}
+.logos-federaciones{display:flex; justify-content:center; flex-wrap:wrap; gap:40px; margin-top: 20px;}
+.logos-federaciones img{height:80px; object-fit:contain; filter:grayscale(100%); transition:.3s}
+.logos-federaciones img:hover{filter:grayscale(0%); transform:scale(1.05)}
+.footer{background:var(--negro); color:#fff; text-align:center; padding:40px 20px;}
+.sponsors img{height:45px; margin:0 10px; filter: brightness(0) invert(1);}
 </style>
 </head>
 <body>
 
 <div id="welcome-modal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" id="closePopUp">&times;</span>
-    <p style="margin:0; color:#888; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Auspiciante Oficial</p>
-    <div class="sponsor-container">
-      <img id="sponsor-img" src="" alt="Sponsor ProKart">
+    <div class="modal-content">
+        <span class="close-btn" id="closePopUp">&times;</span>
+        <p style="margin:0; color:#888; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Auspiciante Oficial</p>
+        <div class="sponsor-container">
+            <img id="sponsor-img" src="" alt="Sponsor ProKart">
+        </div>
+        <h2 id="sponsor-name" style="border:none; padding:0; margin:10px 0; font-size:22px; color:var(--negro)">Cargando...</h2>
+        <a href="#inscripcion" class="pop-cta" id="ctaPopUp">INSCRIBIRSE AHORA</a>
     </div>
-    <h2 id="sponsor-name" style="border:none; padding:0; margin:10px 0; font-size:22px; color:var(--negro)">CARGANDO...</h2>
-    <a href="#inscripcion" class="pop-cta" id="ctaPopUp">INSCRIBIRSE AHORA</a>
-  </div>
 </div>
 
 <header>
-  <img src="ProKart.jpg" alt="PROKART CALETENSE">
-  <h1>PROKART CALETENSE</h1>
-  <p>Temporada Oficial 2026</p>
+    <img src="ProKart.jpg" alt="PROKART CALETENSE">
+    <h1>PROKART CALETENSE</h1>
+    <p>Temporada Oficial 2026</p>
 </header>
 
 <nav>
-  <a href="#fechas">Fechas</a>
-  <a href="#categorias">Categorías</a>
-  <a href="#posiciones">Resultados</a>
-  <a href="campeonato.html">Campeonato</a>
-  <a href="#inscripcion">Inscripciones</a>
+    <a href="#fechas">Fechas</a>
+    <a href="#categorias">Categorías</a>
+    <a href="#posiciones">Resultados</a>
+    <a href="#inscripcion">Inscripciones</a>
 </nav>
 
 <div class="ad-header-container">
-    <div class="ad-banner-top" id="main-ad-banner">
+    <div class="ad-banner-top">
         <span class="ad-label">Publicidad</span>
         <img id="ad-top-img" src="" style="height:100%; object-fit:contain;">
     </div>
 </div>
 
 <section id="fechas">
-<h2>Calendario Oficial 2026</h2>
-<div class="grid">
-<a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1</h3><p>5 de Abril - Pico Truncado</p></a>
-<a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2 </h3><p>2 de Mayo - Caleta Olivia</p></a>
-<a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3 </h3><p>3 de Mayo - Caleta Olivia</p></a>
-<a href="fecha.html?fecha=Fecha%204" class="card"><h3>Fecha 4</h3><p>7 de Junio - Caleta Olivia</p></a>
-<a href="fecha.html?fecha=Fecha%205" class="card"><h3>Fecha 5</h3><p>2 de Agosto - Las Heras</p></a>
-<a href="fecha.html?fecha=Fecha%206" class="card"><h3>Fecha 6 -</h3><p>6 de Septiembre - Puerto Deseado</p></a>
-<a href="fecha.html?fecha=Fecha%207" class="card"><h3>Fecha 7 -</h3><p>7 de Septiembre - Puerto Deseado</p></a>
-<a href="fecha.html?fecha=Fecha%208" class="card"><h3>Fecha 8</h3><p>4 de Octubre - Las Heras</p></a>
-<a href="fecha.html?fecha=Fecha%209" class="card"><h3>Fecha 9 - Cierre</h3><p>1 de Noviembre - Caleta Olivia</p></a>
-</div>
+    <h2>Calendario Oficial 2026</h2>
+    <div class="grid">
+        <div class="card"><h3>Fecha 1</h3><p>5 de Abril - Pico Truncado</p></div>
+        <div class="card"><h3>Fecha 2</h3><p>2 de Mayo - Caleta Olivia</p></div>
+        <div class="card"><h3>Fecha 3</h3><p>3 de Mayo - Caleta Olivia</p></div>
+        <div class="card"><h3>Fecha 4</h3><p>7 de Junio - Caleta Olivia</p></div>
+        <div class="card"><h3>Fecha 5</h3><p>2 de Agosto - Las Heras</p></div>
+        <div class="card"><h3>Fecha 6</h3><p>6 de Septiembre - Puerto Deseado</p></div>
+    </div>
 </section>
 
 <section id="categorias">
     <h2>Categorías</h2>
     <div class="grid">
-        <div class="card">
-            <h3>PRE JUNIOR</h3>
-            <p class="edad">desde los 7 años hasta los 13 años</p> 
-            <a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR_2026.pdf" target="_blank">Reglamento</a>
-        </div>
-        <div class="card">
-            <h3>JUNIOR</h3>
-            <p class="edad">desde los 7 años hasta los 13 años</p>
-            <a class="btn" href="reglamentos/Reglamento_JUNIOR_2026.pdf" target="_blank">Reglamento</a>
-        </div>
-        <div class="card">
-            <h3>110 Cajeros</h3>
-            <p class="edad">desde los 12 años hasta los 17 años</p>
-            <a class="btn" href="reglamentos/Reglamento_110_CAJEROS_2026.pdf" target="_blank">Reglamento</a>
-        </div>
-        <div class="card">
-            <h3>200 STD</h3>
-            <p class="edad">desde los 16 años hasta los 31 años</p>
-            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Reglamento</a>
-        </div>
-       <div class="card">
-            <h3>200 Master</h3>
-            <p class="edad">desde los 30 años cumplidos</p>
-            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Reglamento</a>
-        </div>
-        <div class="card ad-card" id="native-ad-category">
+        <div class="card"><h3>PRE JUNIOR</h3><p>7 a 13 años</p><a class="btn" href="#">Reglamento</a></div>
+        <div class="card"><h3>JUNIOR</h3><p>7 a 13 años</p><a class="btn" href="#">Reglamento</a></div>
+        <div class="card"><h3>110 CAJEROS</h3><p>12 a 17 años</p><a class="btn" href="#">Reglamento</a></div>
+        <div class="card"><h3>200 STD</h3><p>16 a 31 años</p><a class="btn" href="#">Reglamento</a></div>
+        
+        <div class="card ad-card">
             <span class="ad-label" style="top:10px; right:10px;">Auspiciante</span>
             <img id="ad-native-img" src="" alt="Sponsor">
-            <p id="ad-native-name" style="margin-top:15px; font-weight:bold; color:var(--negro)"></p>
+            <p id="ad-native-name" style="margin-top:15px; font-weight:bold;"></p>
         </div>
+    </div>
+</section>
+
+<section id="posiciones">
+    <h2>Resultados del Campeonato</h2>
+    <div class="card">
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <select id="categoriaSelect" style="padding:10px; flex:1"></select>
+            <select id="fechaSelect" style="padding:10px; flex:1"></select>
+        </div>
+        <table id="tablaResultados">
+            <thead><tr><th>Puesto</th><th>Piloto</th><th>Puntos</th></tr></thead>
+            <tbody></tbody>
+        </table>
+        <h2 style="margin-top:40px; border:none;">Tabla General</h2>
+        <table id="tablaGeneral">
+            <thead><tr><th>Pos</th><th>Piloto</th><th>Total</th></tr></thead>
+            <tbody></tbody>
+        </table>
     </div>
 </section>
 
 <section id="inscripcion">
-  <h2>Inscripciones Abiertas</h2>
-  <div class="card" style="text-align: center;">
-    <div id="countdown-container" style="margin-bottom: 25px;">
-      <p style="margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; color: #666;">Faltan para la Proxima Fecha:</p>
-      <div id="timer" style="font-size: 2rem; font-weight: 700; color: var(--negro); display: flex; justify-content: center; gap: 15px;">
-        <div><span id="days">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">DÍAS</small></div>
-        <div><span id="hours">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">HORAS</small></div>
-        <div><span id="minutes">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">MIN</small></div>
-        <div><span id="seconds">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">SEG</small></div>
-      </div>
+    <h2>Inscripciones Abiertas</h2>
+    <div class="card" style="text-align: center;">
+        <div id="timer" style="font-size: 2rem; font-weight: 700; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+            <div><span id="days">00</span><small style="display:block; font-size: 10px; color: var(--rojo);">DÍAS</small></div>
+            <div><span id="hours">00</span><small style="display:block; font-size: 10px; color: var(--rojo);">HORAS</small></div>
+            <div><span id="minutes">00</span><small style="display:block; font-size: 10px; color: var(--rojo);">MIN</small></div>
+            <div><span id="seconds">00</span><small style="display:block; font-size: 10px; color: var(--rojo);">SEG</small></div>
+        </div>
+        <a class="btn" href="https://forms.gle/87QmuPKku5HrZi2v6" target="_blank" style="padding: 15px 30px; font-size: 1.2rem;">IR AL FORMULARIO</a>
     </div>
-    <p>Asegurá tu lugar en la grilla completando el formulario oficial.</p>
-    <a class="btn" href="https://forms.gle/87QmuPKku5HrZi2v6" target="_blank" style="padding: 15px 30px; font-size: 1.2rem;">FORMULARIO DE INSCRIPCIÓN</a>
-  </div>
-</section>
-
-<section class="institucional">
-<h2>Instituciones que nos respaldan</h2>
-<div class="logos-federaciones">
-<img src="img/frad.png" alt="FRAD SCZN">
-<img src="img/cda.png" alt="CDA">
-<img src="img/aca.png" alt="ACA">
-</div>
 </section>
 
 <div id="ticker-ads"></div>
 
+<section class="institucional">
+    <h2>Avalado por</h2>
+    <div class="logos-federaciones">
+        <img src="img/frad.png" alt="FRAD">
+        <img src="img/cda.png" alt="CDA">
+        <img src="img/aca.png" alt="ACA">
+    </div>
+</section>
+
 <footer class="footer">
-  <div class="sponsors" id="footer-sponsors"></div>
-  <p>© 2026 PROKART CALETENSE</p>
+    <div class="sponsors" id="footer-sponsors"></div>
+    <p>© 2026 PROKART CALETENSE | Diseño Profesional</p>
 </footer>
 
 <script>
-  const sponsorsPop = [
+// 1. CONFIGURACIÓN DE BASE DE DATOS (REEMPLAZA CON TUS LINKS)
+const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_TU_LINK_REAL_RESULTADOS/pub?output=csv";
+const SHEET_PILOTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_TU_LINK_REAL_PILOTOS/pub?output=csv";
+
+// 2. LISTA DE SPONSORS
+const sponsorsPop = [
     { nombre: "Vintage Motors 4T", img: "sponsors/vintage.png" },
     { nombre: "UL Motos", img: "sponsors/ul.png" },
     { nombre: "Dany Kart", img: "sponsors/dany.png" },
     { nombre: "Repuestos Santiago", img: "sponsors/caleta.png" },
     { nombre: "FiftySix", img: "sponsors/56.png" }
-  ];
+];
 
-  function gestionarPublicidades() {
-    // 1. Pop-up (Tu lógica original)
-    const modal = document.getElementById("welcome-modal");
-    const sImg = document.getElementById("sponsor-img");
-    const sName = document.getElementById("sponsor-name");
-    const randPop = Math.floor(Math.random() * sponsorsPop.length);
-    if(sImg) sImg.src = sponsorsPop[randPop].img;
-    if(sName) sName.innerText = sponsorsPop[randPop].nombre;
-    setTimeout(() => { if(modal) modal.style.display = "block"; }, 800);
+let datos = [];
+let pilotosDB = {};
 
-    // 2. Banner Superior
-    const randTop = Math.floor(Math.random() * sponsorsPop.length);
-    document.getElementById("ad-top-img").src = sponsorsPop[randTop].img;
+// 3. PARSEADOR DE CSV (CORREGIDO)
+function parseCSV(text){
+    return text.split("\n").map(row =>
+      row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+         .map(c => c.replace(/^"|"$/g,'').trim())
+    );
+}
 
-    // 3. Anuncio Nativo en Categorías
+// 4. LÓGICA DE PUBLICIDAD PROFESIONAL
+function iniciarPublicidad() {
+    // Pop-up Aleatorio
+    const rand = Math.floor(Math.random() * sponsorsPop.length);
+    document.getElementById("sponsor-img").src = sponsorsPop[rand].img;
+    document.getElementById("sponsor-name").innerText = sponsorsPop[rand].nombre;
+    setTimeout(() => { document.getElementById("welcome-modal").style.display = "block"; }, 800);
+
+    // Banner Superior
+    document.getElementById("ad-top-img").src = sponsorsPop[Math.floor(Math.random() * sponsorsPop.length)].img;
+
+    // Native Ad
     const randNative = Math.floor(Math.random() * sponsorsPop.length);
     document.getElementById("ad-native-img").src = sponsorsPop[randNative].img;
     document.getElementById("ad-native-name").innerText = sponsorsPop[randNative].nombre;
 
-    // 4. Ticker Corredizo
-    const tickerContainer = document.getElementById("ticker-ads");
-    const marcasText = sponsorsPop.map(s => `<span>🏁 ${s.nombre} 🏁</span>`).join("");
-    tickerContainer.innerHTML = `
-        <div class="ticker-wrapper">
-            <div class="ticker-content">${marcasText}${marcasText}</div>
-        </div>`;
+    // Ticker (Cinta corrediza)
+    const marcas = sponsorsPop.map(s => `<span>🏁 ${s.nombre} 🏁</span>`).join("");
+    document.getElementById("ticker-ads").innerHTML = `<div class="ticker-wrapper"><div class="ticker-content">${marcas}${marcas}</div></div>`;
 
-    // 5. Footer
-    const footerContainer = document.getElementById("footer-sponsors");
-    footerContainer.innerHTML = sponsorsPop.map(sp => `<img src="${sp.img}" alt="${sp.nombre}">`).join("");
-  }
+    // Footer
+    document.getElementById("footer-sponsors").innerHTML = sponsorsPop.map(sp => `<img src="${sp.img}" alt="${sp.nombre}">`).join("");
+}
 
-  function actualizarCronometro() {
-    const fechaCarrera = new Date("April 3, 2026 13:00:00").getTime();
-    setInterval(function() {
-      const ahora = new Date().getTime();
-      const distancia = fechaCarrera - ahora;
-      const dEl = document.getElementById("days");
-      if(!dEl) return;
-      const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
-      const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-      const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
-      dEl.innerText = dias < 10 ? "0" + dias : dias;
-      document.getElementById("hours").innerText = horas < 10 ? "0" + horas : horas;
-      document.getElementById("minutes").innerText = minutos < 10 ? "0" + minutos : minutos;
-      document.getElementById("seconds").innerText = segundos < 10 ? "0" + segundos : segundos;
+// 5. CARGA DE DATOS DE GOOGLE SHEETS
+async function cargarDatos() {
+    try {
+        const [res1, res2] = await Promise.all([fetch(SHEET_RESULTADOS), fetch(SHEET_PILOTOS)]);
+        const [textRes, textPil] = await Promise.all([res1.text(), res2.text()]);
+
+        // Mapear Pilotos
+        const f2 = parseCSV(textPil);
+        f2.slice(1).forEach(f => { if(f[0]) pilotosDB[f[0]] = { nombre: f[1] }; });
+
+        // Mapear Resultados
+        const f1 = parseCSV(textRes);
+        const h = f1[0] || [];
+        datos = f1.slice(1).map(f => ({
+            fecha: f[h.indexOf("Fecha")],
+            categoria: f[h.indexOf("Categoria")],
+            piloto: f[h.indexOf("Piloto")],
+            puntos: Number(f[h.indexOf("Puntos Obtenidos")]) || 0,
+            id: f[h.indexOf("Categoria")] + "_" + f[h.indexOf("Numero")]
+        })).filter(d => d.fecha);
+
+        cargarFiltros();
+    } catch (e) { console.error("Error en carga:", e); }
+}
+
+function cargarFiltros() {
+    const selCat = document.getElementById("categoriaSelect");
+    const cats = [...new Set(datos.map(d => d.categoria))];
+    selCat.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join("");
+    selCat.onchange = cargarFechas;
+    cargarFechas();
+}
+
+function cargarFechas() {
+    const cat = document.getElementById("categoriaSelect").value;
+    const selFec = document.getElementById("fechaSelect");
+    const fechas = [...new Set(datos.filter(d => d.categoria === cat).map(d => d.fecha))];
+    selFec.innerHTML = fechas.map(f => `<option value="${f}">${f}</option>`).join("");
+    selFec.onchange = mostrarTablas;
+    mostrarTablas();
+}
+
+function mostrarTablas() {
+    const cat = document.getElementById("categoriaSelect").value;
+    const fec = document.getElementById("fechaSelect").value;
+
+    // Resultados de Fecha
+    const filtrados = datos.filter(d => d.categoria === cat && d.fecha === fec).sort((a,b) => b.puntos - a.puntos);
+    document.querySelector("#tablaResultados tbody").innerHTML = filtrados.map((d,i) => `
+        <tr><td>${i+1}</td><td>${pilotosDB[d.id]?.nombre || d.piloto}</td><td>${d.puntos}</td></tr>
+    `).join("");
+
+    // General
+    const mapa = {};
+    datos.filter(d => d.categoria === cat).forEach(d => { mapa[d.id] = (mapa[d.id] || 0) + d.puntos; });
+    const ranking = Object.entries(mapa).sort((a,b) => b[1] - a[1]);
+    document.querySelector("#tablaGeneral tbody").innerHTML = ranking.map((d,i) => `
+        <tr><td>${i+1}</td><td>${pilotosDB[d[0]]?.nombre || d[0]}</td><td>${d[1]}</td></tr>
+    `).join("");
+}
+
+// 6. CRONÓMETRO
+function cronometro() {
+    const fin = new Date("April 5, 2026 09:00:00").getTime();
+    setInterval(() => {
+        const ahora = new Date().getTime();
+        const d = fin - ahora;
+        if (d < 0) return;
+        document.getElementById("days").innerText = Math.floor(d / 864e5);
+        document.getElementById("hours").innerText = Math.floor((d % 864e5) / 36e5);
+        document.getElementById("minutes").innerText = Math.floor((d % 36e5) / 6e4);
+        document.getElementById("seconds").innerText = Math.floor((d % 6e4) / 1e3);
     }, 1000);
-  }
+}
 
-  document.addEventListener("DOMContentLoaded", () => {
-    gestionarPublicidades();
-    actualizarCronometro();
+// 7. INICIALIZACIÓN
+document.addEventListener("DOMContentLoaded", () => {
+    iniciarPublicidad();
+    cargarDatos();
+    cronometro();
     
-    // Eventos Pop-up
+    // Cierre de Pop-up
     document.getElementById("closePopUp").onclick = () => document.getElementById("welcome-modal").style.display = "none";
     document.getElementById("ctaPopUp").onclick = () => document.getElementById("welcome-modal").style.display = "none";
-    window.onclick = (e) => { if (e.target == document.getElementById("welcome-modal")) document.getElementById("welcome-modal").style.display = "none"; };
-  });
+    window.onclick = (e) => { if(e.target == document.getElementById("welcome-modal")) e.target.style.display = "none"; };
+});
 </script>
 </body>
 </html>
