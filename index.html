@@ -13,144 +13,108 @@
 body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 
 /* ==========================================
-   ESTILOS ADICIONALES PARA PUBLICIDAD PROFESIONAL
+   ESTILOS DE NAVEGACIÓN RESPONSIVA (NUEVO)
    ========================================== */
-.ad-header-container {
-    background: #e9e9e9;
-    padding: 15px 0;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-}
-.ad-banner-top {
-    max-width: 1100px;
-    margin: 0 auto;
-    height: 90px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px dashed #bbb;
-    position: relative;
-    overflow: hidden;
-}
-.ad-label {
-    position: absolute;
+nav {
+    position: sticky;
     top: 0;
-    right: 0;
-    background: #bbb;
-    color: #fff;
-    font-size: 9px;
-    padding: 2px 5px;
-    text-transform: uppercase;
-    z-index: 5;
-}
-.card.ad-card {
-    background: #fdfdfd;
-    border: 2px solid var(--rojo);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-.ad-card img {
-    max-width: 85%;
-    max-height: 110px;
-    object-fit: contain;
-}
-.ticker-wrapper {
-    width: 100%;
-    overflow: hidden;
     background: var(--negro);
-    padding: 12px 0;
-    border-top: 2px solid var(--rojo);
-}
-.ticker-content {
     display: flex;
-    white-space: nowrap;
-    animation: ticker 40s linear infinite;
+    justify-content: center; /* Centrado en PC */
+    align-items: center;
+    padding: 15px;
+    z-index: 2000;
 }
-.ticker-content span {
-    color: white;
-    padding: 0 40px;
-    font-size: 1.1rem;
-    font-weight: bold;
+
+.nav-links {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
     text-transform: uppercase;
+    font-weight: bold;
 }
-@keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+
+nav a:hover { color: var(--rojo); }
+
+/* Botón Hamburguesa */
+.menu-toggle {
+    display: none; /* Oculto en PC */
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* Diseño para Celulares */
+@media (max-width: 768px) {
+    nav {
+        justify-content: space-between;
+        padding: 15px 20px;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none; /* Oculto inicialmente */
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--negro);
+        padding: 20px 0;
+        text-align: center;
+        border-top: 1px solid #333;
+    }
+
+    /* Clase que activa el menú con JS */
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 15px;
+        display: block;
+    }
 }
 
 /* ==========================================
-   ESTILOS ORIGINALES POP-UP
+   ESTILOS ORIGINALES E INSTITUCIONALES
    ========================================== */
-.modal {
-  display: none; 
-  position: fixed;
-  z-index: 2000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
-}
-.modal-content {
-  background-color: #fff;
-  margin: 10% auto;
-  padding: 25px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-.close-btn {
-  position: absolute;
-  right: 15px; top: 10px;
-  font-size: 30px;
-  cursor: pointer;
-  color: #333;
-  line-height: 1;
-}
-.sponsor-container {
-  margin: 15px 0;
-  min-height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#sponsor-img {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  object-fit: contain;
-}
-.pop-cta {
-  background: var(--rojo);
-  color: white;
-  border: none;
-  padding: 15px 25px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Oswald';
-  text-transform: uppercase;
-  font-weight: 700;
-  width: 100%;
-  text-decoration: none;
-  display: block;
-}
+.ad-header-container { background: #e9e9e9; padding: 15px 0; border-bottom: 1px solid #ddd; text-align: center; }
+.ad-banner-top { max-width: 1100px; margin: 0 auto; height: 90px; background: #fff; display: flex; align-items: center; justify-content: center; border: 1px dashed #bbb; position: relative; overflow: hidden; }
+.ad-label { position: absolute; top: 0; right: 0; background: #bbb; color: #fff; font-size: 9px; padding: 2px 5px; text-transform: uppercase; z-index: 5; }
+.card.ad-card { background: #fdfdfd; border: 2px solid var(--rojo); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.ad-card img { max-width: 85%; max-height: 110px; object-fit: contain; }
+.ticker-wrapper { width: 100%; overflow: hidden; background: var(--negro); padding: 12px 0; border-top: 2px solid var(--rojo); }
+.ticker-content { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
+.ticker-content span { color: white; padding: 0 40px; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-/* ESTILOS ORIGINALES WEB */
-header{
-  background:linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)),
-  url("img/23610.jpg") center/cover no-repeat;
-  color:#fff;text-align:center;padding:120px 20px;
-}
+.modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
+.modal-content { background-color: #fff; margin: 10% auto; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.close-btn { position: absolute; right: 15px; top: 10px; font-size: 30px; cursor: pointer; color: #333; line-height: 1; }
+.sponsor-container { margin: 15px 0; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+#sponsor-img { max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain; }
+.pop-cta { background: var(--rojo); color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-family: 'Oswald'; text-transform: uppercase; font-weight: 700; width: 100%; text-decoration: none; display: block; }
+
+header{ background:linear-gradient(rgba(0,0,0,.75), rgba(0,0,0,.75)), url("img/23610.jpg") center/cover no-repeat; color:#fff;text-align:center;padding:120px 20px; }
 header img{max-width:320px;width:90%}
-nav{position:sticky;top:0;background:var(--negro);display:flex;justify-content:center;gap:25px;padding:15px;z-index:10}
-nav a{color:#fff;text-decoration:none}
-nav a:hover{color:var(--rojo)}
 section{max-width:1100px;margin:auto;padding:60px 20px}
 h2{border-left:6px solid var(--rojo);padding-left:15px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
@@ -159,9 +123,6 @@ h2{border-left:6px solid var(--rojo);padding-left:15px}
 table{width:100%;border-collapse:collapse;margin-top:20px}
 th,td{padding:12px;border-bottom:1px solid #ddd}
 th{background:var(--negro);color:#fff}
-#tablaGeneral tbody tr:nth-child(1){background:#ffd70033;font-weight:700}
-#tablaGeneral tbody tr:nth-child(2){background:#c0c0c033}
-#tablaGeneral tbody tr:nth-child(3){background:#cd7f3233}
 #aclaracion{background:#fff;border-top:4px solid var(--rojo);text-align:center}
 .institucional{text-align:center;padding:60px 20px;background:#fff}
 .logos-federaciones{display:flex;justify-content:center;flex-wrap:wrap;gap:40px}
@@ -192,11 +153,21 @@ th{background:var(--negro);color:#fff}
 </header>
 
 <nav>
-  <a href="#fechas">Fechas</a>
-  <a href="#categorias">Categorías</a>
-  <a href="#posiciones">Resultados</a>
-  <a href="campeonato.html">Campeonato</a>
-  <a href="#inscripcion">Inscripciones</a>
+  <div style="color: white; font-weight: bold; font-size: 1.1rem;" class="nav-logo">PROKART</div>
+  
+  <button class="menu-toggle" id="mobile-menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="nav-links" id="nav-links">
+    <a href="#fechas">Fechas</a>
+    <a href="#categorias">Categorías</a>
+    <a href="#posiciones">Resultados</a>
+    <a href="campeonato.html">Campeonato</a>
+    <a href="#inscripcion">Inscripciones</a>
+  </div>
 </nav>
 
 <div class="ad-header-container">
@@ -209,7 +180,7 @@ th{background:var(--negro);color:#fff}
 <section id="fechas">
 <h2>Calendario Oficial 2026</h2>
 <div class="grid">
-<a href="fecha.html?fecha=Fecha%201" class="card"><h3><blink>Fecha 1</blink></h3><p>5 de Abril - Pico Truncado</p></a>
+<a href="fecha.html?fecha=Fecha%201" class="card"><h3>Fecha 1</h3><p>5 de Abril - Pico Truncado</p></a>
 <a href="fecha.html?fecha=Fecha%202" class="card"><h3>Fecha 2 </h3><p>2 de Mayo - Caleta Olivia</p></a>
 <a href="fecha.html?fecha=Fecha%203" class="card"><h3>Fecha 3 </h3><p>3 de Mayo - Caleta Olivia</p></a>
 <a href="fecha.html?fecha=Fecha%204" class="card"><h3>Fecha 4</h3><p>7 de Junio - Caleta Olivia</p></a>
@@ -223,59 +194,30 @@ th{background:var(--negro);color:#fff}
 
 <section id="categorias">
     <h2>Categorías</h2>
-    <p>Selecciona tu categoría para descargar el reglamento correspondiente.</p>
     <div class="grid">
         <div class="card">
             <h3>PRE JUNIOR</h3>
-            <p class="edad">desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en el campeonato 2026</p> 
-            <a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR_2026.pdf" target="_blank">Descargar Reglamento</a>
+            <p class="edad">desde los 7 años hasta los 13 años</p> 
+            <a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR_2026.pdf" target="_blank">Reglamento</a>
         </div>
-        <div class="card">
-            <h3>JUNIOR</h3>
-            <p class="edad">desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en el campeonato 2026</p>
-            <a class="btn" href="reglamentos/Reglamento_JUNIOR_2026.pdf" target="_blank">Descargar Reglamento</a>
-        </div>
-
         <div class="card ad-card">
             <span class="ad-label" style="top:10px; right:10px;">Auspiciante</span>
             <img id="ad-native-img" src="" alt="Sponsor">
             <p id="ad-native-name" style="margin-top:15px; font-weight:bold; color:var(--negro)"></p>
         </div>
-
         <div class="card">
-            <h3>110 Cajeros</h3>
-            <p class="edad">desde los 12 años cumplidos en 2025 hasta los 17 años cumplidos en el campeonato 2026</p>
-            <a class="btn" href="reglamentos/Reglamento_110_CAJEROS_2026.pdf" target="_blank">Descargar Reglamento</a>
-        </div>
-        <div class="card">
-            <h3>200 STD</h3>
-            <p class="edad">desde los 16 años cumplidos en 2025 hasta los 31 años cumplidos en el campeonato 2026</p>
-            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
-        </div>
-       <div class="card">
             <h3>200 Master</h3>
-            <p class="edad">desde los 30 años cumplidos en 2025 </p>
-            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
+            <p class="edad">desde los 30 años cumplidos en 2025</p>
+            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Reglamento</a>
         </div>
     </div>
 </section>
-
-<div style="display: none;">
-<section id="posiciones">
-<h2>Resultados</h2>
-<select id="categoriaSelect"></select>
-<select id="fechaSelect"></select>
-<table id="tablaResultados"><thead><tr><th>Puesto</th><th>Piloto</th><th>Puntos</th></tr></thead><tbody></tbody></table>
-<h2>Tabla General</h2>
-<table id="tablaGeneral"><thead><tr><th>Pos</th><th>Piloto</th><th>Total</th></tr></thead><tbody></tbody></table>
-</section>
-</div>
 
 <section id="inscripcion">
   <h2>Inscripciones Abiertas</h2>
   <div class="card" style="text-align: center;">
     <div id="countdown-container" style="margin-bottom: 25px;">
-      <p style="margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; color: #666;">Faltan para la Proxima Fecha:</p>
+      <p>Faltan para la Proxima Fecha:</p>
       <div id="timer" style="font-size: 2rem; font-weight: 700; color: var(--negro); display: flex; justify-content: center; gap: 15px;">
         <div><span id="days">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">DÍAS</small></div>
         <div><span id="hours">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">HORAS</small></div>
@@ -283,36 +225,11 @@ th{background:var(--negro);color:#fff}
         <div><span id="seconds">00</span><small style="display:block; font-size: 0.5em; color: var(--rojo);">SEG</small></div>
       </div>
     </div>
-    <p>Asegurá tu lugar en la grilla completando el formulario oficial.</p>
-    <a class="btn" href="https://forms.gle/87QmuPKku5HrZi2v6" target="_blank" style="padding: 15px 30px; font-size: 1.2rem;">IR AL FORMULARIO DE INSCRIPCIÓN</a>
+    <a class="btn" href="https://forms.gle/87QmuPKku5HrZi2v6" target="_blank">IR AL FORMULARIO</a>
   </div>
 </section>
 
-<section id="inscripcion">
-<h2>Confirmados para esta Fecha</h2>
-<div class="card">
-<a class="btn" href="preinscriptos.html" target="_blank">Confirmados</a>
-   <a class="btn" href="https://lat.sorteados.online/r/32164-ROsjvU10tMeiqakE4d3LxFSTNHB5PJ" target="_blank">SORTEO 1° Fecha</a>
-</div>
-</section>
-
 <div id="ticker-section"></div>
-
-<section id="aclaracion">
-<div style="max-width:900px;margin:auto">
-<h3>Nota Aclaratoria</h3>
-<p>El ProKart Caletense no se hace responsable de los datos suministrados por la FRAD de Santa Cruz Zona Norte para la confección de los puntajes y estadísticas publicadas en esta aplicación.</p>
-</div>
-</section>
-
-<section class="institucional">
-<h2>Instituciones que nos respaldan</h2>
-<div class="logos-federaciones">
-<img src="img/frad.png" alt="FRAD SCZN">
-<img src="img/cda.png" alt="CDA">
-<img src="img/aca.png" alt="ACA">
-</div>
-</section>
 
 <footer class="footer">
   <div class="sponsors" id="footer-sponsors"></div>
@@ -320,7 +237,7 @@ th{background:var(--negro);color:#fff}
 </footer>
 
 <script>
-  // TUS SPONSORS ORIGINALES
+  // SPONSORS
   const sponsorsPop = [
     { nombre: "Vintage Motors 4T", img: "sponsors/vintage.png" },
     { nombre: "UL Motos", img: "sponsors/ul.png" },
@@ -328,129 +245,30 @@ th{background:var(--negro);color:#fff}
   ];
 
   function gestionarPublicidad() {
-    // 1. Pop-up original
     const modal = document.getElementById("welcome-modal");
     const randPop = Math.floor(Math.random() * sponsorsPop.length);
     document.getElementById("sponsor-img").src = sponsorsPop[randPop].img;
     document.getElementById("sponsor-name").innerText = sponsorsPop[randPop].nombre;
     setTimeout(() => { if(modal) modal.style.display = "block"; }, 800);
 
-    // 2. Banner Superior
     document.getElementById("ad-top-img").src = sponsorsPop[Math.floor(Math.random() * sponsorsPop.length)].img;
-
-    // 3. Native Ad
     const randNative = Math.floor(Math.random() * sponsorsPop.length);
     document.getElementById("ad-native-img").src = sponsorsPop[randNative].img;
     document.getElementById("ad-native-name").innerText = sponsorsPop[randNative].nombre;
 
-    // 4. Ticker Tape
     const tickerContainer = document.getElementById("ticker-section");
     const marcasText = sponsorsPop.map(s => `<span>🏁 ${s.nombre} 🏁</span>`).join("");
     tickerContainer.innerHTML = `<div class="ticker-wrapper"><div class="ticker-content">${marcasText}${marcasText}</div></div>`;
     
-    // 5. Footer
     document.getElementById("footer-sponsors").innerHTML = sponsorsPop.map(sp => `<img src="${sp.img}" alt="${sp.nombre}">`).join("");
   }
 
-  const SHEET_RESULTADOS="https://docs.google.com";
-  const SHEET_PILOTOS="https://docs.google.com";
-  let datos=[];
-  let pilotosDB={};
-
-  function parseCSV(text){
-    return text.split("\n").map(row =>
-      row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g,'').trim())
-    );
-  }
-
-  async function cargarDatos(){
-    gestionarPublicidad();
-    try {
-      const r1 = await fetch(SHEET_RESULTADOS);
-      const t1 = await r1.text();
-      const f1 = parseCSV(t1);
-      const h1 = f1[0] || [];
-      const iFecha = h1.indexOf("Fecha");
-      const iCat = h1.indexOf("Categoria");
-      const iPil = h1.indexOf("Piloto");
-      const iPts = h1.indexOf("Puntos Obtenidos");
-      const iNum = h1.indexOf("Numero");
-
-      datos = f1.slice(1).map(f=>{
-        if(!f.length || f.length < 2) return null;
-        const categoria = f[iCat];
-        const numero = f[iNum];
-        return {
-          fecha: f[iFecha],
-          categoria,
-          piloto: f[iPil],
-          numero,
-          puntos: Number(f[iPts]) || 0,
-          id: categoria && numero ? categoria+"_"+numero : null
-        };
-      }).filter(d => d && d.fecha && d.categoria);
-
-      const r2 = await fetch(SHEET_PILOTOS);
-      const t2 = await r2.text();
-      const f2 = parseCSV(t2);
-      const h2 = f2[0] || [];
-      const iID = h2.indexOf("ID");
-      const iNom = h2.indexOf("Nombre");
-
-      f2.slice(1).forEach(f=>{ if(f[iID]){ pilotosDB[f[iID]] = { nombre: f[iNom] }; } });
-      cargarCategorias();
-    } catch (error) { console.error(error); }
-  }
-
-  function cargarCategorias(){
-    const selectCat = document.getElementById("categoriaSelect");
-    if(!selectCat) return;
-    const cats=[...new Set(datos.map(d=>d.categoria))];
-    selectCat.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join("");
-    cargarFechas();
-  }
-
-  function cargarFechas(){
-    const selectCat = document.getElementById("categoriaSelect");
-    const selectFecha = document.getElementById("fechaSelect");
-    if(!selectCat || !selectFecha) return;
-    const cat=selectCat.value;
-    const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-    selectFecha.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
-    mostrarResultados();
-  }
-
-  function mostrarResultados(){
-    const catSelect = document.getElementById("categoriaSelect");
-    const fecSelect = document.getElementById("fechaSelect");
-    if(!catSelect || !fecSelect) return;
-    const cat = catSelect.value;
-    const fec = fecSelect.value;
-    const filtrados = datos.filter(d=>d.categoria===cat && d.fecha===fec).sort((a,b)=>b.puntos-a.puntos);
-    const tBody = document.querySelector("#tablaResultados tbody");
-    if(tBody) {
-      tBody.innerHTML = filtrados.map((d,i)=>`<tr><td>${i+1}</td><td><a href="piloto.html?id=${encodeURIComponent(d.id)}">${pilotosDB[d.id]?.nombre || d.piloto}</a></td><td>${d.puntos}</td></tr>`).join("");
-    }
-    mostrarGeneral(cat);
-  }
-
-  function mostrarGeneral(cat){
-    const mapa={};
-    datos.filter(d=>d.categoria===cat).forEach(d=>{ mapa[d.id]=(mapa[d.id]||0)+d.puntos; });
-    const ranking=Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
-    const gBody = document.querySelector("#tablaGeneral tbody");
-    if(gBody) {
-      gBody.innerHTML = ranking.map((d,i)=>`<tr><td>${i+1}</td><td><a href="piloto.html?id=${encodeURIComponent(d[0])}">${pilotosDB[d[0]]?.nombre || d[0]}</a></td><td>${d[1]}</td></tr>`).join("");
-    }
-  }
-
   function actualizarCronometro() {
-    const fechaCarrera = new Date("April 3, 2026 13:00:00").getTime();
+    const fechaCarrera = new Date("April 5, 2026 13:00:00").getTime();
     setInterval(function() {
       const ahora = new Date().getTime();
       const distancia = fechaCarrera - ahora;
-      const dEl = document.getElementById("days");
-      if(!dEl) return;
+      if(!document.getElementById("days")) return;
       document.getElementById("days").innerText = Math.floor(distancia / 864e5);
       document.getElementById("hours").innerText = Math.floor((distancia % 864e5) / 36e5);
       document.getElementById("minutes").innerText = Math.floor((distancia % 36e5) / 6e4);
@@ -458,16 +276,30 @@ th{background:var(--negro);color:#fff}
     }, 1000);
   }
 
+  // FUNCIÓN DEL MENÚ MÓVIL
+  function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu');
+    const menu = document.getElementById('nav-links');
+    if(btn && menu) {
+        btn.onclick = function() {
+            menu.classList.toggle('active');
+        };
+        // Cerrar menú al hacer clic en un link
+        const links = menu.getElementsByTagName('a');
+        for (let link of links) {
+            link.onclick = () => menu.classList.remove('active');
+        }
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     actualizarCronometro();
-    cargarDatos();
+    gestionarPublicidad();
+    initMobileMenu(); // Iniciamos el menú móvil
+    
     document.getElementById("closePopUp").onclick = () => document.getElementById("welcome-modal").style.display = "none";
     document.getElementById("ctaPopUp").onclick = () => document.getElementById("welcome-modal").style.display = "none";
     window.onclick = (e) => { if(e.target == document.getElementById("welcome-modal")) e.target.style.display = "none"; };
-    const cS = document.getElementById("categoriaSelect");
-    const fS = document.getElementById("fechaSelect");
-    if(cS) cS.addEventListener('change', cargarFechas);
-    if(fS) fS.addEventListener('change', mostrarResultados);
   });
 </script>
 </body>
