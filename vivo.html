@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIEMPOS EN VIVO | PROKART CALETENSE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com" rel="stylesheet">
+<style>
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Oswald',Arial;background:var(--gris); overflow-x: hidden;}
+
+/* MENU RESPONSIVO (Mismo estilo que el index) */
+nav {
+    position: sticky;
+    top: 0;
+    background: var(--negro);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    z-index: 2000;
+}
+.nav-links { display: flex; gap: 25px; }
+nav a { color: #fff; text-decoration: none; font-weight: bold; text-transform: uppercase; }
+nav a:hover { color: var(--rojo); }
+.menu-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
+.menu-toggle span { width: 25px; height: 3px; background: white; border-radius: 2px; }
+
+@media (max-width: 768px) {
+    nav { justify-content: space-between; padding: 15px 20px; }
+    .menu-toggle { display: flex; }
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--negro);
+        padding: 20px 0;
+        text-align: center;
+        border-top: 1px solid #333;
+    }
+    .nav-links.active { display: flex; }
+    .nav-links a { padding: 15px; display: block; }
+}
+
+/* CONTENEDOR DEL IFRAME */
+.live-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 10px;
+}
+
+.live-header {
+    background: var(--negro);
+    color: white;
+    padding: 20px;
+    border-left: 6px solid var(--rojo);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+}
+
+.live-header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; }
+
+.status-live {
+    background: var(--rojo);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+.iframe-wrapper {
+    position: relative;
+    width: 100%;
+    height: 80vh; /* Ajusta la altura al 80% de la pantalla */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.footer {
+    background: var(--negro);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* BOTÓN VOLVER */
+.btn-back {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border: 1px solid white;
+    padding: 5px 15px;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+.btn-back:hover { background: white; color: black; }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div style="color: white; font-weight: bold; font-size: 1.1rem;">PROKART LIVE</div>
+  <button class="menu-toggle" id="mobile-menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html">Inicio</a>
+    <a href="index.html#fechas">Fechas</a>
+    <a href="campeonato.html">Campeonato</a>
+    <a href="index.html#inscripcion">Inscripciones</a>
+  </div>
+</nav>
+
+<div class="live-container">
+    <div class="live-header">
+        <div>
+            <h1>Tiempos en Vivo</h1>
+            <p style="margin: 5px 0 0; color: #bbb; font-size: 0.9rem;">Cronometraje Oficial MyLaps</p>
+        </div>
+        <div class="status-live">EN DIRECTO</div>
+    </div>
+
+    <div class="iframe-wrapper">
+        <iframe src="TU_URL_DE_MYLAPS_AQUÍ" allowfullscreen></iframe>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="index.html" class="btn-back">← Volver al Sitio Oficial</a>
+    </div>
+</div>
+
+<footer class="footer">
+  <p>© 2026 PROKART CALETENSE | Caleta Olivia, Santa Cruz</p>
+</footer>
+
+<script>
+  // FUNCIONALIDAD DEL MENÚ MÓVIL
+  function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu');
+    const menu = document.getElementById('nav-links');
+    if(btn && menu) {
+        btn.onclick = () => menu.classList.toggle('active');
+        const links = menu.getElementsByTagName('a');
+        for (let link of links) {
+            link.onclick = () => menu.classList.remove('active');
+        }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+</body>
+</html>
