@@ -12,7 +12,7 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:'Oswald',Arial;background:var(--gris); overflow-x: hidden;}
 
-/* MENU RESPONSIVO (Mismo estilo que el index) */
+/* MENU RESPONSIVO (IGUAL AL INDEX) */
 nav {
     position: sticky;
     top: 0;
@@ -74,6 +74,7 @@ nav a:hover { color: var(--rojo); }
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
+    font-weight: bold;
     animation: blink 1.5s infinite;
 }
 
@@ -86,7 +87,7 @@ nav a:hover { color: var(--rojo); }
 .iframe-wrapper {
     position: relative;
     width: 100%;
-    height: 80vh; /* Ajusta la altura al 80% de la pantalla */
+    height: 75vh;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -103,37 +104,24 @@ iframe {
     background: var(--negro);
     color: #fff;
     text-align: center;
-    padding: 20px;
+    padding: 40px 20px;
     margin-top: 40px;
 }
-
-/* BOTÓN VOLVER */
-.btn-back {
-    display: inline-block;
-    color: white;
-    text-decoration: none;
-    font-size: 0.9rem;
-    border: 1px solid white;
-    padding: 5px 15px;
-    border-radius: 4px;
-    transition: 0.3s;
-}
-.btn-back:hover { background: white; color: black; }
-
 </style>
 </head>
 <body>
 
 <nav>
-  <div style="color: white; font-weight: bold; font-size: 1.1rem;">PROKART LIVE</div>
+  <div style="color: white; font-weight: bold; font-size: 1.1rem;">PROKART</div>
   <button class="menu-toggle" id="mobile-menu">
     <span></span>
     <span></span>
     <span></span>
   </button>
   <div class="nav-links" id="nav-links">
-    <a href="index.html">Inicio</a>
     <a href="index.html#fechas">Fechas</a>
+    <a href="index.html#categorias">Categorías</a>
+    <a href="index.html#posiciones">Resultados</a>
     <a href="campeonato.html">Campeonato</a>
     <a href="index.html#inscripcion">Inscripciones</a>
   </div>
@@ -145,20 +133,16 @@ iframe {
             <h1>Tiempos en Vivo</h1>
             <p style="margin: 5px 0 0; color: #bbb; font-size: 0.9rem;">Cronometraje Oficial MyLaps</p>
         </div>
-        <div class="status-live">EN DIRECTO</div>
+        <div class="status-live">VIVO</div>
     </div>
 
     <div class="iframe-wrapper">
-        <iframe src="https://speedhive.mylaps.com/livetiming/CDLPNDLQ-2147483782/active" allowfullscreen></iframe>
-    </div>
-    
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="index.html" class="btn-back">← Volver al Sitio Oficial</a>
+        <iframe src="https://livetiming.mylaps.com/TU_CODIGO_AQUI" allowfullscreen></iframe>
     </div>
 </div>
 
 <footer class="footer">
-  <p>© 2026 PROKART CALETENSE | Caleta Olivia, Santa Cruz</p>
+  <p>© 2026 PROKART CALETENSE | Caleta Olivia</p>
 </footer>
 
 <script>
