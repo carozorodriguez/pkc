@@ -13,7 +13,7 @@
 body{margin:0;font-family:'Oswald',Arial;background:var(--gris)}
 
 /* ==========================================
-   MENU RESPONSIVO (CORREGIDO)
+   MENU RESPONSIVO
    ========================================== */
 nav {
     position: sticky;
@@ -25,21 +25,17 @@ nav {
     padding: 15px;
     z-index: 2000;
 }
-
 .nav-links {
     display: flex;
     gap: 25px;
 }
-
 nav a {
     color: #fff;
     text-decoration: none;
     font-weight: bold;
     text-transform: uppercase;
 }
-
 nav a:hover { color: var(--rojo); }
-
 .menu-toggle {
     display: none;
     flex-direction: column;
@@ -48,14 +44,12 @@ nav a:hover { color: var(--rojo); }
     border: none;
     cursor: pointer;
 }
-
 .menu-toggle span {
     width: 25px;
     height: 3px;
     background: white;
     border-radius: 2px;
 }
-
 @media (max-width: 768px) {
     nav { justify-content: space-between; padding: 15px 20px; }
     .menu-toggle { display: flex; }
@@ -177,17 +171,11 @@ th{background:var(--negro);color:#fff}
 
 <section id="categorias">
     <h2>Categorías</h2>
-    <p>Selecciona tu categoría para descargar el reglamento correspondiente.</p>
     <div class="grid">
         <div class="card">
             <h3>PRE JUNIOR</h3>
-            <p class="edad">desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en el campeonato 2026</p> 
-            <a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR_2026.pdf" target="_blank">Descargar Reglamento</a>
-        </div>
-        <div class="card">
-            <h3>JUNIOR</h3>
-            <p class="edad">desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en el campeonato 2026</p>
-            <a class="btn" href="reglamentos/Reglamento_JUNIOR_2026.pdf" target="_blank">Descargar Reglamento</a>
+            <p>desde los 7 años cumplidos en 2025 hasta los 13 años cumplidos en 2026</p> 
+            <a class="btn" href="reglamentos/Reglamento_PRE_JUNIOR_2026.pdf" target="_blank">Reglamento</a>
         </div>
         <div class="card ad-card">
             <span class="ad-label" style="top:10px; right:10px;">Auspiciante</span>
@@ -195,19 +183,9 @@ th{background:var(--negro);color:#fff}
             <p id="ad-native-name" style="margin-top:15px; font-weight:bold; color:var(--negro)"></p>
         </div>
         <div class="card">
-            <h3>110 Cajeros</h3>
-            <p class="edad">desde los 12 años cumplidos en 2025 hasta los 17 años cumplidos en el campeonato 2026</p>
-            <a class="btn" href="reglamentos/Reglamento_110_CAJEROS_2026.pdf" target="_blank">Descargar Reglamento</a>
-        </div>
-        <div class="card">
-            <h3>200 STD</h3>
-            <p class="edad">desde los 16 años cumplidos en 2025 hasta los 31 años cumplidos en el campeonato 2026</p>
-            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
-        </div>
-       <div class="card">
             <h3>200 Master</h3>
-            <p class="edad">desde los 30 años cumplidos en 2025 </p>
-            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
+            <p>desde los 30 años cumplidos en 2025</p>
+            <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Reglamento</a>
         </div>
     </div>
 </section>
@@ -239,16 +217,15 @@ th{background:var(--negro);color:#fff}
   </div>
 </section>
 
-<div id="ticker-section"></div>
-
-<section class="institucional">
-<h2>Instituciones que nos respaldan</h2>
-<div class="logos-federaciones">
-<img src="img/frad.png" alt="FRAD SCZN">
-<img src="img/cda.png" alt="CDA">
-<img src="img/aca.png" alt="ACA">
+<section id="confirmados">
+<h2>Confirmados para esta Fecha</h2>
+<div class="card">
+  <a class="btn" href="preinscriptos.html" target="_blank">Confirmados</a>
+  <a class="btn" href="https://lat.sorteados.online/r/32164-ROsjvU10tMeiqakE4d3LxFSTNHB5PJ" target="_blank">SORTEO 1° Fecha</a>
 </div>
 </section>
+
+<div id="ticker-section"></div>
 
 <footer class="footer">
   <div class="sponsors" id="footer-sponsors"></div>
@@ -256,7 +233,6 @@ th{background:var(--negro);color:#fff}
 </footer>
 
 <script>
-  // SPONSORS
   const sponsorsPop = [
     { nombre: "Vintage Motors 4T", img: "sponsors/vintage.png" },
     { nombre: "UL Motos", img: "sponsors/ul.png" },
@@ -269,29 +245,23 @@ th{background:var(--negro);color:#fff}
     document.getElementById("sponsor-img").src = sponsorsPop[randPop].img;
     document.getElementById("sponsor-name").innerText = sponsorsPop[randPop].nombre;
     setTimeout(() => { if(modal) modal.style.display = "block"; }, 800);
-
     document.getElementById("ad-top-img").src = sponsorsPop[Math.floor(Math.random() * sponsorsPop.length)].img;
     const randNative = Math.floor(Math.random() * sponsorsPop.length);
     document.getElementById("ad-native-img").src = sponsorsPop[randNative].img;
     document.getElementById("ad-native-name").innerText = sponsorsPop[randNative].nombre;
-
     const tickerContainer = document.getElementById("ticker-section");
     const marcasText = sponsorsPop.map(s => `<span>🏁 ${s.nombre} 🏁</span>`).join("");
     tickerContainer.innerHTML = `<div class="ticker-wrapper"><div class="ticker-content">${marcasText}${marcasText}</div></div>`;
-    
     document.getElementById("footer-sponsors").innerHTML = sponsorsPop.map(sp => `<img src="${sp.img}" alt="${sp.nombre}">`).join("");
   }
 
-  // LOGICA DE DATOS GOOGLE SHEETS
   const SHEET_RESULTADOS="https://docs.google.com";
   const SHEET_PILOTOS="https://docs.google.com";
   let datos=[];
   let pilotosDB={};
 
   function parseCSV(text){
-    return text.split("\n").map(row =>
-      row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g,'').trim())
-    );
+    return text.split("\n").map(row => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g,'').trim()));
   }
 
   async function cargarDatos(){
@@ -301,36 +271,12 @@ th{background:var(--negro);color:#fff}
       const t1 = await r1.text();
       const f1 = parseCSV(t1);
       const h1 = f1[0] || [];
-      const iFecha = h1.indexOf("Fecha");
-      const iCat = h1.indexOf("Categoria");
-      const iPil = h1.indexOf("Piloto");
-      const iPts = h1.indexOf("Puntos Obtenidos");
-      const iNum = h1.indexOf("Numero");
-
       datos = f1.slice(1).map(f=>{
         if(!f.length || f.length < 2) return null;
-        const categoria = f[iCat];
-        const numero = f[iNum];
-        return {
-          fecha: f[iFecha],
-          categoria,
-          piloto: f[iPil],
-          numero,
-          puntos: Number(f[iPts]) || 0,
-          id: categoria && numero ? categoria+"_"+numero : null
-        };
-      }).filter(d => d && d.fecha && d.categoria);
-
-      const r2 = await fetch(SHEET_PILOTOS);
-      const t2 = await r2.text();
-      const f2 = parseCSV(t2);
-      const h2 = f2[0] || [];
-      const iID = h2.indexOf("ID");
-      const iNom = h2.indexOf("Nombre");
-
-      f2.slice(1).forEach(f=>{ if(f[iID]){ pilotosDB[f[iID]] = { nombre: f[iNom] }; } });
+        return { fecha: f[h1.indexOf("Fecha")], categoria: f[h1.indexOf("Categoria")], piloto: f[h1.indexOf("Piloto")], numero: f[h1.indexOf("Numero")], puntos: Number(f[h1.indexOf("Puntos Obtenidos")]) || 0, id: f[h1.indexOf("Categoria")]+"_"+f[h1.indexOf("Numero")] };
+      }).filter(d => d && d.fecha);
       cargarCategorias();
-    } catch (error) { console.error(error); }
+    } catch (e) { console.error(e); }
   }
 
   function cargarCategorias(){
@@ -352,27 +298,20 @@ th{background:var(--negro);color:#fff}
   }
 
   function mostrarResultados(){
-    const catSelect = document.getElementById("categoriaSelect");
-    const fecSelect = document.getElementById("fechaSelect");
-    if(!catSelect || !fecSelect) return;
-    const cat = catSelect.value;
-    const fec = fecSelect.value;
+    const cat = document.getElementById("categoriaSelect")?.value;
+    const fec = document.getElementById("fechaSelect")?.value;
     const filtrados = datos.filter(d=>d.categoria===cat && d.fecha===fec).sort((a,b)=>b.puntos-a.puntos);
     const tBody = document.querySelector("#tablaResultados tbody");
-    if(tBody) {
-      tBody.innerHTML = filtrados.map((d,i)=>`<tr><td>${i+1}</td><td><a href="piloto.html?id=${encodeURIComponent(d.id)}">${pilotosDB[d.id]?.nombre || d.piloto}</a></td><td>${d.puntos}</td></tr>`).join("");
-    }
+    if(tBody) tBody.innerHTML = filtrados.map((d,i)=>`<tr><td>${i+1}</td><td>${d.piloto}</td><td>${d.puntos}</td></tr>`).join("");
     mostrarGeneral(cat);
   }
 
   function mostrarGeneral(cat){
     const mapa={};
-    datos.filter(d=>d.categoria===cat).forEach(d=>{ mapa[d.id]=(mapa[d.id]||0)+d.puntos; });
+    datos.filter(d=>d.categoria===cat).forEach(d=>{ mapa[d.piloto]=(mapa[d.piloto]||0)+d.puntos; });
     const ranking=Object.entries(mapa).sort((a,b)=>b[1]-a[1]);
     const gBody = document.querySelector("#tablaGeneral tbody");
-    if(gBody) {
-      gBody.innerHTML = ranking.map((d,i)=>`<tr><td>${i+1}</td><td><a href="piloto.html?id=${encodeURIComponent(d[0])}">${pilotosDB[d[0]]?.nombre || d[0]}</a></td><td>${d[1]}</td></tr>`).join("");
-    }
+    if(gBody) gBody.innerHTML = ranking.map((d,i)=>`<tr><td>${i+1}</td><td>${d[0]}</td><td>${d[1]}</td></tr>`).join("");
   }
 
   function actualizarCronometro() {
@@ -394,9 +333,7 @@ th{background:var(--negro);color:#fff}
     if(btn && menu) {
         btn.onclick = () => menu.classList.toggle('active');
         const links = menu.getElementsByTagName('a');
-        for (let link of links) {
-            link.onclick = () => menu.classList.remove('active');
-        }
+        for (let link of links) { link.onclick = () => menu.classList.remove('active'); }
     }
   }
 
@@ -407,11 +344,8 @@ th{background:var(--negro);color:#fff}
     document.getElementById("closePopUp").onclick = () => document.getElementById("welcome-modal").style.display = "none";
     document.getElementById("ctaPopUp").onclick = () => document.getElementById("welcome-modal").style.display = "none";
     window.onclick = (e) => { if(e.target == document.getElementById("welcome-modal")) e.target.style.display = "none"; };
-    
     const cS = document.getElementById("categoriaSelect");
-    const fS = document.getElementById("fechaSelect");
     if(cS) cS.addEventListener('change', cargarFechas);
-    if(fS) fS.addEventListener('change', mostrarResultados);
   });
 </script>
 </body>
