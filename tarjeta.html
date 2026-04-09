@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultados ProKart</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#f4f4f4}
+header{background:#111;color:#fff;padding:15px;text-align:center}
+select{width:90%;margin:10px auto;display:block;padding:10px;border-radius:8px;border:1px solid #ccc}
+
+/* TARJETAS */
+.cards{padding:10px;display:grid;gap:12px}
+.card{
+  background:#fff;
+  border-radius:14px;
+  padding:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.pos{
+  font-size:22px;
+  font-weight:bold;
+  width:40px;
+}
+.piloto{
+  flex:1;
+  font-size:16px;
+  font-weight:600;
+}
+.puntos{
+  font-size:18px;
+  font-weight:bold;
+  color:#e10600;
+}
+
+/* PODIO */
+.card:nth-child(1){background:#ffd70033}
+.card:nth-child(2){background:#c0c0c033}
+.card:nth-child(3){background:#cd7f3233}
+</style>
+</head>
+<body>
+
+<header>
+<h2>Resultados</h2>
+</header>
+
+<select id="categoriaSelect"></select>
+<select id="fechaSelect"></select>
+
+<div class="cards" id="cardsResultados"></div>
+
+<script>
+const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+
+let datos=[];
+let pilotosDB={};
+
+function parseCSV(text){
+  return text.split("\n").map(r=>r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c=>c.replace(/^"|"$/g,'').trim()));
+}
+
+async function cargarDatos(){
+  const r1 = await fetch(SHEET_RESULTADOS);
+  const t1 = await r1.text();
+  const f1 = parseCSV(t1);
+  const h1 = f1[0];
+
+  datos = f1.slice(1).map(f=>({
+    fecha: f[h1.indexOf("Fecha")],
+    categoria: f[h1.indexOf("Categoria")],
+    piloto: f[h1.indexOf("Piloto")],
+    numero: f[h1.indexOf("Numero")],
+    puntos: Number(f[h1.indexOf("Puntos Obtenidos")]) || 0,
+    id: f[h1.indexOf("Categoria")]+"_"+f[h1.indexOf("Numero")]
+  }));
+
+  const r2 = await fetch(SHEET_PILOTOS);
+  const t2 = await r2.text();
+  const f2 = parseCSV(t2);
+  const h2 = f2[0];
+
+  f2.slice(1).forEach(f=>{
+    pilotosDB[f[h2.indexOf("ID")]] = {
+      nombre: f[h2.indexOf("Nombre")]
+    };
+  });
+
+  cargarCategorias();
+}
+
+function cargarCategorias(){
+  const cats=[...new Set(datos.map(d=>d.categoria))];
+  categoriaSelect.innerHTML=cats.map(c=>`<option>${c}</option>`).join("");
+  cargarFechas();
+}
+
+function cargarFechas(){
+  const cat=categoriaSelect.value;
+  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+  fechaSelect.innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
+  mostrarResultados();
+}
+
+function mostrarResultados(){
+  const cat=categoriaSelect.value;
+  const fec=fechaSelect.value;
+
+  const filtrados=datos
+    .filter(d=>d.categoria===cat && d.fecha===fec)
+    .sort((a,b)=>b.puntos-a.puntos);
+
+  cardsResultados.innerHTML = filtrados.map((d,i)=>`
+    <div class="card">
+      <div class="pos">${i+1}</div>
+      <div class="piloto">${pilotosDB[d.id]?.nombre || d.piloto}</div>
+      <div class="puntos">${d.puntos}</div>
+    </div>
+  `).join("");
+}
+
+categoriaSelect.addEventListener('change', cargarFechas);
+fechaSelect.addEventListener('change', mostrarResultados);
+
+cargarDatos();
+</script>
+
+</body>
+</html>
