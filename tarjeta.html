@@ -4,125 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resultados ProKart</title>
-
-<style>
-body{font-family:Arial;margin:0;background:#f4f4f4}
-header{background:#111;color:#fff;padding:15px;text-align:center}
-select{width:90%;margin:10px auto;display:block;padding:10px;border-radius:8px;border:1px solid #ccc}
-.cards{padding:10px;display:grid;gap:12px}
-.card{background:#fff;border-radius:14px;padding:15px;box-shadow:0 4px 10px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between}
-.pos{font-size:22px;font-weight:bold;width:40px}
-.piloto{flex:1;font-size:16px;font-weight:600}
-.puntos{font-size:18px;font-weight:bold;color:#e10600}
-.card:nth-child(1){background:#ffd70033}
-.card:nth-child(2){background:#c0c0c033}
-.card:nth-child(3){background:#cd7f3233}
-</style>
 </head>
 <body>
 
-<header><h2>Resultados</h2></header>
-
+<h2>Resultados</h2>
 <select id="categoriaSelect"></select>
 <select id="fechaSelect"></select>
-
-<div class="cards" id="cardsResultados"></div>
+<div id="resultados"></div>
 
 <script>
 const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
 
 let datos=[];
 
-function limpiar(texto){
-  return texto.replace(/\r/g,'').trim();
-}
-
 function parseCSV(text){
-  return text.split("\n").map(r=>
-    r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-     .map(c=>limpiar(c.replace(/^"|"$/g,'')))
-  );
+  return text.replace(/\r/g,'').split("\n").map(row => row.split(","));
 }
 
 async function cargarDatos(){
-  try{
-    const r = await fetch(SHEET_RESULTADOS);
-    const t = await r.text();
-    const filas = parseCSV(t);
+  const res = await fetch(SHEET_RESULTADOS);
+  const text = await res.text();
+  const filas = parseCSV(text);
 
-    const headers = filas[0].map(h=>limpiar(h));
+  const headers = filas[0];
 
-    const idx = {
-      fecha: headers.indexOf("Fecha"),
-      categoria: headers.indexOf("Categoria"),
-      piloto: headers.indexOf("Piloto"),
-      numero: headers.indexOf("Numero"),
-      puntos: headers.indexOf("Puntos")
-    };
+  const idx = {
+    fecha: headers.indexOf("Fecha"),
+    categoria: headers.indexOf("Categoria"),
+    piloto: headers.indexOf("Piloto"),
+    puntos: headers.indexOf("Puntos"),
+    numero: headers.indexOf("Numero"),
+    id: headers.indexOf("PilotoID")
+  };
 
-    console.log("HEADERS:", headers);
-    console.log("INDEX:", idx);
+  datos = filas.slice(1).map(f => ({
+    fecha: f[idx.fecha],
+    categoria: f[idx.categoria],
+    piloto: f[idx.piloto],
+    numero: f[idx.numero],
+    puntos: Number(f[idx.puntos]) || 0,
+    id: f[idx.id]
+  })).filter(d => d.fecha && d.categoria);
 
-    datos = filas.slice(1).map(f=>({
-      fecha: f[idx.fecha],
-      categoria: f[idx.categoria],
-      piloto: f[idx.piloto],
-      numero: f[idx.numero],
-      puntos: Number(f[idx.puntos]) || 0
-    })).filter(d=>d.fecha && d.categoria);
-
-    console.log("DATOS:", datos);
-
-    cargarCategorias();
-  }catch(e){console.error("ERROR:",e)}
+  cargarCategorias();
 }
 
 function cargarCategorias(){
-  const select=document.getElementById("categoriaSelect");
-  const cats=[...new Set(datos.map(d=>d.categoria))];
-  select.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  const select = document.getElementById("categoriaSelect");
+  const cats = [...new Set(datos.map(d=>d.categoria))];
+  select.innerHTML = cats.map(c=>`<option>${c}</option>`).join("");
   cargarFechas();
 }
 
 function cargarFechas(){
-  const cat=document.getElementById("categoriaSelect").value;
-  const select=document.getElementById("fechaSelect");
-
-  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-  select.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
-
+  const cat = document.getElementById("categoriaSelect").value;
+  const fechas = [...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+  document.getElementById("fechaSelect").innerHTML = fechas.map(f=>`<option>${f}</option>`).join("");
   mostrarResultados();
 }
 
 function mostrarResultados(){
-  const cat=document.getElementById("categoriaSelect").value;
-  const fec=document.getElementById("fechaSelect").value;
+  const cat = document.getElementById("categoriaSelect").value;
+  const fec = document.getElementById("fechaSelect").value;
 
-  const filtrados=datos
-    .filter(d=>d.categoria===cat && d.fecha===fec)
+  const filtrados = datos.filter(d=>d.categoria===cat && d.fecha===fec)
     .sort((a,b)=>b.puntos-a.puntos);
 
-  const cont=document.getElementById("cardsResultados");
+  const cont = document.getElementById("resultados");
 
-  if(filtrados.length===0){
-    cont.innerHTML = "<p style='text-align:center'>No hay datos</p>";
+  if(!filtrados.length){
+    cont.innerHTML = "<p>No hay datos</p>";
     return;
   }
 
   cont.innerHTML = filtrados.map((d,i)=>`
-    <div class="card">
-      <div class="pos">${i+1}</div>
-      <div class="piloto">${d.piloto}</div>
-      <div class="puntos">${d.puntos}</div>
+    <div style="background:#fff;margin:10px;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)">
+      <strong>#${i+1}</strong> - ${d.piloto}<br>
+      Kart: ${d.numero}<br>
+      Puntos: ${d.puntos}
     </div>
   `).join("");
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("categoriaSelect").addEventListener('change', cargarFechas);
-  document.getElementById("fechaSelect").addEventListener('change', mostrarResultados);
-  cargarDatos();
-});
+document.getElementById("categoriaSelect").addEventListener("change", cargarFechas);
+document.getElementById("fechaSelect").addEventListener("change", mostrarResultados);
+
+cargarDatos();
 </script>
 
 </body>
