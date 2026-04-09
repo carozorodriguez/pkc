@@ -4,34 +4,111 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resultados ProKart</title>
+
 <style>
 body{margin:0;font-family:Arial;background:#0d0d0d;color:#fff}
-.header{position:sticky;top:0;background:rgba(20,20,20,0.8);backdrop-filter:blur(10px);padding:10px 15px;z-index:1000;border-bottom:1px solid #222}
-.header h1{margin:0;font-size:18px}
+
+/* HEADER APP */
+.header{
+ position:sticky;
+ top:0;
+ background:rgba(20,20,20,0.85);
+ backdrop-filter:blur(10px);
+ padding:12px 15px;
+ z-index:1000;
+ border-bottom:1px solid #222;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+.header h1{margin:0;font-size:16px}
+
+/* BOTON VOLVER */
+.btn-back{
+ background:#1a1a1a;
+ border:none;
+ color:#fff;
+ padding:8px 12px;
+ border-radius:8px;
+ text-decoration:none;
+ font-size:13px;
+}
+
+/* CONTENEDOR */
 .container{max-width:600px;margin:auto;padding:10px}
-.label{font-size:11px;color:#aaa;margin:10px 5px 5px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
-.select-box{background:#1a1a1a;border-radius:12px;padding:5px 10px;margin-bottom:10px;box-shadow:inset 0 0 0 1px #2a2a2a}
-select{width:100%;padding:12px;border:none;background:transparent;color:#fff;font-size:14px;outline:none}
+
+/* SELECTORES */
+.label{
+ font-size:11px;
+ color:#aaa;
+ margin:10px 5px 5px;
+ display:flex;
+ gap:6px;
+ text-transform:uppercase;
+}
+.select-box{
+ background:#1a1a1a;
+ border-radius:12px;
+ padding:5px 10px;
+ margin-bottom:10px;
+ box-shadow:inset 0 0 0 1px #2a2a2a;
+}
+select{
+ width:100%;
+ padding:12px;
+ border:none;
+ background:transparent;
+ color:#fff;
+ font-size:14px;
+ outline:none;
+}
+
+/* LISTA */
 .lista{scroll-snap-type:y mandatory}
-.card{background:#1a1a1a;border-radius:12px;padding:15px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.5);transition:.3s;scroll-snap-align:start}
+
+/* TARJETAS */
+.card{
+ background:#1a1a1a;
+ border-radius:12px;
+ padding:15px;
+ margin:10px 0;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ box-shadow:0 4px 10px rgba(0,0,0,.5);
+ transition:.3s;
+ scroll-snap-align:start;
+}
 .card:hover{transform:scale(1.02)}
+
 .pos{font-size:20px;font-weight:bold;width:40px}
 .name{flex:1}
 .name a{color:#fff;text-decoration:none}
 .points{font-weight:bold}
-.up{color:#4caf50;font-weight:bold;margin-left:5px}
-.down{color:#f44336;font-weight:bold;margin-left:5px}
+
+/* INDICADORES */
+.up{color:#4caf50;margin-left:5px}
+.down{color:#f44336;margin-left:5px}
+
+/* PODIO */
 .gold{background:#ffd70022}
 .silver{background:#c0c0c022}
 .bronze{background:#cd7f3222}
+
+/* ANIMACION */
 .fade-in{animation:fade .4s ease}
-@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fade{
+ from{opacity:0;transform:translateY(10px)}
+ to{opacity:1;transform:translateY(0)}
+}
 </style>
 </head>
+
 <body>
 
 <div class="header">
-<h1>🏁 Resultados ProKart</h1>
+ <a href="index.html" class="btn-back">← Volver</a>
+ <h1>🏁 Resultados</h1>
 </div>
 
 <div class="container">
@@ -47,6 +124,7 @@ select{width:100%;padding:12px;border:none;background:transparent;color:#fff;fon
 </div>
 
 <div id="resultados" class="lista"></div>
+
 </div>
 
 <script>
@@ -54,7 +132,9 @@ const SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HX
 
 let datos=[];
 
-function parseCSV(text){return text.split("\n").map(r=>r.split(","));}
+function parseCSV(text){
+ return text.split("\n").map(r=>r.split(","));
+}
 
 async function cargar(){
  const res=await fetch(SHEET);
@@ -82,8 +162,10 @@ function cargarCategorias(){
 function cargarFechas(){
  const cat=categoria.value;
  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+
  fecha.innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
  fecha.selectedIndex=fechas.length-1;
+
  mostrar();
 }
 
@@ -103,6 +185,7 @@ function mostrar(){
 
  resultados.innerHTML=orden.map((d,i)=>{
   let clase=i==0?"gold":i==1?"silver":i==2?"bronze":"";
+
   let indicador="";
   if(rankPrev[d.id]){
    if(rankPrev[d.id]>i+1) indicador='<span class="up">▲</span>';
@@ -111,7 +194,10 @@ function mostrar(){
 
   return `<div class="card fade-in ${clase}">
    <div class="pos">${i+1}</div>
-   <div class="name"><a href="piloto.html?id=${encodeURIComponent(d.id)}">${d.piloto}</a> ${indicador}</div>
+   <div class="name">
+     <a href="piloto.html?id=${encodeURIComponent(d.id)}">${d.piloto}</a>
+     ${indicador}
+   </div>
    <div class="points">${d.puntos}</div>
   </div>`;
  }).join("");
