@@ -63,7 +63,7 @@ async function cargarDatos(){
       categoria: f[h1.indexOf("Categoria")],
       piloto: f[h1.indexOf("Piloto")],
       numero: f[h1.indexOf("Numero")],
-      puntos: Number(f[h1.indexOf("Puntos Obtenidos")]) || 0,
+      puntos: Number(f[h1.indexOf("Puntos")]) || 0,
       id: f[h1.indexOf("Categoria")]+"_"+f[h1.indexOf("Numero")]
     })).filter(d=>d.fecha);
 
