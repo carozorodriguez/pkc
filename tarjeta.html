@@ -6,11 +6,15 @@
 <title>Resultados ProKart</title>
 <style>
 body{margin:0;font-family:Arial;background:#0d0d0d;color:#fff}
-.container{max-width:600px;margin:auto;padding:15px}
-.label{font-size:12px;color:#aaa;margin:10px 5px 5px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px}
+.header{position:sticky;top:0;background:rgba(20,20,20,0.8);backdrop-filter:blur(10px);padding:10px 15px;z-index:1000;border-bottom:1px solid #222}
+.header h1{margin:0;font-size:18px}
+.container{max-width:600px;margin:auto;padding:10px}
+.label{font-size:11px;color:#aaa;margin:10px 5px 5px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
 .select-box{background:#1a1a1a;border-radius:12px;padding:5px 10px;margin-bottom:10px;box-shadow:inset 0 0 0 1px #2a2a2a}
 select{width:100%;padding:12px;border:none;background:transparent;color:#fff;font-size:14px;outline:none}
-.card{background:#1a1a1a;border-radius:12px;padding:15px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.5)}
+.lista{scroll-snap-type:y mandatory}
+.card{background:#1a1a1a;border-radius:12px;padding:15px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.5);transition:.3s;scroll-snap-align:start}
+.card:hover{transform:scale(1.02)}
 .pos{font-size:20px;font-weight:bold;width:40px}
 .name{flex:1}
 .name a{color:#fff;text-decoration:none}
@@ -20,9 +24,16 @@ select{width:100%;padding:12px;border:none;background:transparent;color:#fff;fon
 .gold{background:#ffd70022}
 .silver{background:#c0c0c022}
 .bronze{background:#cd7f3222}
+.fade-in{animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
+
+<div class="header">
+<h1>🏁 Resultados ProKart</h1>
+</div>
+
 <div class="container">
 
 <div class="label">🏁 Categoría</div>
@@ -35,7 +46,7 @@ select{width:100%;padding:12px;border:none;background:transparent;color:#fff;fon
 <select id="fecha"></select>
 </div>
 
-<div id="resultados"></div>
+<div id="resultados" class="lista"></div>
 </div>
 
 <script>
@@ -43,9 +54,7 @@ const SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HX
 
 let datos=[];
 
-function parseCSV(text){
- return text.split("\n").map(r=>r.split(","));
-}
+function parseCSV(text){return text.split("\n").map(r=>r.split(","));}
 
 async function cargar(){
  const res=await fetch(SHEET);
@@ -73,10 +82,8 @@ function cargarCategorias(){
 function cargarFechas(){
  const cat=categoria.value;
  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-
  fecha.innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
  fecha.selectedIndex=fechas.length-1;
-
  mostrar();
 }
 
@@ -85,38 +92,26 @@ function mostrar(){
  const fec=fecha.value;
 
  const actual=datos.filter(d=>d.categoria===cat && d.fecha===fec);
- const todasFechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
- const indexActual=todasFechas.indexOf(fec);
- const fechaAnterior=todasFechas[indexActual-1];
-
- const anterior=datos.filter(d=>d.categoria===cat && d.fecha===fechaAnterior);
+ const todas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+ const i=todas.indexOf(fec);
+ const anterior=datos.filter(d=>d.categoria===cat && d.fecha===todas[i-1]);
 
  const rankPrev={};
- anterior.sort((a,b)=>b.puntos-a.puntos).forEach((d,i)=>{
-  rankPrev[d.id]=i+1;
- });
+ anterior.sort((a,b)=>b.puntos-a.puntos).forEach((d,i)=>rankPrev[d.id]=i+1);
 
  const orden=actual.sort((a,b)=>b.puntos-a.puntos);
 
  resultados.innerHTML=orden.map((d,i)=>{
-  let clase="";
-  if(i==0) clase="gold";
-  if(i==1) clase="silver";
-  if(i==2) clase="bronze";
-
+  let clase=i==0?"gold":i==1?"silver":i==2?"bronze":"";
   let indicador="";
   if(rankPrev[d.id]){
-   if(rankPrev[d.id] > i+1) indicador=`<span class="up">▲</span>`;
-   else if(rankPrev[d.id] < i+1) indicador=`<span class="down">▼</span>`;
+   if(rankPrev[d.id]>i+1) indicador='<span class="up">▲</span>';
+   else if(rankPrev[d.id]<i+1) indicador='<span class="down">▼</span>';
   }
 
-  return `
-  <div class="card ${clase}">
+  return `<div class="card fade-in ${clase}">
    <div class="pos">${i+1}</div>
-   <div class="name">
-     <a href="piloto.html?id=${encodeURIComponent(d.id)}">${d.piloto}</a>
-     ${indicador}
-   </div>
+   <div class="name"><a href="piloto.html?id=${encodeURIComponent(d.id)}">${d.piloto}</a> ${indicador}</div>
    <div class="points">${d.puntos}</div>
   </div>`;
  }).join("");
@@ -127,5 +122,6 @@ fecha.onchange=mostrar;
 
 cargar();
 </script>
+
 </body>
 </html>
