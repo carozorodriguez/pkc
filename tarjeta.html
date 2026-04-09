@@ -3,26 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROKART CALETENSE | Resultados</title>
+<title>Resultados ProKart</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f4f4}
-section{max-width:900px;margin:auto;padding:20px}
-select{padding:10px;margin:10px 5px}
-.card{background:#fff;margin:10px 0;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
+body{margin:0;font-family:Arial;background:var(--negro);color:#fff}
+section{max-width:600px;margin:auto;padding:15px}
+h2{margin-bottom:10px}
+select{padding:10px;margin:5px;width:48%;border-radius:8px;border:none}
+.card{background:#1c1c1c;margin:10px 0;padding:15px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:space-between}
+.pos{font-size:22px;font-weight:bold;width:50px;text-align:center}
+.info{flex:1;padding-left:10px}
+.nombre{font-size:16px;font-weight:bold}
+.detalle{font-size:13px;color:#ccc}
+.puntos{font-size:16px;font-weight:bold}
+.oro{background:#ffd700;color:#000}
+.plata{background:#c0c0c0;color:#000}
+.bronce{background:#cd7f32;color:#000}
 </style>
+
 </head>
 <body>
 
 <section>
-<h2>Resultados</h2>
+<h2>🏁 Resultados</h2>
 <select id="categoriaSelect"></select>
 <select id="fechaSelect"></select>
 <div id="resultados"></div>
 </section>
 
 <script>
-const SHEET_RESULTADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
+const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
 
 let datos=[];
 
@@ -42,15 +53,13 @@ async function cargarDatos(){
   const iPil = h.indexOf("Piloto");
   const iPts = h.indexOf("Puntos");
   const iNum = h.indexOf("Numero");
-  const iID = h.indexOf("PilotoID");
 
   datos = filas.slice(1).map(f=>({
     fecha: f[iFecha],
     categoria: f[iCat],
     piloto: f[iPil],
     numero: f[iNum],
-    puntos: Number(f[iPts])||0,
-    id: f[iID]
+    puntos: Number(f[iPts])||0
   })).filter(d=>d.fecha && d.categoria);
 
   cargarCategorias();
@@ -84,13 +93,23 @@ function mostrarResultados(){
     return;
   }
 
-  cont.innerHTML=filtrados.map((d,i)=>`
-    <div class="card">
-      <strong>#${i+1}</strong> - ${d.piloto}<br>
-      Kart: ${d.numero}<br>
-      Puntos: ${d.puntos}
+  cont.innerHTML=filtrados.map((d,i)=>{
+    let clase="";
+    if(i===0) clase="oro";
+    else if(i===1) clase="plata";
+    else if(i===2) clase="bronce";
+
+    return `
+    <div class="card ${clase}">
+      <div class="pos">#${i+1}</div>
+      <div class="info">
+        <div class="nombre">${d.piloto}</div>
+        <div class="detalle">Kart ${d.numero}</div>
+      </div>
+      <div class="puntos">${d.puntos} pts</div>
     </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 document.getElementById("categoriaSelect").addEventListener("change",cargarFechas);
