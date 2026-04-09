@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -30,6 +31,7 @@ text-decoration:none;
 border-radius:6px;
 }
 </style>
+
 </head>
 
 <body>
@@ -51,9 +53,15 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_j
 const params = new URLSearchParams(window.location.search);
 const fechaSeleccionada = params.get("fecha");
 
-document.getElementById("tituloFecha").textContent = "Resultados - " + fechaSeleccionada;
+document.getElementById("tituloFecha").textContent =
+"🏁 Resultados - " + (fechaSeleccionada || "");
 
 async function cargar(){
+
+if(!fechaSeleccionada){
+document.getElementById("contenedor").innerHTML = "<p>Fecha no especificada.</p>";
+return;
+}
 
 const response = await fetch(SHEET_URL);
 const csv = await response.text();
@@ -74,7 +82,7 @@ puntos: Number(limpiar(c[4])) || 0
 };
 })
 .filter(Boolean)
-.filter(d=>d.fecha===fechaSeleccionada);
+.filter(d => normalizar(d.fecha) === normalizar(fechaSeleccionada));
 
 mostrar(datos);
 }
@@ -83,9 +91,19 @@ function limpiar(v){
 return v?.replace(/^"|"$/g,'').trim();
 }
 
+function normalizar(texto){
+if(!texto) return "";
+return texto
+.toString()
+.toLowerCase()
+.replace(/\s+/g,"")
+.trim();
+}
+
 function mostrar(datos){
 
 const cont = document.getElementById("contenedor");
+cont.innerHTML = "";
 
 if(datos.length===0){
 cont.innerHTML = "<p>No hay resultados cargados para esta fecha.</p>";
