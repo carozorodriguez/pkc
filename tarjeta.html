@@ -9,21 +9,11 @@
 body{font-family:Arial;margin:0;background:#f4f4f4}
 header{background:#111;color:#fff;padding:15px;text-align:center}
 select{width:90%;margin:10px auto;display:block;padding:10px;border-radius:8px;border:1px solid #ccc}
-
 .cards{padding:10px;display:grid;gap:12px}
-.card{
-  background:#fff;
-  border-radius:14px;
-  padding:15px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
+.card{background:#fff;border-radius:14px;padding:15px;box-shadow:0 4px 10px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between}
 .pos{font-size:22px;font-weight:bold;width:40px}
 .piloto{flex:1;font-size:16px;font-weight:600}
 .puntos{font-size:18px;font-weight:bold;color:#e10600}
-
 .card:nth-child(1){background:#ffd70033}
 .card:nth-child(2){background:#c0c0c033}
 .card:nth-child(3){background:#cd7f3233}
@@ -31,9 +21,7 @@ select{width:90%;margin:10px auto;display:block;padding:10px;border-radius:8px;b
 </head>
 <body>
 
-<header>
-<h2>Resultados</h2>
-</header>
+<header><h2>Resultados</h2></header>
 
 <select id="categoriaSelect"></select>
 <select id="fechaSelect"></select>
@@ -42,81 +30,89 @@ select{width:90%;margin:10px auto;display:block;padding:10px;border-radius:8px;b
 
 <script>
 const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
-const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
 
 let datos=[];
-let pilotosDB={};
+
+function limpiar(texto){
+  return texto.replace(/\r/g,'').trim();
+}
 
 function parseCSV(text){
-  return text.split("\n").map(r=>r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c=>c.replace(/^"|"$/g,'').trim()));
+  return text.split("\n").map(r=>
+    r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+     .map(c=>limpiar(c.replace(/^"|"$/g,'')))
+  );
 }
 
 async function cargarDatos(){
   try{
-    const r1 = await fetch(SHEET_RESULTADOS);
-    const t1 = await r1.text();
-    const f1 = parseCSV(t1);
-    const h1 = f1[0];
+    const r = await fetch(SHEET_RESULTADOS);
+    const t = await r.text();
+    const filas = parseCSV(t);
 
-    datos = f1.slice(1).map(f=>({
-      fecha: f[h1.indexOf("Fecha")],
-      categoria: f[h1.indexOf("Categoria")],
-      piloto: f[h1.indexOf("Piloto")],
-      numero: f[h1.indexOf("Numero")],
-      puntos: Number(f[h1.indexOf("Puntos")]) || 0,
-      id: f[h1.indexOf("Categoria")]+"_"+f[h1.indexOf("Numero")]
-    })).filter(d=>d.fecha);
+    const headers = filas[0].map(h=>limpiar(h));
 
-    const r2 = await fetch(SHEET_PILOTOS);
-    const t2 = await r2.text();
-    const f2 = parseCSV(t2);
-    const h2 = f2[0];
+    const idx = {
+      fecha: headers.indexOf("Fecha"),
+      categoria: headers.indexOf("Categoria"),
+      piloto: headers.indexOf("Piloto"),
+      numero: headers.indexOf("Numero"),
+      puntos: headers.indexOf("Puntos")
+    };
 
-    f2.slice(1).forEach(f=>{
-      if(f[h2.indexOf("ID")]){
-        pilotosDB[f[h2.indexOf("ID")]] = {
-          nombre: f[h2.indexOf("Nombre")]
-        };
-      }
-    });
+    console.log("HEADERS:", headers);
+    console.log("INDEX:", idx);
+
+    datos = filas.slice(1).map(f=>({
+      fecha: f[idx.fecha],
+      categoria: f[idx.categoria],
+      piloto: f[idx.piloto],
+      numero: f[idx.numero],
+      puntos: Number(f[idx.puntos]) || 0
+    })).filter(d=>d.fecha && d.categoria);
+
+    console.log("DATOS:", datos);
 
     cargarCategorias();
-  }catch(e){console.error(e)}
+  }catch(e){console.error("ERROR:",e)}
 }
 
 function cargarCategorias(){
-  const categoriaSelect = document.getElementById("categoriaSelect");
+  const select=document.getElementById("categoriaSelect");
   const cats=[...new Set(datos.map(d=>d.categoria))];
-  categoriaSelect.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  select.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join("");
   cargarFechas();
 }
 
 function cargarFechas(){
-  const categoriaSelect = document.getElementById("categoriaSelect");
-  const fechaSelect = document.getElementById("fechaSelect");
+  const cat=document.getElementById("categoriaSelect").value;
+  const select=document.getElementById("fechaSelect");
 
-  const cat=categoriaSelect.value;
   const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-  fechaSelect.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+  select.innerHTML=fechas.map(f=>`<option value="${f}">${f}</option>`).join("");
+
   mostrarResultados();
 }
 
 function mostrarResultados(){
-  const categoriaSelect = document.getElementById("categoriaSelect");
-  const fechaSelect = document.getElementById("fechaSelect");
-  const cards = document.getElementById("cardsResultados");
-
-  const cat=categoriaSelect.value;
-  const fec=fechaSelect.value;
+  const cat=document.getElementById("categoriaSelect").value;
+  const fec=document.getElementById("fechaSelect").value;
 
   const filtrados=datos
     .filter(d=>d.categoria===cat && d.fecha===fec)
     .sort((a,b)=>b.puntos-a.puntos);
 
-  cards.innerHTML = filtrados.map((d,i)=>`
+  const cont=document.getElementById("cardsResultados");
+
+  if(filtrados.length===0){
+    cont.innerHTML = "<p style='text-align:center'>No hay datos</p>";
+    return;
+  }
+
+  cont.innerHTML = filtrados.map((d,i)=>`
     <div class="card">
       <div class="pos">${i+1}</div>
-      <div class="piloto">${pilotosDB[d.id]?.nombre || d.piloto}</div>
+      <div class="piloto">${d.piloto}</div>
       <div class="puntos">${d.puntos}</div>
     </div>
   `).join("");
