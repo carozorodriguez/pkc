@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resultados ProKart</title>
+<title>PROKART CALETENSE | Resultados</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f4f4}
+section{max-width:900px;margin:auto;padding:20px}
+select{padding:10px;margin:10px 5px}
+.card{background:#fff;margin:10px 0;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+</style>
 </head>
 <body>
 
+<section>
 <h2>Resultados</h2>
 <select id="categoriaSelect"></select>
 <select id="fechaSelect"></select>
 <div id="resultados"></div>
+</section>
 
 <script>
 const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
@@ -18,67 +27,65 @@ const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo
 let datos=[];
 
 function parseCSV(text){
-  return text.replace(/\r/g,'').split("\n").map(row => row.split(","));
+  return text.replace(/\r/g,'').split("\n").map(r=>r.split(","));
 }
 
 async function cargarDatos(){
   const res = await fetch(SHEET_RESULTADOS);
-  const text = await res.text();
-  const filas = parseCSV(text);
+  const txt = await res.text();
+  const filas = parseCSV(txt);
 
-  const headers = filas[0];
+  const h = filas[0];
 
-  const idx = {
-    fecha: headers.indexOf("Fecha"),
-    categoria: headers.indexOf("Categoria"),
-    piloto: headers.indexOf("Piloto"),
-    puntos: headers.indexOf("Puntos"),
-    numero: headers.indexOf("Numero"),
-    id: headers.indexOf("PilotoID")
-  };
+  const iFecha = h.indexOf("Fecha");
+  const iCat = h.indexOf("Categoria");
+  const iPil = h.indexOf("Piloto");
+  const iPts = h.indexOf("Puntos");
+  const iNum = h.indexOf("Numero");
+  const iID = h.indexOf("PilotoID");
 
-  datos = filas.slice(1).map(f => ({
-    fecha: f[idx.fecha],
-    categoria: f[idx.categoria],
-    piloto: f[idx.piloto],
-    numero: f[idx.numero],
-    puntos: Number(f[idx.puntos]) || 0,
-    id: f[idx.id]
-  })).filter(d => d.fecha && d.categoria);
+  datos = filas.slice(1).map(f=>({
+    fecha: f[iFecha],
+    categoria: f[iCat],
+    piloto: f[iPil],
+    numero: f[iNum],
+    puntos: Number(f[iPts])||0,
+    id: f[iID]
+  })).filter(d=>d.fecha && d.categoria);
 
   cargarCategorias();
 }
 
 function cargarCategorias(){
-  const select = document.getElementById("categoriaSelect");
-  const cats = [...new Set(datos.map(d=>d.categoria))];
-  select.innerHTML = cats.map(c=>`<option>${c}</option>`).join("");
+  const sel=document.getElementById("categoriaSelect");
+  const cats=[...new Set(datos.map(d=>d.categoria))];
+  sel.innerHTML=cats.map(c=>`<option>${c}</option>`).join("");
   cargarFechas();
 }
 
 function cargarFechas(){
-  const cat = document.getElementById("categoriaSelect").value;
-  const fechas = [...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-  document.getElementById("fechaSelect").innerHTML = fechas.map(f=>`<option>${f}</option>`).join("");
+  const cat=document.getElementById("categoriaSelect").value;
+  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+  document.getElementById("fechaSelect").innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
   mostrarResultados();
 }
 
 function mostrarResultados(){
-  const cat = document.getElementById("categoriaSelect").value;
-  const fec = document.getElementById("fechaSelect").value;
+  const cat=document.getElementById("categoriaSelect").value;
+  const fec=document.getElementById("fechaSelect").value;
 
-  const filtrados = datos.filter(d=>d.categoria===cat && d.fecha===fec)
+  const filtrados=datos.filter(d=>d.categoria===cat && d.fecha===fec)
     .sort((a,b)=>b.puntos-a.puntos);
 
-  const cont = document.getElementById("resultados");
+  const cont=document.getElementById("resultados");
 
   if(!filtrados.length){
-    cont.innerHTML = "<p>No hay datos</p>";
+    cont.innerHTML="<p>No hay datos</p>";
     return;
   }
 
-  cont.innerHTML = filtrados.map((d,i)=>`
-    <div style="background:#fff;margin:10px;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)">
+  cont.innerHTML=filtrados.map((d,i)=>`
+    <div class="card">
       <strong>#${i+1}</strong> - ${d.piloto}<br>
       Kart: ${d.numero}<br>
       Puntos: ${d.puntos}
@@ -86,8 +93,8 @@ function mostrarResultados(){
   `).join("");
 }
 
-document.getElementById("categoriaSelect").addEventListener("change", cargarFechas);
-document.getElementById("fechaSelect").addEventListener("change", mostrarResultados);
+document.getElementById("categoriaSelect").addEventListener("change",cargarFechas);
+document.getElementById("fechaSelect").addEventListener("change",mostrarResultados);
 
 cargarDatos();
 </script>
