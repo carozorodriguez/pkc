@@ -7,7 +7,9 @@
 <style>
 body{margin:0;font-family:Arial;background:#0d0d0d;color:#fff}
 .container{max-width:600px;margin:auto;padding:15px}
-select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;background:#1a1a1a;color:#fff}
+.label{font-size:12px;color:#aaa;margin:10px 5px 5px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px}
+.select-box{background:#1a1a1a;border-radius:12px;padding:5px 10px;margin-bottom:10px;box-shadow:inset 0 0 0 1px #2a2a2a}
+select{width:100%;padding:12px;border:none;background:transparent;color:#fff;font-size:14px;outline:none}
 .card{background:#1a1a1a;border-radius:12px;padding:15px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.5)}
 .pos{font-size:20px;font-weight:bold;width:40px}
 .name{flex:1}
@@ -22,10 +24,17 @@ select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;backgr
 </head>
 <body>
 <div class="container">
-<h3 style="margin:10px 0 5px 0; color:#ccc; font-weight:600;">Categoría</h3>
+
+<div class="label">🏁 Categoría</div>
+<div class="select-box">
 <select id="categoria"></select>
-<h3 style="margin:15px 0 5px 0; color:#ccc; font-weight:600;">Fecha</h3>
+</div>
+
+<div class="label">📅 Fecha</div>
+<div class="select-box">
 <select id="fecha"></select>
+</div>
+
 <div id="resultados"></div>
 </div>
 
@@ -33,7 +42,6 @@ select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;backgr
 const SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
 
 let datos=[];
-let rankingAnterior={};
 
 function parseCSV(text){
  return text.split("\n").map(r=>r.split(","));
@@ -67,8 +75,6 @@ function cargarFechas(){
  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
 
  fecha.innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
-
- // AUTO seleccionar última fecha
  fecha.selectedIndex=fechas.length-1;
 
  mostrar();
@@ -79,9 +85,9 @@ function mostrar(){
  const fec=fecha.value;
 
  const actual=datos.filter(d=>d.categoria===cat && d.fecha===fec);
- const prevFecha=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
- const indexActual=prevFecha.indexOf(fec);
- const fechaAnterior=prevFecha[indexActual-1];
+ const todasFechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+ const indexActual=todasFechas.indexOf(fec);
+ const fechaAnterior=todasFechas[indexActual-1];
 
  const anterior=datos.filter(d=>d.categoria===cat && d.fecha===fechaAnterior);
 
