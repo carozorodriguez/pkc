@@ -264,8 +264,9 @@ th{background:var(--negro);color:#fff}
     document.getElementById("footer-sponsors").innerHTML = sponsorsPop.map(sp => `<img src="${sp.img}" alt="${sp.nombre}">`).join("");
   }
 
-  const SHEET_RESULTADOS="https://docs.google.com";
-  const SHEET_PILOTOS="https://docs.google.com";
+  const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=368482217&single=true&output=csv";
+  const SHEET_PILOTOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=2063656949&single=true&output=csv";
+
   let datos=[];
   let pilotosDB={};
 
