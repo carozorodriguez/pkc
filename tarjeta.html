@@ -4,119 +4,120 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resultados ProKart</title>
-
 <style>
-:root{--rojo:#e10600;--negro:#111;--gris:#f4f4f4}
-body{margin:0;font-family:Arial;background:var(--negro);color:#fff}
-section{max-width:600px;margin:auto;padding:15px}
-h2{margin-bottom:10px}
-select{padding:10px;margin:5px;width:48%;border-radius:8px;border:none}
-.card{background:#1c1c1c;margin:10px 0;padding:15px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:space-between}
-.pos{font-size:22px;font-weight:bold;width:50px;text-align:center}
-.info{flex:1;padding-left:10px}
-.nombre{font-size:16px;font-weight:bold}
-.detalle{font-size:13px;color:#ccc}
-.puntos{font-size:16px;font-weight:bold}
-.oro{background:#ffd700;color:#000}
-.plata{background:#c0c0c0;color:#000}
-.bronce{background:#cd7f32;color:#000}
+body{margin:0;font-family:Arial;background:#0d0d0d;color:#fff}
+.container{max-width:600px;margin:auto;padding:15px}
+select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;background:#1a1a1a;color:#fff}
+.card{background:#1a1a1a;border-radius:12px;padding:15px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.5)}
+.pos{font-size:20px;font-weight:bold;width:40px}
+.name{flex:1}
+.name a{color:#fff;text-decoration:none}
+.points{font-weight:bold}
+.up{color:#4caf50;font-weight:bold;margin-left:5px}
+.down{color:#f44336;font-weight:bold;margin-left:5px}
+.gold{background:#ffd70022}
+.silver{background:#c0c0c022}
+.bronze{background:#cd7f3222}
 </style>
-
 </head>
 <body>
-
-<section>
-<h2>🏁 Resultados</h2>
-<select id="categoriaSelect"></select>
-<select id="fechaSelect"></select>
+<div class="container">
+<select id="categoria"></select>
+<select id="fecha"></select>
 <div id="resultados"></div>
-</section>
+</div>
 
 <script>
-const SHEET_RESULTADOS="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
+const SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGhBGHo7TZ_jtqT0HXBvYaV3g1TYBN5lEfYfq2phY0vvHTEyVkTfrVy6RrotDcqVOxm5C4JX9CdTBp/pub?gid=1201386360&single=true&output=csv";
 
 let datos=[];
+let rankingAnterior={};
 
 function parseCSV(text){
-  return text.replace(/\r/g,'').split("\n").map(r=>r.split(","));
+ return text.split("\n").map(r=>r.split(","));
 }
 
-async function cargarDatos(){
-  const res = await fetch(SHEET_RESULTADOS);
-  const txt = await res.text();
-  const filas = parseCSV(txt);
+async function cargar(){
+ const res=await fetch(SHEET);
+ const txt=await res.text();
+ const filas=parseCSV(txt);
+ const headers=filas[0];
 
-  const h = filas[0];
+ datos=filas.slice(1).map(f=>({
+  fecha:f[headers.indexOf("Fecha")],
+  categoria:f[headers.indexOf("Categoria")],
+  piloto:f[headers.indexOf("Piloto")],
+  id:f[headers.indexOf("PilotoID")],
+  puntos:Number(f[headers.indexOf("Puntos")])||0
+ })).filter(d=>d.fecha);
 
-  const iFecha = h.indexOf("Fecha");
-  const iCat = h.indexOf("Categoria");
-  const iPil = h.indexOf("Piloto");
-  const iPts = h.indexOf("Puntos");
-  const iNum = h.indexOf("Numero");
-
-  datos = filas.slice(1).map(f=>({
-    fecha: f[iFecha],
-    categoria: f[iCat],
-    piloto: f[iPil],
-    numero: f[iNum],
-    puntos: Number(f[iPts])||0
-  })).filter(d=>d.fecha && d.categoria);
-
-  cargarCategorias();
+ cargarCategorias();
 }
 
 function cargarCategorias(){
-  const sel=document.getElementById("categoriaSelect");
-  const cats=[...new Set(datos.map(d=>d.categoria))];
-  sel.innerHTML=cats.map(c=>`<option>${c}</option>`).join("");
-  cargarFechas();
+ const cats=[...new Set(datos.map(d=>d.categoria))];
+ categoria.innerHTML=cats.map(c=>`<option>${c}</option>`).join("");
+ cargarFechas();
 }
 
 function cargarFechas(){
-  const cat=document.getElementById("categoriaSelect").value;
-  const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
-  document.getElementById("fechaSelect").innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
-  mostrarResultados();
+ const cat=categoria.value;
+ const fechas=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+
+ fecha.innerHTML=fechas.map(f=>`<option>${f}</option>`).join("");
+
+ // AUTO seleccionar última fecha
+ fecha.selectedIndex=fechas.length-1;
+
+ mostrar();
 }
 
-function mostrarResultados(){
-  const cat=document.getElementById("categoriaSelect").value;
-  const fec=document.getElementById("fechaSelect").value;
+function mostrar(){
+ const cat=categoria.value;
+ const fec=fecha.value;
 
-  const filtrados=datos.filter(d=>d.categoria===cat && d.fecha===fec)
-    .sort((a,b)=>b.puntos-a.puntos);
+ const actual=datos.filter(d=>d.categoria===cat && d.fecha===fec);
+ const prevFecha=[...new Set(datos.filter(d=>d.categoria===cat).map(d=>d.fecha))];
+ const indexActual=prevFecha.indexOf(fec);
+ const fechaAnterior=prevFecha[indexActual-1];
 
-  const cont=document.getElementById("resultados");
+ const anterior=datos.filter(d=>d.categoria===cat && d.fecha===fechaAnterior);
 
-  if(!filtrados.length){
-    cont.innerHTML="<p>No hay datos</p>";
-    return;
+ const rankPrev={};
+ anterior.sort((a,b)=>b.puntos-a.puntos).forEach((d,i)=>{
+  rankPrev[d.id]=i+1;
+ });
+
+ const orden=actual.sort((a,b)=>b.puntos-a.puntos);
+
+ resultados.innerHTML=orden.map((d,i)=>{
+  let clase="";
+  if(i==0) clase="gold";
+  if(i==1) clase="silver";
+  if(i==2) clase="bronze";
+
+  let indicador="";
+  if(rankPrev[d.id]){
+   if(rankPrev[d.id] > i+1) indicador=`<span class="up">▲</span>`;
+   else if(rankPrev[d.id] < i+1) indicador=`<span class="down">▼</span>`;
   }
 
-  cont.innerHTML=filtrados.map((d,i)=>{
-    let clase="";
-    if(i===0) clase="oro";
-    else if(i===1) clase="plata";
-    else if(i===2) clase="bronce";
-
-    return `
-    <div class="card ${clase}">
-      <div class="pos">#${i+1}</div>
-      <div class="info">
-        <div class="nombre">${d.piloto}</div>
-        <div class="detalle">Kart ${d.numero}</div>
-      </div>
-      <div class="puntos">${d.puntos} pts</div>
-    </div>
-    `;
-  }).join("");
+  return `
+  <div class="card ${clase}">
+   <div class="pos">${i+1}</div>
+   <div class="name">
+     <a href="piloto.html?id=${encodeURIComponent(d.id)}">${d.piloto}</a>
+     ${indicador}
+   </div>
+   <div class="points">${d.puntos}</div>
+  </div>`;
+ }).join("");
 }
 
-document.getElementById("categoriaSelect").addEventListener("change",cargarFechas);
-document.getElementById("fechaSelect").addEventListener("change",mostrarResultados);
+categoria.onchange=cargarFechas;
+fecha.onchange=mostrar;
 
-cargarDatos();
+cargar();
 </script>
-
 </body>
 </html>
