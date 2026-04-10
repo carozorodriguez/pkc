@@ -176,7 +176,7 @@ th{background:var(--negro);color:#fff}
             <p>desde los 16 años cumplidos en 2025 hasta los 31 años cumplidos en el campeonato 2026</p>
             <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
         </div>
-       <div class="card">
+        <div class="card">
             <h3>200 Master</h3>
             <p>desde los 30 años cumplidos en 2025 </p>
             <a class="btn" href="reglamentos/Reglamento_200_MASTER_2026.pdf" target="_blank">Descargar Reglamento</a>
@@ -251,14 +251,31 @@ th{background:var(--negro);color:#fff}
 
   function gestionarPublicidad() {
     const modal = document.getElementById("welcome-modal");
-    const randPop = Math.floor(Math.random() * sponsorsPop.length);
-    document.getElementById("sponsor-img").src = sponsorsPop[randPop].img;
-    document.getElementById("sponsor-name").innerText = sponsorsPop[randPop].nombre;
-    setTimeout(() => { if(modal) modal.style.display = "block"; }, 800);
+    
+    // --- Lógica de una vez al día ---
+    const hoy = new Date().toLocaleDateString();
+    const ultimaVista = localStorage.getItem('popupVisto');
+
+    if (ultimaVista !== hoy) {
+        const randPop = Math.floor(Math.random() * sponsorsPop.length);
+        document.getElementById("sponsor-img").src = sponsorsPop[randPop].img;
+        document.getElementById("sponsor-name").innerText = sponsorsPop[randPop].nombre;
+        
+        setTimeout(() => { 
+            if(modal) {
+                modal.style.display = "block"; 
+                localStorage.setItem('popupVisto', hoy);
+            }
+        }, 800);
+    }
+    // --- Fin lógica Popup ---
+
+    // Publicidad dinámica en banners y ticker (estos siempre rotan)
     document.getElementById("ad-top-img").src = sponsorsPop[Math.floor(Math.random() * sponsorsPop.length)].img;
     const randNative = Math.floor(Math.random() * sponsorsPop.length);
     document.getElementById("ad-native-img").src = sponsorsPop[randNative].img;
     document.getElementById("ad-native-name").innerText = sponsorsPop[randNative].nombre;
+    
     const tickerContainer = document.getElementById("ticker-section");
     const marcasText = sponsorsPop.map(s => `<span>🏁 ${s.nombre} 🏁</span>`).join("");
     tickerContainer.innerHTML = `<div class="ticker-wrapper"><div class="ticker-content">${marcasText}${marcasText}</div></div>`;
