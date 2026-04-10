@@ -96,8 +96,7 @@ puntos: Number(limpiar(c[7])) || 0 // Puntos reales
 };
 })
 .filter(Boolean)
-.filter(d => normalizar(d.fecha) === normalizar(fechaSeleccionada));
-
+.filter(d => normalizar(d.fecha).includes(normalizar(fechaSeleccionada)));
 mostrar(datos);
 }
 
