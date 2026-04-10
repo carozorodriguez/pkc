@@ -89,10 +89,10 @@ const c = f.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
 if(!c) return null;
 
 return {
-fecha: limpiar(c[1]),
-categoria: limpiar(c[2]),
-piloto: limpiar(c[3]),
-puntos: Number(limpiar(c[4])) || 0
+fecha: limpiar(c[1]),       // Columna Fecha
+categoria: limpiar(c[2]),   // Categoría
+piloto: limpiar(c[4]),      // Nombre del piloto
+puntos: Number(limpiar(c[7])) || 0 // Puntos reales
 };
 })
 .filter(Boolean)
